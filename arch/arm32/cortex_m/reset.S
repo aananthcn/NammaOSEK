@@ -1,0 +1,122 @@
+/*
+ * Copyright (c) 2013-2014 Wind River Systems, Inc.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * Author: Aananth C N
+ * Date: 27 Jun 2021
+ */
+
+/**
+ * @file
+ * @brief Reset handler
+ *
+ * Reset handler that prepares the system for running C code.
+ */
+
+
+#include <macros.h>
+
+.text; .code 32
+
+/*
+#define GTEXT(sym) .globl sym; .type sym, @function
+#define GDATA(sym) .globl sym; .type sym, @object
+*/
+
+.globl z_arm_reset; .type z_arm_reset, @function
+.globl memset; .type memset, @function
+.globl z_interrupt_stacks; .type z_interrupt_stacks, @object
+#if defined(CONFIG_PLATFORM_SPECIFIC_INIT)
+.globl z_platform_init; .type z_platform_init, @function
+#endif
+#if defined(CONFIG_INIT_ARCH_HW_AT_BOOT)
+.globl z_arm_init_arch_hw_at_boot; .type z_arm_init_arch_hw_at_boot, @function
+.globl z_main_stack; .type z_main_stack, @object
+#endif
+
+
+/**
+ *
+ * @brief Reset vector
+ *
+ * Ran when the system comes out of reset, or when the firmware image is chain-
+ * loaded by another application (for instance, a bootloader). At minimum, the
+ * processor must be in thread mode with privileged level. At this point, the
+ * main stack pointer (MSP) should be already pointing to a valid area in SRAM.
+ *
+ * Locking interrupts prevents anything but NMIs and hard faults from
+ * interrupting the CPU. A default NMI handler is already in place in the
+ * vector table, and the boot code should not generate hard fault, or we're in
+ * deep trouble.
+ *
+ * We want to use the process stack pointer (PSP) instead of the MSP, since the
+ * MSP is to be set up to point to the one-and-only interrupt stack during
+ * later boot. That would not be possible if in use for running C code.
+ *
+ * When these steps are completed, jump to z_arm_prep_c(), which will finish
+ * setting up the system for running C code.
+ *
+ * @return N/A
+ */
+
+SECTION_SUBSEC_FUNC(TEXT,_reset_section,z_arm_reset)
+
+/*
+ * The entry point is located at the z_arm_reset symbol, which
+ * is fetched by a XIP image playing the role of a bootloader, which jumps to
+ * it, not through the reset vector mechanism. Such bootloaders might want to
+ * search for a __start symbol instead, so create that alias here.
+ */
+SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
+
+    /* lock interrupts: will get unlocked when switch to main task */
+    movs.n r0, #_EXC_IRQ_DEFAULT_PRIO
+    msr BASEPRI, r0
+
+#ifdef CONFIG_WDOG_INIT
+    /* board-specific watchdog initialization is necessary */
+    bl z_arm_watchdog_init
+#endif
+
+/*
+ *
+ * Note: in all Cortex-M variants the interrupt stack area is at
+ * least equal to CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE
+ * (may be larger due to rounding up for stack pointer aligning
+ * purposes but this is sufficient during initialization).
+ */
+#ifdef CONFIG_INIT_STACKS
+    ldr r0, =z_interrupt_stacks
+    ldr r1, =0xaa
+    ldr r2, =CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE
+    bl memset
+#endif
+
+    /*
+     * Set PSP and use it to boot without using MSP, so that it
+     * gets set to z_interrupt_stacks during initialization.
+     */
+    ldr r0, =z_interrupt_stacks
+    ldr r1, =CONFIG_ISR_STACK_SIZE + MPU_GUARD_ALIGN_AND_SIZE
+    adds r0, r0, r1
+    msr PSP, r0
+    mrs r0, CONTROL
+    movs r1, #2
+    orrs r0, r1 /* CONTROL_SPSEL_Msk */
+    msr CONTROL, r0
+    /*
+     * When changing the stack pointer, software must use an ISB instruction
+     * immediately after the MSR instruction. This ensures that instructions
+     * after the ISB instruction execute using the new stack pointer.
+     */
+    isb
+
+    /*
+     * 'bl' jumps the furthest of the branch instructions that are
+     * supported on all platforms. So it is used when jumping to z_arm_prep_c
+     * (even though we do not intend to return).
+     */
+    bl z_arm_prep_c
