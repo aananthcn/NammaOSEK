@@ -7,6 +7,15 @@
  * This file is taken from zephyr project (Apache 2.0)
  */
 
+#define GTEXT(sym) .globl sym; .type sym,%function
+#define GDATA(sym) .globl sym; .type sym,%object
+
+#define PERFOPT_ALIGN .balign  4
+#define _ASM_FILE_PROLOGUE .text; .syntax unified; .thumb
+
+/* ACN: Following line is written without any thought, please re-design this */
+#define _EXC_IRQ_DEFAULT_PRIO	7
+
 .macro section_var section, symbol
 	.section .\section\().\symbol
 	\symbol :

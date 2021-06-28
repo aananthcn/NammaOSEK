@@ -4,7 +4,13 @@
  */
 
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
-OUTPUT_ARCH(aarch32)
+OUTPUT_ARCH(arm)
+
+/* Memory Map for STM32F401RE from datasheet */
+ROM_ADDR = 0x08000000;
+ROM_SIZE = 0x00080000;
+RAM_ADDR = 0x20000000;
+RAM_SIZE = 0x00018000;
 
 MEMORY
 {
@@ -155,6 +161,7 @@ SECTIONS
     /*
      * Heap section.
      */
+    /*
     .heap (NOLOAD) :
     {
         . = ALIGN(4);
@@ -163,4 +170,5 @@ SECTIONS
         . = ORIGIN(HEAP_RAM) + LENGTH(HEAP_RAM);
         __heap_end__ = .;
     } > SRAM
+    */
 }

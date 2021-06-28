@@ -18,23 +18,19 @@
 
 
 #include <macros.h>
+#include <config.h>
 
-.text; .code 32
+_ASM_FILE_PROLOGUE
 
-/*
-#define GTEXT(sym) .globl sym; .type sym, @function
-#define GDATA(sym) .globl sym; .type sym, @object
-*/
-
-.globl z_arm_reset; .type z_arm_reset, @function
-.globl memset; .type memset, @function
-.globl z_interrupt_stacks; .type z_interrupt_stacks, @object
+GTEXT(z_arm_reset)
+GTEXT(memset)
+GDATA(z_interrupt_stacks)
 #if defined(CONFIG_PLATFORM_SPECIFIC_INIT)
-.globl z_platform_init; .type z_platform_init, @function
+GTEXT(z_platform_init)
 #endif
 #if defined(CONFIG_INIT_ARCH_HW_AT_BOOT)
-.globl z_arm_init_arch_hw_at_boot; .type z_arm_init_arch_hw_at_boot, @function
-.globl z_main_stack; .type z_main_stack, @object
+GTEXT(z_arm_init_arch_hw_at_boot)
+GDATA(z_main_stack)
 #endif
 
 
@@ -68,9 +64,9 @@ SECTION_SUBSEC_FUNC(TEXT,_reset_section,z_arm_reset)
  * The entry point is located at the z_arm_reset symbol, which
  * is fetched by a XIP image playing the role of a bootloader, which jumps to
  * it, not through the reset vector mechanism. Such bootloaders might want to
- * search for a __start symbol instead, so create that alias here.
+ * search for a _start symbol instead, so create that alias here.
  */
-SECTION_SUBSEC_FUNC(TEXT,_reset_section,__start)
+SECTION_SUBSEC_FUNC(TEXT,_reset_section,_start)
 
     /* lock interrupts: will get unlocked when switch to main task */
     movs.n r0, #_EXC_IRQ_DEFAULT_PRIO

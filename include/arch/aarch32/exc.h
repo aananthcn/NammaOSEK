@@ -15,10 +15,12 @@
 #ifndef ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_EXC_H_
 #define ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_EXC_H_
 
-#if defined(CONFIG_CPU_CORTEX_M)
-#include <devicetree.h>
+#include <config.h>
 
-#include <arch/arm/aarch32/cortex_m/nvic.h>
+#if defined(CONFIG_CPU_CORTEX_M)
+//#include <devicetree.h> -- ACN: let us not go in device tree path now.
+
+#include <nvic.h>
 
 /* for assembler, only works with constants */
 #define Z_EXC_PRIO(pri) (((pri) << (8 - NUM_IRQ_PRIO_BITS)) & 0xff)
@@ -49,7 +51,11 @@
 
 #define _EXC_FAULT_PRIO 0
 #define _EXC_ZERO_LATENCY_IRQS_PRIO 0
-#define _EXC_SVC_PRIO COND_CODE_1(CONFIG_ZERO_LATENCY_IRQS, (1), (0))
+#if defined (CONFIG_ZERO_LATENCY_IRQS)
+#define _EXC_SVC_PRIO (1)
+#else
+#define _EXC_SVC_PRIO (0)
+#endif
 #define _IRQ_PRIO_OFFSET (_EXCEPTION_RESERVED_PRIO + _EXC_SVC_PRIO)
 
 #define _EXC_IRQ_DEFAULT_PRIO Z_EXC_PRIO(_IRQ_PRIO_OFFSET)
