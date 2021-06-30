@@ -21,7 +21,10 @@
 #ifndef ZEPHYR_ARCH_ARM_INCLUDE_AARCH32_KERNEL_ARCH_FUNC_H_
 #define ZEPHYR_ARCH_ARM_INCLUDE_AARCH32_KERNEL_ARCH_FUNC_H_
 
-#include <kernel_arch_data.h>
+//#include <kernel_arch_data.h>
+#include <compiler.h>
+#include <stack.h>
+#include <cortex_m_exc.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +38,12 @@ extern void z_arm_configure_static_mpu_regions(void);
 extern void z_arm_configure_dynamic_mpu_regions(struct k_thread *thread);
 extern int z_arm_mpu_init(void);
 #endif /* CONFIG_ARM_MPU */
+
+//  Aananth moved these functions from other locations
+void z_data_copy(void);
+void z_arm_interrupt_init(void);
+
+
 
 static ALWAYS_INLINE void arch_kernel_init(void)
 {
@@ -55,6 +64,7 @@ static ALWAYS_INLINE void arch_kernel_init(void)
 #endif
 }
 
+#if 0
 static ALWAYS_INLINE void
 arch_thread_return_value_set(struct k_thread *thread, unsigned int value)
 {
@@ -62,7 +72,7 @@ arch_thread_return_value_set(struct k_thread *thread, unsigned int value)
 }
 
 #if !defined(CONFIG_MULTITHREADING) && defined(CONFIG_CPU_CORTEX_M)
-extern FUNC_NORETURN void z_arm_switch_to_main_no_multithreading(
+extern void z_arm_switch_to_main_no_multithreading(
 	k_thread_entry_t main_func,
 	void *p1, void *p2, void *p3);
 
@@ -71,12 +81,13 @@ extern FUNC_NORETURN void z_arm_switch_to_main_no_multithreading(
 
 #endif /* !CONFIG_MULTITHREADING && CONFIG_CPU_CORTEX_M */
 
-extern FUNC_NORETURN void z_arm_userspace_enter(k_thread_entry_t user_entry,
+extern void z_arm_userspace_enter(k_thread_entry_t user_entry,
 					       void *p1, void *p2, void *p3,
 					       uint32_t stack_end,
 					       uint32_t stack_start);
 
 extern void z_arm_fatal_error(unsigned int reason, const z_arch_esf_t *esf);
+#endif
 
 #endif /* _ASMLANGUAGE */
 

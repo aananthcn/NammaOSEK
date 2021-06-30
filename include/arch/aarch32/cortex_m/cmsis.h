@@ -14,7 +14,7 @@
 #ifndef ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_CORTEX_M_CMSIS_H_
 #define ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_CORTEX_M_CMSIS_H_
 
-#include <soc.h>
+//#include <soc.h>
 #include <config.h>
 #include <nvic.h>
 

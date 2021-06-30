@@ -34,9 +34,15 @@ SECTIONS
     .vectors : ALIGN(4)
     {
         FILL(0xFF)
-        __vectors_start__ = ABSOLUTE(.); 
+        _vector_start = .;
+        KEEP(*(.exc_vector_table))
+        KEEP(*(".exc_vector_table.*"))
+
+        KEEP(*(_IRQ_VECTOR_TABLE_SECTION_SYMS))
+
         KEEP(*(.vectors))
-        *(.after_vectors .after_vectors.*)
+
+        _vector_end = .;
     } > FLASH
 
     /*

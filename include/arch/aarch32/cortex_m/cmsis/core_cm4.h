@@ -42,6 +42,7 @@
 #define __CORE_CM4_H_GENERIC
 
 #include <stdint.h>
+#include <cmsis.h>
 
 #ifdef __cplusplus
  extern "C" {
@@ -1574,6 +1575,16 @@ typedef struct
   \defgroup CMSIS_Core_FunctionInterface Functions and Instructions Reference
 */
 
+
+#if defined ( __GNUC__ )
+
+// Aananth copied these lines to resolve error temporarily on 30 Jun 2021
+  #define __ASM            __asm                                      /*!< asm keyword for GNU Compiler */
+  #define __INLINE         inline                                     /*!< inline keyword for GNU Compiler */
+  #define __STATIC_INLINE  static inline
+
+#include <cmsis_gcc.h>
+#endif
 
 
 /* ##########################   NVIC functions  #################################### */

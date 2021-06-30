@@ -23,6 +23,7 @@
 _ASM_FILE_PROLOGUE
 
 GTEXT(z_arm_reset)
+GTEXT(_start)
 GTEXT(memset)
 GDATA(z_interrupt_stacks)
 #if defined(CONFIG_PLATFORM_SPECIFIC_INIT)

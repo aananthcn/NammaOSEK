@@ -10,7 +10,8 @@ CWD      := $(shell pwd)
 INCDIRS  := -I ${CWD}/include \
             -I ${CWD}/include/arch/aarch32/ \
 	    -I ${CWD}/board/*/* \
-	    -I ${CWD}/include/arch/aarch32/cortex_m/
+	    -I ${CWD}/include/arch/aarch32/cortex_m/ \
+	    -I ${CWD}/include/arch/aarch32/cortex_m/cmsis/
 
 LDFLAGS  += -nostdlib
 CFLAGS   += -Werror ${INCDIRS} 
@@ -24,7 +25,8 @@ ASFLAGS += -march=armv7-m
 LDFLAGS += -m armelf -T osex-os.lds
 OBJS    := \
 	arch/arm32/cortex_m/reset.o \
-	arch/arm32/prep_c.o
+	arch/arm32/prep_c.o \
+	kernel/main.o
 
 
 .PHONY: all
@@ -41,5 +43,5 @@ info:
 	@echo By default ARCH=arm64
 
 clean:
-	rm -f *.o 
+	rm -f ${OBJS}
 	rm -f ${TARGET}.bin ${TARGET}.elf

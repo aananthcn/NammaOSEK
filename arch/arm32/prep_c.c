@@ -27,6 +27,13 @@
 #include <aarch32/cortex_a_r/stack.h>
 #endif
 
+#if defined(CONFIG_CPU_CORTEX_M4)
+#include <core_cm4.h>
+#endif
+
+#include <linker_defs.h>
+#include <kernel_arch_func.h>
+
 #if defined(__GNUC__)
 /*
  * GCC can detect if memcpy is passed a NULL argument, however one of
@@ -168,7 +175,7 @@ static inline void z_arm_floating_point_init(void)
 }
 #endif /* CONFIG_CPU_HAS_FPU */
 
-extern FUNC_NORETURN void z_cstart(void);
+extern void z_cstart(void);
 
 
 /**
@@ -179,7 +186,6 @@ extern FUNC_NORETURN void z_cstart(void);
  *
  * @return N/A
  */
-__boot_func
 void z_bss_zero(void)
 {
 	(void)memset(__bss_start, 0, __bss_end - __bss_start);
