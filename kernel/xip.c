@@ -13,6 +13,9 @@
 extern volatile uintptr_t __stack_chk_guard;
 #endif /* CONFIG_STACK_CANARIES */
 
+#define DT_NODE_HAS_STATUS(x, y) 0
+#define DT_CHOSEN(x)	0
+
 /**
  *
  * @brief Copy the data section from ROM to RAM

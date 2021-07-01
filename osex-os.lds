@@ -141,13 +141,13 @@ SECTIONS
     {
         . = ALIGN(4);
         PROVIDE(_bss_start = .);
-        __bss_start__ = .;
+        __bss_start = .;
         *(.bss)
         *(.bss.*)
         *(COMMON)
         . = ALIGN(4);
         PROVIDE(_bss_end = .);
-        __bss_end__ = .;
+        __bss_end = .;
         PROVIDE(end = .);
     } > SRAM
 

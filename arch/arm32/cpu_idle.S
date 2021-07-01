@@ -10,8 +10,9 @@
  *
  */
 
-#include <toolchain.h>
-#include <linker/sections.h>
+#define _ASMLANGUAGE 1
+#include <config.h>
+#include <compiler.h>
 
 _ASM_FILE_PROLOGUE
 

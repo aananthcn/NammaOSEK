@@ -2,12 +2,7 @@
 #define OSEK_OS_TYPES_H
 
 #include <stdint.h>
-
-// boolean definitions by Aananth
-typedef unsigned char 	_bool;
-#define bool		_bool
-#define true		1
-#define false		0
+#include <stdbool.h>
 
 // integers easy to use
 typedef uint8_t		u8;
@@ -18,5 +13,10 @@ typedef int8_t		s8;
 typedef int16_t		s16;
 typedef int32_t		s32;
 typedef int64_t		s64;
+
+
+#ifndef BIT
+#define BIT(x) (1U << (x))
+#endif
 
 #endif

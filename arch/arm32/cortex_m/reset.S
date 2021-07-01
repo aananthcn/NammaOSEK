@@ -16,11 +16,17 @@
  * Reset handler that prepares the system for running C code.
  */
 
-
-#include <macros.h>
+#define _ASMLANGUAGE 1
+#include <compiler.h>
 #include <config.h>
 
+/*
+.text 
+.syntax unified
+.thumb
+*/
 _ASM_FILE_PROLOGUE
+
 
 GTEXT(z_arm_reset)
 GTEXT(_start)
@@ -60,6 +66,10 @@ GDATA(z_main_stack)
  */
 
 SECTION_SUBSEC_FUNC(TEXT,_reset_section,z_arm_reset)
+
+
+/* ACN: Following line is written without any thought, please re-design this */
+#define _EXC_IRQ_DEFAULT_PRIO	7
 
 /*
  * The entry point is located at the z_arm_reset symbol, which

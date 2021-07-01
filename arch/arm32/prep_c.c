@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <cmsis.h>
 
 #if defined(CONFIG_ARMV7_R)
 #include <aarch32/cortex_a_r/stack.h>

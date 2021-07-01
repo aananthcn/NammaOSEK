@@ -12,11 +12,12 @@
 #define ZEPHYR_INCLUDE_IRQ_H_
 
 /* Pull in the arch-specific implementations */
-#include <arch/cpu.h>
+#include <cpu.h>
 
 #ifndef _ASMLANGUAGE
-#include <toolchain.h>
-#include <zephyr/types.h>
+//#include <toolchain.h>
+#include <compiler.h>
+#include <ostypes.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +49,7 @@ extern "C" {
 #define IRQ_CONNECT(irq_p, priority_p, isr_p, isr_param_p, flags_p) \
 	ARCH_IRQ_CONNECT(irq_p, priority_p, isr_p, isr_param_p, flags_p)
 
+#ifdef CONFIG_DYNAMIC_INTERRUPTS
 /**
  * Configure a dynamic interrupt.
  *
@@ -69,6 +71,7 @@ irq_connect_dynamic(unsigned int irq, unsigned int priority,
 	return arch_irq_connect_dynamic(irq, priority, routine, parameter,
 					flags);
 }
+#endif
 
 /**
  * @brief Initialize a 'direct' interrupt handler.

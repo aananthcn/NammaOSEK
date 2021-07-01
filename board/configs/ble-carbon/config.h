@@ -5,7 +5,8 @@
 
 // Commented by Aananth (27 Jun 2021) as it is too early to support such feature
 // #define CONFIG_ARCH_HAS_RAMFUNC_SUPPORT 1
-
+#define CONFIG_ARM 1
+#define CONFIG_ASSEMBLER_ISA_THUMB2 1
 #define CONFIG_CPU_CORTEX_M4	1
 #if defined (CONFIG_CPU_CORTEX_M4)
   #define CONFIG_CPU_CORTEX_M 	1

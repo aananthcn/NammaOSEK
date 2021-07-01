@@ -12,12 +12,45 @@
  * Common fault handler for ARM Cortex-M processors.
  */
 
+#if 0
 #include <kernel.h>
 #include <kernel_internal.h>
 #include <inttypes.h>
 #include <exc_handle.h>
 #include <logging/log.h>
 LOG_MODULE_DECLARE(os, CONFIG_KERNEL_LOG_LEVEL);
+#endif
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <assert.h>
+#include <string.h>
+
+#include <config.h>
+#include <exc.h>
+#include <fatal.h>
+#include <cmsis.h>
+#include <ostypes.h>
+#include <asm_inline_gcc.h>
+#include <kernel_arch_func.h>
+
+
+struct _callee_saved {
+	uint32_t v1;  /* r4 */
+	uint32_t v2;  /* r5 */
+	uint32_t v3;  /* r6 */
+	uint32_t v4;  /* r7 */
+	uint32_t v5;  /* r8 */
+	uint32_t v6;  /* r9 */
+	uint32_t v7;  /* r10 */
+	uint32_t v8;  /* r11 */
+	uint32_t psp; /* r13 */
+};
+
+typedef struct _callee_saved _callee_saved_t;
+
+
 
 #if defined(CONFIG_PRINTK) || defined(CONFIG_LOG)
 #define PR_EXC(...) LOG_ERR(__VA_ARGS__)
