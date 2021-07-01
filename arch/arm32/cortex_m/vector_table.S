@@ -17,9 +17,14 @@
  * rest should not be triggered until the kernel is ready to handle them.
  */
 
+#if 0
 #include <toolchain.h>
 #include <linker/sections.h>
-#include "vector_table.h"
+#endif
+
+#define _ASMLANGUAGE 1
+#include <compiler.h>
+#include <config.h>
 
 _ASM_FILE_PROLOGUE
 

@@ -1,6 +1,7 @@
 COMPILER=arm-none-eabi-
 CC=${COMPILER}gcc
 LD=${COMPILER}ld
+AS=${COMPILER}as
 OBJCOPY=${COMPILER}objcopy
 ARCH = arm32
 
@@ -15,8 +16,8 @@ INCDIRS  := -I ${CWD}/include \
 	    -I ${CWD}/lib/include
 
 LDFLAGS  += -nostdlib -g
-CFLAGS   += -Werror ${INCDIRS} -g 
-ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS}
+CFLAGS   += -Werror ${INCDIRS} -g
+ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
 
 $(info compilating for "-m armelf")
 #CFLAGS  += -march=armv7-m -mcpu=cortex-m4
@@ -43,8 +44,10 @@ LIBOBJS	:= \
 
 OS_OBJS	:= \
 	arch/arm32/cortex_m/reset.o \
+	arch/arm32/cortex_m/vector_table.o \
 	arch/arm32/cortex_m/irq_init.o \
 	arch/arm32/cortex_m/fault.o \
+	arch/arm32/cortex_m/fault_s.o \
 	arch/arm32/prep_c.o \
 	arch/arm32/fatal.o \
 	arch/arm32/irq_manage.o \
@@ -57,7 +60,7 @@ OBJS	:= $(OS_OBJS) $(LIBOBJS)
 
 .PHONY: all
 
-all: clean ${TARGET}
+all: ${TARGET}
 
 ${TARGET}: ${OBJS}
 	@echo Compiled for -march=armv7ve
