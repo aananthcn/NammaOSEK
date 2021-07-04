@@ -1,9 +1,15 @@
 #! /bin/bash
 
+print_usage()
+{
+  printf "usage: ./configure <board-name>\n"
+  printf "Supported boards:\n  1) ble-carbon\n  2) linux-app\n\n"
+}
+
 argc=$#
 if [ "$argc" -lt 1 ]; then
   printf "Error: Board name not provided!\n\n"
-  echo "usage: ./configure <board-name>"
+  print_usage
   exit -1
 fi
 
