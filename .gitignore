@@ -2,3 +2,5 @@
 *.out
 *.elf
 *.bin
+*.dfu
+./Makefile

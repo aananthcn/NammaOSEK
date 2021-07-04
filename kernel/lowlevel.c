@@ -2,6 +2,7 @@
 #include <compiler.h>
 #include <stack.h>
 #include <string.h>
+#include <debug.h>
 
 
 /* Using typedef deliberately here, this is quite intended to be an opaque
@@ -144,13 +145,22 @@ K_THREAD_STACK_DEFINE(z_main_stack, CONFIG_MAIN_STACK_SIZE);
 
 #include <kernel_arch_func.h>
 
+
+#define CNT_RELOAD	0x80000000
+
 void z_cstart(void)
 {
-	// cstartup
+	u32 count = CNT_RELOAD;
+	/* cstartup */
 	arch_kernel_init();
 
+	/* user led init */
+	user_led_init();
+
 	while (1) {
-		// do nothing!
+		toggle_user_led1();
+		while(++count);
+		count = CNT_RELOAD;
 	}
 }
 

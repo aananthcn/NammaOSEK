@@ -1,0 +1,34 @@
+#! /bin/bash
+
+argc=$#
+if [ "$argc" -lt 1 ]; then
+  printf "Error: Board name not provided!\n\n"
+  echo "usage: ./configure <board-name>"
+  exit -1
+fi
+
+target=$1
+board_path=""
+validt="false"
+boards=$(find $(pwd)/board -maxdepth 1 -mindepth 1  -type d)
+for brd in $boards
+do
+  brdname=${brd##*/}
+  if [ "$target" == "$brdname" ]; then
+    validt="true"
+    board_path=${brd}
+    break
+  fi
+done
+
+if [ "$validt" == "false" ]; then
+  echo "Error: Board '$target' is not supported!"
+  exit -1
+else
+  echo "Board '$target' is supported!"
+fi
+
+echo "CWD := $(pwd)" > ./Makefile
+echo "include ${board_path}/${target}.mk" >> ./Makefile
+echo "include ./common.mk" >> ./Makefile
+echo "Configuration Success!"
