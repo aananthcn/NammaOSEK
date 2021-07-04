@@ -3,4 +3,4 @@
 *.elf
 *.bin
 *.dfu
-./Makefile
+/Makefile

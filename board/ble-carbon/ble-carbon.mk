@@ -29,6 +29,18 @@ LDFILE	:= ${CWD}/board/ble-carbon/ble-carbon.lds
 LDFLAGS += -m armelf -T ${LDFILE}
 
 
+STDLIBOBJS	:= \
+	lib/libc-minimal/stdlib/abort.o \
+	lib/libc-minimal/stdlib/atoi.o \
+	lib/libc-minimal/stdlib/bsearch.o \
+	lib/libc-minimal/stdlib/exit.o \
+	lib/libc-minimal/stdlib/malloc.o \
+	lib/libc-minimal/stdlib/strtol.o \
+	lib/libc-minimal/stdlib/strtoul.o \
+
+LIBOBJS	:= \
+	lib/libc-minimal/string/string.o
+
 BRD_OBJS	:= \
 	arch/arm32/cortex_m/reset.o \
 	arch/arm32/cortex_m/vector_table.o \

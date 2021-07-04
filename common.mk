@@ -1,18 +1,5 @@
 TARGET = osek-os
 
-STDLIBOBJS	:= \
-	lib/libc-minimal/stdlib/abort.o \
-	lib/libc-minimal/stdlib/atoi.o \
-	lib/libc-minimal/stdlib/bsearch.o \
-	lib/libc-minimal/stdlib/exit.o \
-	lib/libc-minimal/stdlib/malloc.o \
-	lib/libc-minimal/stdlib/strtol.o \
-	lib/libc-minimal/stdlib/strtoul.o \
-
-LIBOBJS	:= \
-	lib/libc-minimal/string/string.o
-
-	
 OBJS	:= $(BRD_OBJS) $(LIBOBJS)
 
 
