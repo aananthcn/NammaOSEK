@@ -16,6 +16,6 @@ $(info compilating for "Linux PC")
 
 
 BRD_OBJS	:= \
-	${CWD}/board/linux-app/main.o \
+	${CWD}/board/linux-app/board.o \
 	${CWD}/kernel/kernel.o
 
