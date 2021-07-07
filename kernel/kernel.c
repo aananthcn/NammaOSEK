@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include <osek.h>
 #include <board.h>
+#include <osek.h>
 
 
 int OsAppMode;
 
-int SetOsMode(os_modes_t mode) {
+int SetOsMode(OsModeType mode) {
 	if (mode >= OS_MODES_MAX) {
 		printf("Error: Invalid mode! New mode %d > MAX (%d)\n", mode, OS_MODES_MAX);
 		return -1;
@@ -15,7 +15,7 @@ int SetOsMode(os_modes_t mode) {
 	return 0;
 }
 
-os_modes_t GetOsMode(void) {
+OsModeType GetOsMode(void) {
 	return OsAppMode;
 }
 
@@ -32,7 +32,7 @@ void RunBackgroundTasks(void) {
 	BoardSpecific_BackgroundTask();
 }
 
-void StartOS(os_modes_t mode) {
+void StartOS(OsModeType mode) {
 	SetOsMode(mode);
 	if (mode != OSDEFAULTAPPMODE) {
 		printf("%s::%s(): Error: Invalid OS START mode!\n", __FILE__, __func__);
