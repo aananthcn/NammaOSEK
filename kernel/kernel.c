@@ -5,7 +5,7 @@
 
 int OsAppMode;
 
-int SetOsMode(OsModeType mode) {
+int SetActiveApplicationMode(AppModeType mode) {
 	if (mode >= OS_MODES_MAX) {
 		printf("Error: Invalid mode! New mode %d > MAX (%d)\n", mode, OS_MODES_MAX);
 		return -1;
@@ -15,7 +15,7 @@ int SetOsMode(OsModeType mode) {
 	return 0;
 }
 
-OsModeType GetOsMode(void) {
+AppModeType GetActiveApplicationMode(void) {
 	return OsAppMode;
 }
 
@@ -32,8 +32,8 @@ void RunBackgroundTasks(void) {
 	BoardSpecific_BackgroundTask();
 }
 
-void StartOS(OsModeType mode) {
-	SetOsMode(mode);
+void StartOS(AppModeType mode) {
+	SetActiveApplicationMode(mode);
 	if (mode != OSDEFAULTAPPMODE) {
 		printf("%s::%s(): Error: Invalid OS START mode!\n", __FILE__, __func__);
 		printf("Info: Expected mode == %d mode, actual == %d!\n", 

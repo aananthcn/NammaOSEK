@@ -6,7 +6,7 @@
 #include <osek.h>
 
 void isr_handler(int unused) {
-    SetOsMode(OS_SHUTDOWN_MODE);
+    SetActiveApplicationMode(OS_SHUTDOWN_MODE);
 }
 
 
