@@ -53,7 +53,7 @@ typedef TaskType* TaskRefType;
  */
 typedef enum eAppModeType {
 	OSDEFAULTAPPMODE, /* Default application mode, always a valid parameter to StartOS */
-	OS_SHUTDOWN_MODE,
+	OS_SLEEP_MODE,
 	OS_ERROR_MODE,
 	OS_MODES_MAX
 } AppModeType;
