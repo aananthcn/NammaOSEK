@@ -5,3 +5,5 @@
 *.dfu
 /Makefile
 ~*
+*.pyc
+__pycache__
