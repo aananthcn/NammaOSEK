@@ -157,3 +157,26 @@ def locate_heading_column(text, wb, sheetname):
 def excel_int_to_date(int_val):
     date = datetime.fromordinal(datetime(1900, 1, 1).toordinal() + int_val - 2)
     return date
+
+
+# Function: locate_cols
+# ---------------------------
+# This function takes a list of column headings as input and find the excel columns
+# such as 'A', 'B', 'E", for the correponding column heading strings. 
+
+# Return value: 
+# 1) A dictionary of {"column headings" : "[A-Z]"}
+# 2) Row in which the header column is placed - An integer.
+def locate_cols(wb, sheetname, headers):
+    Cols = {}
+    Row = None
+    for item in headers:
+        col, row = locate_heading_column(item, wb, sheetname)
+        if col == -1:
+            print("Error: cannot locate \""+item+"\" in sheet "+ sheetname)
+            return None
+        Cols[item] = chr(col)
+        if row != -1:
+            Row = row
+
+    return Cols, Row
