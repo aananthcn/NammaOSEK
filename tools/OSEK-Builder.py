@@ -3,6 +3,7 @@
 
 import sys
 import utils
+import os
 
 import colorama
 from colorama import Fore, Back, Style
@@ -43,7 +44,7 @@ def parse_task_data(wb, sheetname):
                 TaskData[task_count][tsk_item] = sheet[TaskCols[tsk_item]+str(row)].value
         task_count += 1
     
-    print(TaskData)
+    #print(TaskData)
     return TaskData
 
 
@@ -59,7 +60,7 @@ def parse_appmode_data(wb, sheetname):
         row = i + attr_row
         AppModes.append(sheet[chr(attr_col)+str(row)].value.strip())
     
-    print(AppModes)
+    #print(AppModes)
     return AppModes
 
 
@@ -97,11 +98,87 @@ def parse_os_data(wb, sheetname):
     OsData["uparacc"]  = read_os_attribute(sheet, sheetname, attr_col, "USEPARAMETERACCESS")
     OsData["uressch"]  = read_os_attribute(sheet, sheetname, attr_col, "USERESSCHEDULER")
 
-    print(OsData)
+    #print(OsData)
     return OsData
 
 
+def print_oil_item_type1(f, task, tkey, okey, indent):
+    count = len(task[tkey])
+    item0 = task[tkey][0]
+    if count > 1 or not (item0 == "None" or item0 == "NONE"):
+        for res in task[tkey]:
+            f.write(indent*"\t" +okey+" = "+ res +";\n")
+
+
+
+def print_oil_output(OsData, AppMode, TaskData):
+    # open file
+    path = "/".join(os.path.abspath(__file__).split("/")[0:-1])
+    oil_file_name = OsData["os_name"]+"-"+OsData["cpu"]+".oil"
+    full_filename = path+"/"+oil_file_name
+    f = open(full_filename, "w")
+
+    # start of CPU
+    indent = 0
+    f.write("CPU " + OsData["cpu"] + " {\n")
+        
+    # write OS data
+    indent += 1
+    f.write(indent*"\t" + " OS " + OsData["os_name"] + " {\n")
+    indent += 1
+    f.write(indent*"\t" + "STATUS = " + OsData["status"] + ";\n")
+    f.write(indent*"\t" + "STARTUPHOOK = " + OsData["strthk"] + ";\n")
+    f.write(indent*"\t" + "ERRORHOOK = " + OsData["errhk"] + ";\n")
+    f.write(indent*"\t" + "SHUTDOWNHOOK = " + OsData["shdnhk"] + ";\n")
+    f.write(indent*"\t" + "PRETASKHOOK = " + OsData["pretskhk"] + ";\n")
+    f.write(indent*"\t" + "POSTTASKHOOK = " + OsData["postskhk"] + ";\n")
+    f.write(indent*"\t" + "USEGETSERVICEID = " + OsData["ugtsrvid"] + ";\n")
+    f.write(indent*"\t" + "USEPARAMETERACCESS = " + OsData["uparacc"] + ";\n")
+    f.write(indent*"\t" + "USERESSCHEDULER = " + OsData["uressch"] + ";\n")
+    indent -= 1
+    f.write(indent*"\t" + "};\n")
+
+    # write tasks
+    for task in TaskData:
+        f.write(indent*"\t"+ "TASK " + task['Task Name'] + " {\n")
+        indent += 1
+        f.write(indent*"\t" +"PRIORITY = " + str(task['Priority']) + ";\n")
+        f.write(indent*"\t" +"SCHEDULE = " + task['Schedule'] + ";\n")
+        f.write(indent*"\t" +"ACTIVATION = " + str(task['Activation']) + ";\n")
+
+        # AUTOSTART and APPMODEs
+        appmodes = len(task['Autostart'])
+        autostrt = task['Autostart'][0]
+        if appmodes == 1 and (autostrt == "None" or autostrt == "NONE"):
+	        f.write(indent*"\t" +"AUTOSTART = FALSE;\n")
+        else:
+            f.write(indent*"\t" +"AUTOSTART = TRUE {\n")
+            indent += 1
+            for mode in AppMode:
+                f.write(indent*"\t" +"APPMODE = "+ mode +";\n")
+            indent -= 1
+            f.write(indent*"\t" + "};\n")
+        
+        # type1 == like Resource, Event, Message
+        print_oil_item_type1(f, task, 'Resource', 'RESOURCE', indent)
+        print_oil_item_type1(f, task, 'Event', 'EVENT', indent)
+        print_oil_item_type1(f, task, 'Message', 'MESSAGE', indent)
+            
+        # End of Task
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
+
+    #end of CPU
+    indent -= 1
+    f.write(indent*"\t" + "};\n")
+    f.close()
+    return full_filename
+
+
 def main(wb):
+    OsData = None
+    AppModes = None
+    TaskData = None
     for sheetname in wb.sheetnames:
         if "OS" in sheetname:
             print_info("Parsing OS attributes")
@@ -118,6 +195,10 @@ def main(wb):
             TaskData = parse_task_data(wb, sheetname)
             if TaskData == None:
                 print(Fore.RED, "Error: TaskData parse failure!")
+
+    print_info("Generating OIL file")
+    oil_path = print_oil_output(OsData, AppModes, TaskData)
+    print(Fore.GREEN + "OIL file generated in \"" + oil_path + "\"")
 
 
 def print_usage(prog):
