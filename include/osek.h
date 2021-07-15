@@ -89,7 +89,7 @@ void SuspendOSInterrupts(void);
 #define ISR(FuncName)) void OSEK_ISR_##FuncName)(void)
 
 /*
- * Resource Management - At the moment I am assuming two types of resources
+ * Resource Management - At the moment (26-Jun-2021) I am assuming two types of resources
  * 1) Memory
  * 2) Device (memory mapped)
  * 3) Scheduler

@@ -16,7 +16,8 @@ def print_info(text):
 def validate_column(wb, sheetname, col_header):
     col, row = utils.locate_heading_column(col_header, wb, sheetname)
     if col == -1:
-        print("Error: can't locate \""+col_header+"\" in sheet \"" + sheetname + "\"")
+        print(Fore.RED + "Error: can't locate \""+col_header+"\" in sheet \"" + sheetname + "\"")
+        print(Style.RESET_ALL)
         return None
 
     return col, row
@@ -112,8 +113,8 @@ def print_oil_item_type1(f, task, tkey, okey, indent):
 
 
 def print_oil_output(OsData, AppMode, TaskData):
-    # open file
-    path = "/".join(os.path.abspath(__file__).split("/")[0:-1])
+    # open or create output file
+    path = "/".join(os.path.abspath(__file__).split("/")[0:-2])
     oil_file_name = OsData["os_name"]+"-"+OsData["cpu"]+".oil"
     full_filename = path+"/"+oil_file_name
     f = open(full_filename, "w")
@@ -208,7 +209,7 @@ def print_usage(prog):
 if __name__ == '__main__':
     cmd_args = len(sys.argv)
     if cmd_args < 2:
-        print("Error: Input excel document not passed as argument!")
+        print(Fore.RED + "Error: Input excel document not passed as argument!", Style.RESET_ALL)
         print_usage(sys.argv[0])
         exit(-1)
     
@@ -218,7 +219,7 @@ if __name__ == '__main__':
 
     excelfile = sys.argv[1]
     if "xlsx" != excelfile.split(".")[-1]:
-        print("Error: Input file is not an excel file!")
+        print(Fore.RED + "Error: Input file is not an excel file!", Style.RESET_ALL)
     else:
         print_info("Opening " + excelfile)
         print(Fore.CYAN, "\033[F")
