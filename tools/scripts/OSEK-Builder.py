@@ -9,10 +9,17 @@ import colorama
 from colorama import Fore, Back, Style
 
 # Global Variables
+# ------------------
+# list of column titles in TASK tab of OSEX-Builder.xlsx
+TaskParams = ["Task Name", "Priority", "Schedule", "Activation", "Autostart",
+    "Resource", "Event", "Message"]
+
+# list of column titles in TASK tab of OSEX-Builder.xlsx
 CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE"]
 
 
 # Functions
+# ------------------
 def print_info(text):
     print(Fore.BLUE, "\bInfo:", text, Style.RESET_ALL)
 
@@ -28,24 +35,21 @@ def validate_column(wb, sheetname, col_header):
 
 
 def parse_task_data(wb, sheetname):
-    # list of column titles in TASK tab of OSEX-Builder.xlsx
-    taskparams = ["Task Name", "Priority", "Schedule", "Activation", "Autostart",
-    "Resource", "Event", "Message"]
     # parameters / columns that has comma separated entries
     specltasks = ["autostart", "resource", "event", "message"]
     # find out all column numbers of all the column titles and add to a list
-    param_cols, hrow = utils.locate_cols(wb, sheetname, taskparams)
+    param_cols, hrow = utils.locate_cols(wb, sheetname, TaskParams)
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
     
     sheet = wb[sheetname]
-    active_rows = len(sheet[param_cols[taskparams[0]]])
+    active_rows = len(sheet[param_cols[TaskParams[0]]])
     TaskData = [dict() for x in range(hrow, active_rows)]
     task_count = 0
     for i in range(hrow, active_rows):
         row = i + hrow
-        for tsk_item in taskparams:
+        for tsk_item in TaskParams:
             if tsk_item.lower() in specltasks:
                 lvalue = str(sheet[param_cols[tsk_item]+str(row)].value).split(",")
                 TaskData[task_count][tsk_item] = lvalue
@@ -116,7 +120,6 @@ def parse_os_data(wb, sheetname):
 
 
 def parse_counters(wb, sheetname):
-    # list of column titles in TASK tab of OSEX-Builder.xlsx
     attr_col, attr_row = validate_column(wb, sheetname, CntrParams[0])
     if attr_col == None:
         print("Error: sheet validation failed ("+ sheetname +")")
@@ -180,15 +183,15 @@ def print_oil_output(OsData, AppMode, TaskData, Counters):
 
     # write tasks
     for task in TaskData:
-        f.write(indent*"\t"+ "TASK " + task['Task Name'] + " {\n")
+        f.write(indent*"\t"+ "TASK " + task[TaskParams[0]] + " {\n")
         indent += 1
-        f.write(indent*"\t" +"PRIORITY = " + str(task['Priority']) + ";\n")
-        f.write(indent*"\t" +"SCHEDULE = " + task['Schedule'] + ";\n")
-        f.write(indent*"\t" +"ACTIVATION = " + str(task['Activation']) + ";\n")
+        f.write(indent*"\t" +"PRIORITY = " + str(task[TaskParams[1]]) + ";\n")
+        f.write(indent*"\t" +"SCHEDULE = " + task[TaskParams[2]] + ";\n")
+        f.write(indent*"\t" +"ACTIVATION = " + str(task[TaskParams[3]]) + ";\n")
 
         # AUTOSTART and APPMODEs
-        appmodes = len(task['Autostart'])
-        autostrt = task['Autostart'][0]
+        appmodes = len(task[TaskParams[4]])
+        autostrt = task[TaskParams[4]][0]
         if appmodes == 1 and (autostrt == "None" or autostrt == "NONE"):
 	        f.write(indent*"\t" +"AUTOSTART = FALSE;\n")
         else:
@@ -200,9 +203,9 @@ def print_oil_output(OsData, AppMode, TaskData, Counters):
             f.write(indent*"\t" + "};\n")
         
         # type1 == like Resource, Event, Message
-        print_oil_item_type1(f, task, 'Resource', 'RESOURCE', indent)
-        print_oil_item_type1(f, task, 'Event', 'EVENT', indent)
-        print_oil_item_type1(f, task, 'Message', 'MESSAGE', indent)
+        print_oil_item_type1(f, task, TaskParams[5], 'RESOURCE', indent)
+        print_oil_item_type1(f, task, TaskParams[6], 'EVENT', indent)
+        print_oil_item_type1(f, task, TaskParams[7], 'MESSAGE', indent)
             
         # End of Task
         indent -= 1
