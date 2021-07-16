@@ -28,6 +28,7 @@ CPU ARM64 {
 		ACTIVATION = 1;
 		AUTOSTART = FALSE;
 		RESOURCE = mutex1;
+		EVENT = event2;
 		MESSAGE = inter_task_message;
 	};
 	TASK Task_C {
@@ -41,5 +42,15 @@ CPU ARM64 {
 		};
 		EVENT = event1;
 		EVENT =  event2;
+	};
+	COUNTER SystemTick {
+		MINCYCLE = 16;
+		MAXALLOWEDVALUE = 0xFFFFFFFF;
+		TICKSPERBASE = 24;
+	};
+	COUNTER RTC_Tick {
+		MINCYCLE = 1;
+		MAXALLOWEDVALUE = 3600;
+		TICKSPERBASE = 1;
 	};
 };
