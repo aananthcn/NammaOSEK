@@ -8,7 +8,11 @@ import os
 import colorama
 from colorama import Fore, Back, Style
 
+# Global Variables
+CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE"]
 
+
+# Functions
 def print_info(text):
     print(Fore.BLUE, "\bInfo:", text, Style.RESET_ALL)
 
@@ -24,25 +28,29 @@ def validate_column(wb, sheetname, col_header):
 
 
 def parse_task_data(wb, sheetname):
+    # list of column titles in TASK tab of OSEX-Builder.xlsx
     taskparams = ["Task Name", "Priority", "Schedule", "Activation", "Autostart",
     "Resource", "Event", "Message"]
+    # parameters / columns that has comma separated entries
     specltasks = ["autostart", "resource", "event", "message"]
-    TaskCols, hrow = utils.locate_cols(wb, sheetname, taskparams)
-    if TaskCols == None:
+    # find out all column numbers of all the column titles and add to a list
+    param_cols, hrow = utils.locate_cols(wb, sheetname, taskparams)
+    if param_cols == None:
+        print("Error: Task Column location failed!")
         return None
     
     sheet = wb[sheetname]
-    active_rows = len(sheet[TaskCols[taskparams[0]]])
+    active_rows = len(sheet[param_cols[taskparams[0]]])
     TaskData = [dict() for x in range(hrow, active_rows)]
     task_count = 0
     for i in range(hrow, active_rows):
         row = i + hrow
         for tsk_item in taskparams:
             if tsk_item.lower() in specltasks:
-                lvalue = str(sheet[TaskCols[tsk_item]+str(row)].value).split(",")
+                lvalue = str(sheet[param_cols[tsk_item]+str(row)].value).split(",")
                 TaskData[task_count][tsk_item] = lvalue
             else:
-                TaskData[task_count][tsk_item] = sheet[TaskCols[tsk_item]+str(row)].value
+                TaskData[task_count][tsk_item] = sheet[param_cols[tsk_item]+str(row)].value
         task_count += 1
     
     #print(TaskData)
@@ -52,6 +60,7 @@ def parse_task_data(wb, sheetname):
 def parse_appmode_data(wb, sheetname):
     attr_col, attr_row = validate_column(wb, sheetname, "APPMODE")
     if attr_col == None:
+        print("Error: sheet validation failed ("+ sheetname +")")
         return None
 
     sheet = wb[sheetname]
@@ -79,9 +88,12 @@ def read_os_attribute(sheet, sheetname, attr_col, attr):
     
     return attr_val
 
+
+
 def parse_os_data(wb, sheetname):
     attr_col, attr_row = validate_column(wb, sheetname, "Attribute Name")
     if attr_col == None:
+        print("Error: sheet validation failed ("+ sheetname +")")
         return None
     sheet = wb[sheetname]
     OsData   = {}
@@ -99,8 +111,35 @@ def parse_os_data(wb, sheetname):
     OsData["uparacc"]  = read_os_attribute(sheet, sheetname, attr_col, "USEPARAMETERACCESS")
     OsData["uressch"]  = read_os_attribute(sheet, sheetname, attr_col, "USERESSCHEDULER")
 
-    #print(OsData)
     return OsData
+
+
+
+def parse_counters(wb, sheetname):
+    # list of column titles in TASK tab of OSEX-Builder.xlsx
+    attr_col, attr_row = validate_column(wb, sheetname, CntrParams[0])
+    if attr_col == None:
+        print("Error: sheet validation failed ("+ sheetname +")")
+        return None
+    # find out all column numbers of all the column titles and add to a list
+    param_cols, hrow = utils.locate_cols(wb, sheetname, CntrParams)
+    if param_cols == None:
+        print("Error: Task Column location failed!")
+        return None
+    
+    sheet = wb[sheetname]
+    active_rows = len(sheet[chr(attr_col)])
+    Counters = [dict() for x in range(attr_row, active_rows)]
+    cntr_count = 0
+    for i in range(attr_row, active_rows):
+        row = attr_row + i
+        for param in CntrParams:
+            Counters[cntr_count][param] = sheet[param_cols[param]+str(row)].value
+        cntr_count += 1
+
+    return Counters
+
+
 
 
 def print_oil_item_type1(f, task, tkey, okey, indent):
@@ -112,7 +151,7 @@ def print_oil_item_type1(f, task, tkey, okey, indent):
 
 
 
-def print_oil_output(OsData, AppMode, TaskData):
+def print_oil_output(OsData, AppMode, TaskData, Counters):
     # open or create output file
     path = "/".join(os.path.abspath(__file__).split("/")[0:-2])
     oil_file_name = OsData["os_name"]+"-"+OsData["cpu"]+".oil"
@@ -168,6 +207,18 @@ def print_oil_output(OsData, AppMode, TaskData):
         # End of Task
         indent -= 1
         f.write(indent*"\t" + "};\n")
+    
+    # Start of COUNTERS
+    for cntr in Counters:
+        # Start of Counters
+        f.write(indent*"\t"+ "COUNTER " + cntr[CntrParams[0]] + " {\n")
+        indent += 1
+        f.write(indent*"\t" +"MINCYCLE = " + str(cntr[CntrParams[1]]) + ";\n")
+        f.write(indent*"\t" +"MAXALLOWEDVALUE = " + str(cntr[CntrParams[2]]) + ";\n")
+        f.write(indent*"\t" +"TICKSPERBASE = " + str(cntr[CntrParams[3]]) + ";\n")
+        # End of Counters
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
 
     #end of CPU
     indent -= 1
@@ -180,6 +231,7 @@ def main(wb):
     OsData = None
     AppModes = None
     TaskData = None
+    Counters = None
     for sheetname in wb.sheetnames:
         if "OS" in sheetname:
             print_info("Parsing OS attributes")
@@ -196,9 +248,13 @@ def main(wb):
             TaskData = parse_task_data(wb, sheetname)
             if TaskData == None:
                 print(Fore.RED, "Error: TaskData parse failure!")
+        if "COUNTER" in sheetname:
+            print_info("Parsing Counters")
+            Counters = parse_counters(wb, sheetname)
+        
 
     print_info("Generating OIL file")
-    oil_path = print_oil_output(OsData, AppModes, TaskData)
+    oil_path = print_oil_output(OsData, AppModes, TaskData, Counters)
     print(Fore.GREEN + "OIL file generated in \"" + oil_path + "\"")
 
 
