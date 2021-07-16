@@ -17,6 +17,10 @@ TaskParams = ["Task Name", "Priority", "Schedule", "Activation", "Autostart",
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE"]
 
+# Column titles for Alarms
+AlarmParams = ["Alarm Name", "COUNTER", "Action-Type", "arg1", "arg2", "IsAutostart",
+	"ALARMTIME", "CYCLETIME", "APPMODE[]" ]
+
 
 # Functions
 # ------------------
@@ -48,11 +52,12 @@ def parse_task_data(wb, sheetname):
     TaskData = [dict() for x in range(hrow, active_rows)]
     task_count = 0
     for i in range(hrow, active_rows):
-        row = i + hrow
+        row = i + 1
         for tsk_item in TaskParams:
             if tsk_item.lower() in specltasks:
                 lvalue = str(sheet[param_cols[tsk_item]+str(row)].value).split(",")
-                TaskData[task_count][tsk_item] = lvalue
+                stripped = [s.strip() for s in lvalue]
+                TaskData[task_count][tsk_item] = stripped
             else:
                 TaskData[task_count][tsk_item] = sheet[param_cols[tsk_item]+str(row)].value
         task_count += 1
@@ -71,7 +76,7 @@ def parse_appmode_data(wb, sheetname):
     AppModes = []
     active_rows = len(sheet[chr(attr_col)])
     for i in range(attr_row, active_rows):
-        row = i + attr_row
+        row = i + 1
         AppModes.append(sheet[chr(attr_col)+str(row)].value.strip())
     
     #print(AppModes)
@@ -135,12 +140,37 @@ def parse_counters(wb, sheetname):
     Counters = [dict() for x in range(attr_row, active_rows)]
     cntr_count = 0
     for i in range(attr_row, active_rows):
-        row = attr_row + i
+        row = i + 1
         for param in CntrParams:
             Counters[cntr_count][param] = sheet[param_cols[param]+str(row)].value
         cntr_count += 1
 
     return Counters
+
+
+
+def parse_alarms(wb, sheetname):
+    attr_col, attr_row = validate_column(wb, sheetname, AlarmParams[0])
+    if attr_col == None:
+        print("Error: sheet validation failed ("+ sheetname +")")
+        return None
+    # find out all column numbers of all the column titles and add to a list
+    param_cols, hrow = utils.locate_cols(wb, sheetname, AlarmParams)
+    if param_cols == None:
+        print("Error: Task Column location failed!")
+        return None
+    
+    sheet = wb[sheetname]
+    active_rows = len(sheet[chr(attr_col)])
+    Alarms = [dict() for x in range(attr_row, active_rows)]
+    alrm_count = 0
+    for i in range(attr_row, active_rows):
+        row = i + 1
+        for param in AlarmParams:
+            Alarms[alrm_count][param] = sheet[param_cols[param]+str(row)].value
+        alrm_count += 1
+    
+    return Alarms
 
 
 
@@ -154,7 +184,7 @@ def print_oil_item_type1(f, task, tkey, okey, indent):
 
 
 
-def print_oil_output(OsData, AppMode, TaskData, Counters):
+def print_oil_output(OsData, AppMode, TaskData, Counters, Alarms):
     # open or create output file
     path = "/".join(os.path.abspath(__file__).split("/")[0:-2])
     oil_file_name = OsData["os_name"]+"-"+OsData["cpu"]+".oil"
@@ -197,8 +227,8 @@ def print_oil_output(OsData, AppMode, TaskData, Counters):
         else:
             f.write(indent*"\t" +"AUTOSTART = TRUE {\n")
             indent += 1
-            for mode in AppMode:
-                f.write(indent*"\t" +"APPMODE = "+ mode +";\n")
+            for mode in task[TaskParams[4]]:
+                f.write(indent*"\t" +"APPMODE = "+ AppMode[int(mode)-1] +";\n")
             indent -= 1
             f.write(indent*"\t" + "};\n")
         
@@ -211,7 +241,7 @@ def print_oil_output(OsData, AppMode, TaskData, Counters):
         indent -= 1
         f.write(indent*"\t" + "};\n")
     
-    # Start of COUNTERS
+    # Start of COUNTER
     for cntr in Counters:
         # Start of Counters
         f.write(indent*"\t"+ "COUNTER " + cntr[CntrParams[0]] + " {\n")
@@ -222,6 +252,46 @@ def print_oil_output(OsData, AppMode, TaskData, Counters):
         # End of Counters
         indent -= 1
         f.write(indent*"\t" + "};\n")
+
+    # Start of ALARM
+    for alrm in Alarms:
+        # Start of Alarms
+        f.write(indent*"\t"+ "ALARM " + alrm[AlarmParams[0]] + " {\n")
+        indent += 1
+        f.write(indent*"\t" +"COUNTER = " + str(alrm[AlarmParams[1]]) + ";\n")
+        # Start of Actions
+        f.write(indent*"\t"+ "ACTION = " + alrm[AlarmParams[2]] + " {\n")
+        indent += 1
+        if alrm[AlarmParams[2]] == "ACTIVATETASK":
+	        f.write(indent*"\t" +"TASK = " + str(alrm[AlarmParams[3]]) + ";\n")
+        if alrm[AlarmParams[2]] == "SETEVENT":
+	        f.write(indent*"\t" +"TASK = " + str(alrm[AlarmParams[3]]) + ";\n")
+	        f.write(indent*"\t" +"EVENT = " + str(alrm[AlarmParams[4]]) + ";\n")
+        if alrm[AlarmParams[2]] == "ALARMCALLBACK":
+	        f.write(indent*"\t" +"ALARMCALLBACKNAME = \"" + str(alrm[AlarmParams[3]]) + "\";\n")
+        # End of Actions
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
+
+        if alrm[AlarmParams[5]] == False:
+            f.write(indent*"\t" +"AUTOSTART = FALSE;\n")
+        else:
+            # Start of Autostart
+            f.write(indent*"\t"+ "AUTOSTART = TRUE {\n")
+            indent += 1
+            f.write(indent*"\t" +"ALARMTIME = " + str(alrm[AlarmParams[6]]) + ";\n")
+            f.write(indent*"\t" +"CYCLETIME = " + str(alrm[AlarmParams[7]]) + ";\n")
+            alrm_app_modes = alrm[AlarmParams[8]].split(',')
+            for mode in alrm_app_modes:
+                f.write(indent*"\t" +"APPMODE = " + str(AppMode[int(mode)-1]) + ";\n")
+            # End of Autostart
+            indent -= 1
+            f.write(indent*"\t" + "};\n")
+        # End of Alarms
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
+
+
 
     #end of CPU
     indent -= 1
@@ -235,6 +305,7 @@ def main(wb):
     AppModes = None
     TaskData = None
     Counters = None
+    Alarms = None
     for sheetname in wb.sheetnames:
         if "OS" in sheetname:
             print_info("Parsing OS attributes")
@@ -254,10 +325,12 @@ def main(wb):
         if "COUNTER" in sheetname:
             print_info("Parsing Counters")
             Counters = parse_counters(wb, sheetname)
-        
+        if "ALARM" in sheetname:
+            print_info("Parsing Alarms")
+            Alarms = parse_alarms(wb, sheetname)
 
     print_info("Generating OIL file")
-    oil_path = print_oil_output(OsData, AppModes, TaskData, Counters)
+    oil_path = print_oil_output(OsData, AppModes, TaskData, Counters, Alarms)
     print(Fore.GREEN + "OIL file generated in \"" + oil_path + "\"")
 
 

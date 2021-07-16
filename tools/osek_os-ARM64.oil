@@ -37,11 +37,9 @@ CPU ARM64 {
 		ACTIVATION = 1;
 		AUTOSTART = TRUE {
 			APPMODE = OSDEFAULTAPPMODE;
-			APPMODE = MANUFACT_MODE;
-			APPMODE = HW_TEST_MODE;
 		};
 		EVENT = event1;
-		EVENT =  event2;
+		EVENT = event2;
 	};
 	COUNTER SystemTick {
 		MINCYCLE = 16;
@@ -52,5 +50,32 @@ CPU ARM64 {
 		MINCYCLE = 1;
 		MAXALLOWEDVALUE = 3600;
 		TICKSPERBASE = 1;
+	};
+	ALARM WakeTaskA {
+		COUNTER = SystemTick;
+		ACTION = ACTIVATETASK {
+			TASK = Task_A;
+		};
+		AUTOSTART = FALSE;
+	};
+	ALARM WakeTaskB {
+		COUNTER = SystemTick;
+		ACTION = SETEVENT {
+			TASK = Task_B;
+			EVENT = event2;
+		};
+		AUTOSTART = TRUE {
+			ALARMTIME = 50;
+			CYCLETIME = 100;
+			APPMODE = OSDEFAULTAPPMODE;
+			APPMODE = MANUFACT_MODE;
+		};
+	};
+	ALARM RunCallbackC {
+		COUNTER = RTC_Tick;
+		ACTION = ALARMCALLBACK {
+			ALARMCALLBACKNAME = "clock_minute_callback";
+		};
+		AUTOSTART = FALSE;
 	};
 };
