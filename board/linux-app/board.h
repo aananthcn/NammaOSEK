@@ -1,7 +1,6 @@
 #ifndef LINUX_APP_BOARD_H
 #define LINUX_APP_BOARD_H
 
-int BoardSpecific_BackgroundTask(void);
-int setup_systick(void);
+int brd_setup_sytimer(void);
 
 #endif

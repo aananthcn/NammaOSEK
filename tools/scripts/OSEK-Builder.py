@@ -2,7 +2,7 @@
 # as output.
 
 import sys
-import utils
+import ob_utils
 import os
 
 from ob_globals import *
@@ -16,7 +16,7 @@ from colorama import Fore, Back, Style
 # Functions
 # ------------------
 def validate_column(wb, sheetname, col_header):
-    col, row = utils.locate_heading_column(col_header, wb, sheetname)
+    col, row = ob_utils.locate_heading_column(col_header, wb, sheetname)
     if col == -1:
         print(Fore.RED + "Error: can't locate \""+col_header+"\" in sheet \"" + sheetname + "\"")
         print(Style.RESET_ALL)
@@ -29,7 +29,7 @@ def parse_task_data(wb, sheetname):
     # parameters / columns that has comma separated entries
     specltasks = ["autostart", "resource", "event", "message"]
     # find out all column numbers of all the column titles and add to a list
-    param_cols, hrow = utils.locate_cols(wb, sheetname, TaskParams)
+    param_cols, hrow = ob_utils.locate_cols(wb, sheetname, TaskParams)
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
@@ -72,7 +72,7 @@ def parse_appmode_data(wb, sheetname):
 
 
 def read_os_attribute(sheet, sheetname, attr_col, attr):
-    col, row = utils.locate_text_in_column(attr, sheet, attr_col)
+    col, row = ob_utils.locate_text_in_column(attr, sheet, attr_col)
     if row == -1:
         print("Error: can't locate \"CPU\" in sheet \"" + sheetname + "\"")
         return
@@ -117,7 +117,7 @@ def parse_counters(wb, sheetname):
         print("Error: sheet validation failed ("+ sheetname +")")
         return None
     # find out all column numbers of all the column titles and add to a list
-    param_cols, hrow = utils.locate_cols(wb, sheetname, CntrParams)
+    param_cols, hrow = ob_utils.locate_cols(wb, sheetname, CntrParams)
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
@@ -142,7 +142,7 @@ def parse_alarms(wb, sheetname, Counters):
         print("Error: sheet validation failed ("+ sheetname +")")
         return None
     # find out all column numbers of all the column titles and add to a list
-    param_cols, hrow = utils.locate_cols(wb, sheetname, AlarmParams)
+    param_cols, hrow = ob_utils.locate_cols(wb, sheetname, AlarmParams)
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
@@ -171,7 +171,7 @@ def parse_ISRs(wb, sheetname):
         print("Error: sheet validation failed ("+ sheetname +")")
         return None
     # find out all column numbers of all the column titles and add to a list
-    param_cols, hrow = utils.locate_cols(wb, sheetname, ISR_Params)
+    param_cols, hrow = ob_utils.locate_cols(wb, sheetname, ISR_Params)
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
@@ -239,8 +239,8 @@ if __name__ == '__main__':
         exit(-1)
     
     # check and import pre-requisites
-    utils.import_or_install("openpyxl")
-    utils.import_or_install("colorama")
+    import_or_install("openpyxl")
+    import_or_install("colorama")
 
     excelfile = sys.argv[1]
     if "xlsx" != excelfile.split(".")[-1]:
@@ -248,7 +248,7 @@ if __name__ == '__main__':
     else:
         print_info("Opening " + excelfile)
         print(Fore.CYAN, "\033[F")
-        wb = utils.open_excel_file(excelfile)
+        wb = ob_utils.open_excel_file(excelfile)
         print(Style.RESET_ALL, "\033[F")
         print_info("Parsing" + excelfile)
         main(wb)

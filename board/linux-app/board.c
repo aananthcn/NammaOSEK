@@ -7,15 +7,15 @@
 
 #include "board.h"
 
-void isr_handler(int unused) {
+void brd_isr_handler(int unused) {
     SetActiveApplicationMode(OS_SLEEP_MODE);
 }
 
 
 int main(void)
 {
-    setup_systick();
-    signal(SIGINT, isr_handler);
+    brd_setup_sytimer();
+    signal(SIGINT, brd_isr_handler);
     
     StartOS(OSDEFAULTAPPMODE);
     /* The execution should never reach here */

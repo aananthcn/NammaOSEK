@@ -1,17 +1,8 @@
 import os, sys
-import pip
 import openpyxl
 
 from colorama import Fore, Back, Style
 from datetime import datetime
-
-
-def import_or_install(package):
-    try:
-        __import__(package)
-    except ImportError:
-        print("Trying to install " + package + " ...")
-        pip.main(['install', package])
 
 
 def clear_old_excel_rows(book):
