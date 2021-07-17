@@ -77,4 +77,7 @@ CPU ARM64 {
 		};
 		AUTOSTART = FALSE;
 	};
+	ISR SystemTickISR {
+		CATEGORY = 2;
+	};
 };
