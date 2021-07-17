@@ -4,22 +4,55 @@ import sys
 import os
 
 from common import *
-import utils
+from ob_globals import *
+import sg_counter
 
 import colorama
 from colorama import Fore, Back, Style
 
+Counters = []
 
 
 def print_usage(prog):
     print("Usage:\n\t python " + prog + " tools/oil-files/*.oil")
 
 
-def main(of):
-    oil_lines = of.readlines()
-    for line in oil_lines:
-        print(line)
+def parse_counter(oil_lines, line_num):
+    cntr = {}
+    cntr[CntrParams[0]] = oil_lines[line_num].split()[1]
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if CntrParams[1] in line:
+            cntr[CntrParams[1]] = int(line.replace('=', ';').split(';')[1]);
+        if CntrParams[2] in line:
+            cntr[CntrParams[2]] = line.replace('=', ';').split(';')[1].strip();
+        if CntrParams[3] in line:
+            cntr[CntrParams[3]] = int(line.replace('=', ';').split(';')[1]);
+        if CntrParams[4] in line:
+            cntr[CntrParams[4]] = int(line.replace('=', ';').split(';')[1]);
+        line_num += 1
+    return line_num, cntr
 
+
+
+def main(of):
+    path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
+    if not os.path.exists(path):
+        print_info("Creating source file directory " + path)
+        os.mkdir(path)
+    
+    print_info("Parsing " + oilfile)
+    oil_lines = of.readlines()
+    total_lines = len(oil_lines)
+    line_num = 1
+    while line_num < total_lines:
+        if "COUNTER" in oil_lines[line_num] and "{" in oil_lines[line_num]:
+            line_num, cntr = parse_counter(oil_lines, line_num)
+            Counters.append(cntr)
+        line_num += 1
+
+    sg_counter.generate_code(path, Counters);
 
 if __name__ == '__main__':
     cmd_args = len(sys.argv)
@@ -29,7 +62,7 @@ if __name__ == '__main__':
         exit(-1)
     
     # check and import pre-requisites
-    utils.import_or_install("colorama")
+    import_or_install("colorama")
 
     oilfile = sys.argv[1]
     print_info("Opening " + oilfile)
@@ -41,5 +74,4 @@ if __name__ == '__main__':
     else:
         of = open(oilfile, "r")
         print(Style.RESET_ALL, "\033[F")
-        print_info("Parsing " + oilfile)
         main(of)

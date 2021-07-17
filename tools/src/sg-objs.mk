@@ -8,15 +8,13 @@ ARCH = x86
 INCDIRS  := -I ${CWD}/include \
 	    -I ${CWD}/board/linux-app 
 
-LDFLAGS  += -g -lrt
+LDFLAGS  += -g
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
 
-$(info compilating for "Linux PC")
+$(info compilating System Generator source files)
 
 
-BRD_OBJS	:= \
-	${CWD}/board/linux-app/board.o \
-	${CWD}/board/linux-app/brd_timer.o \
-	${CWD}/kernel/kernel.o
+SG_OBJS	:= \
+	${CWD}/tools/src/sg_counter.o
 
