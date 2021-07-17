@@ -19,7 +19,6 @@ CPU ARM64 {
 			APPMODE = MANUFACT_MODE;
 			APPMODE = HW_TEST_MODE;
 		};
-		EVENT = event1;
 		MESSAGE = inter_task_message;
 	};
 	TASK Task_B {
@@ -28,7 +27,7 @@ CPU ARM64 {
 		ACTIVATION = 1;
 		AUTOSTART = FALSE;
 		RESOURCE = mutex1;
-		EVENT = event2;
+		EVENT = event1;
 		MESSAGE = inter_task_message;
 	};
 	TASK Task_C {
@@ -42,13 +41,13 @@ CPU ARM64 {
 		EVENT = event2;
 	};
 	COUNTER SystemTick {
-		MINCYCLE = 16;
-		MAXALLOWEDVALUE = 0xFFFFFFFF;
-		TICKSPERBASE = 24;
-	};
-	COUNTER RTC_Tick {
 		MINCYCLE = 1;
-		MAXALLOWEDVALUE = 3600;
+		MAXALLOWEDVALUE = 0xFFFFFFFF;
+		TICKSPERBASE = 1;
+	};
+	COUNTER uSecCounter {
+		MINCYCLE = 100;
+		MAXALLOWEDVALUE = 0xFFFFFFFF;
 		TICKSPERBASE = 1;
 	};
 	ALARM WakeTaskA {
@@ -56,25 +55,25 @@ CPU ARM64 {
 		ACTION = ACTIVATETASK {
 			TASK = Task_A;
 		};
-		AUTOSTART = FALSE;
+		AUTOSTART = TRUE {
+			ALARMTIME = 20;
+			CYCLETIME = 4;
+			APPMODE = OSDEFAULTAPPMODE;
+			APPMODE = MANUFACT_MODE;
+		};
 	};
 	ALARM WakeTaskB {
 		COUNTER = SystemTick;
 		ACTION = SETEVENT {
 			TASK = Task_B;
-			EVENT = event2;
+			EVENT = event1;
 		};
-		AUTOSTART = TRUE {
-			ALARMTIME = 50;
-			CYCLETIME = 100;
-			APPMODE = OSDEFAULTAPPMODE;
-			APPMODE = MANUFACT_MODE;
-		};
+		AUTOSTART = FALSE;
 	};
-	ALARM RunCallbackC {
-		COUNTER = RTC_Tick;
+	ALARM uSecAlarm {
+		COUNTER = uSecCounter;
 		ACTION = ALARMCALLBACK {
-			ALARMCALLBACKNAME = "clock_minute_callback";
+			ALARMCALLBACKNAME = "Alarm_uSecAlarm_callback";
 		};
 		AUTOSTART = FALSE;
 	};

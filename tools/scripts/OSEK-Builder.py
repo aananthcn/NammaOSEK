@@ -149,7 +149,7 @@ def parse_counters(wb, sheetname):
 
 
 
-def parse_alarms(wb, sheetname):
+def parse_alarms(wb, sheetname, Counters):
     attr_col, attr_row = validate_column(wb, sheetname, AlarmParams[0])
     if attr_col == None:
         print("Error: sheet validation failed ("+ sheetname +")")
@@ -167,7 +167,11 @@ def parse_alarms(wb, sheetname):
     for i in range(attr_row, active_rows):
         row = i + 1
         for param in AlarmParams:
-            Alarms[alrm_count][param] = sheet[param_cols[param]+str(row)].value
+            if param == "COUNTER":
+                cnt_num = sheet[param_cols[param]+str(row)].value
+                Alarms[alrm_count][param] = Counters[int(cnt_num)-1][CntrParams[0]]
+            else:
+                Alarms[alrm_count][param] = sheet[param_cols[param]+str(row)].value
         alrm_count += 1
     
     return Alarms
@@ -327,7 +331,7 @@ def main(wb):
             Counters = parse_counters(wb, sheetname)
         if "ALARM" in sheetname:
             print_info("Parsing Alarms")
-            Alarms = parse_alarms(wb, sheetname)
+            Alarms = parse_alarms(wb, sheetname, Counters)
 
     print_info("Generating OIL file")
     oil_path = print_oil_output(OsData, AppModes, TaskData, Counters, Alarms)
