@@ -2,5 +2,6 @@
 #define LINUX_APP_BOARD_H
 
 int BoardSpecific_BackgroundTask(void);
+int setup_systick(void);
 
 #endif

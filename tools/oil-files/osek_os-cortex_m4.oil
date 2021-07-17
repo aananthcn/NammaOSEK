@@ -1,5 +1,5 @@
-CPU ARM64 {
-	 OS osek_os {
+CPU cortex_m4 {
+	OS osek_os {
 		STATUS = STANDARD;
 		STARTUPHOOK = FALSE;
 		ERRORHOOK = FALSE;

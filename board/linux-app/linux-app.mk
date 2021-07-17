@@ -8,7 +8,7 @@ ARCH = x86
 INCDIRS  := -I ${CWD}/include \
 	    -I ${CWD}/board/linux-app 
 
-LDFLAGS  += -g 
+LDFLAGS  += -g -lrt
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
 
@@ -17,5 +17,6 @@ $(info compilating for "Linux PC")
 
 BRD_OBJS	:= \
 	${CWD}/board/linux-app/board.o \
+	${CWD}/board/linux-app/timer.o \
 	${CWD}/kernel/kernel.o
 

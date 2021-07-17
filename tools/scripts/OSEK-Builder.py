@@ -6,6 +6,7 @@ import utils
 import os
 
 from ob_globals import *
+from common import *
 import oil
 
 import colorama
@@ -14,10 +15,6 @@ from colorama import Fore, Back, Style
 
 # Functions
 # ------------------
-def print_info(text):
-    print(Fore.BLUE, "\bInfo:", text, Style.RESET_ALL)
-
-
 def validate_column(wb, sheetname, col_header):
     col, row = utils.locate_heading_column(col_header, wb, sheetname)
     if col == -1:
@@ -227,7 +224,7 @@ def main(wb):
 
     print_info("Generating OIL file")
     oil_path = oil.print_output(OsData, AppModes, TaskData, Counters, Alarms, ISRs)
-    print(Fore.GREEN + "OIL file generated in \"" + oil_path + "\"")
+    print(Fore.LIGHTMAGENTA_EX + "OIL file generated in \"" + oil_path + "\"")
 
 
 def print_usage(prog):

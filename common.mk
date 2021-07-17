@@ -8,8 +8,8 @@ OBJS	:= $(BRD_OBJS) $(LIBOBJS)
 all: ${TARGET}
 
 ${TARGET}: ${OBJS}
-	@echo Compiled for -march=armv7ve
-	$(LD) $(LDFLAGS) $^ -o ${TARGET}.elf
+	@echo Compiled for -march=${ARCH}
+	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) 
 	$(OBJCOPY) -O binary ${TARGET}.elf ${TARGET}.bin
 
 info:
