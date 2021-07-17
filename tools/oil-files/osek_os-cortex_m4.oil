@@ -40,18 +40,20 @@ CPU cortex_m4 {
 		EVENT = event1;
 		EVENT = event2;
 	};
-	COUNTER SystemTick {
+	COUNTER mSecCounter {
 		MINCYCLE = 1;
 		MAXALLOWEDVALUE = 0xFFFFFFFF;
 		TICKSPERBASE = 1;
+		TICKDURATION = 1000000; /* nsec */
 	};
 	COUNTER uSecCounter {
 		MINCYCLE = 100;
 		MAXALLOWEDVALUE = 0xFFFFFFFF;
 		TICKSPERBASE = 1;
+		TICKDURATION = 1000; /* nsec */
 	};
 	ALARM WakeTaskA {
-		COUNTER = SystemTick;
+		COUNTER = mSecCounter;
 		ACTION = ACTIVATETASK {
 			TASK = Task_A;
 		};
@@ -63,7 +65,7 @@ CPU cortex_m4 {
 		};
 	};
 	ALARM WakeTaskB {
-		COUNTER = SystemTick;
+		COUNTER = mSecCounter;
 		ACTION = SETEVENT {
 			TASK = Task_B;
 			EVENT = event1;
@@ -77,7 +79,7 @@ CPU cortex_m4 {
 		};
 		AUTOSTART = FALSE;
 	};
-	ISR SystemTickISR {
+	ISR isr_func1 {
 		CATEGORY = 2;
 	};
 };
