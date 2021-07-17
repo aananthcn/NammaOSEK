@@ -23,15 +23,6 @@ void SetupScheduler() {
 	printf("%s:%s() under construction\n", __FILE__, __func__);
 }
 
-void RunBackgroundTasks(void) {
-	// Add all background tasks such as
-	// 1) stack overflow check
-	// 2) flash corruption check
-	// 3) ram corruption check (running 1's?)
-	// 4) board specific background checks
-	BoardSpecific_BackgroundTask();
-}
-
 void StartOS(AppModeType mode) {
 	SetActiveApplicationMode(mode);
 	if (mode != OSDEFAULTAPPMODE) {
@@ -44,6 +35,12 @@ void StartOS(AppModeType mode) {
 	SetupScheduler();
 
 	while (OsAppMode == OSDEFAULTAPPMODE) {
-		RunBackgroundTasks();
+		// code your OSEK scheduling logic here
 	}
+}
+
+void SystemTickISR(void) {
+	static u32 counter;
+	counter++;
+	printf("%d\n", counter);
 }

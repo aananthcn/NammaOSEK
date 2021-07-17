@@ -15,7 +15,7 @@ def print_oil_item_type1(f, task, tkey, okey, indent):
 
 def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
     # open or create output file
-    path = "/".join(os.path.abspath(__file__).split("/")[0:-2])
+    path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/oil-files"
     oil_file_name = OsData["os_name"]+"-"+OsData["cpu"]+".oil"
     full_filename = path+"/"+oil_file_name
     f = open(full_filename, "w")
@@ -26,7 +26,7 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
         
     # start of OS data body
     indent += 1
-    f.write(indent*"\t" + " OS " + OsData["os_name"] + " {\n")
+    f.write(indent*"\t" + "OS " + OsData["os_name"] + " {\n")
     indent += 1
     f.write(indent*"\t" + "STATUS = " + OsData["status"] + ";\n")
     f.write(indent*"\t" + "STARTUPHOOK = " + OsData["strthk"] + ";\n")

@@ -198,7 +198,7 @@ StatusType CancelAlarm(AlarmType AlarmID);
 /*
  * HOOK Routines
  */
-typedef u32 OSServiceIdType;
+//typedef u32 OSServiceIdType;
 
 void ErrorHook (StatusType Error);
 void PreTaskHook(void);

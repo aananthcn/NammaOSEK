@@ -5,19 +5,16 @@
 
 #include <osek.h>
 
+#include "board.h"
+
 void isr_handler(int unused) {
-    SetActiveApplicationMode(OS_SHUTDOWN_MODE);
-}
-
-
-int BoardSpecific_BackgroundTask(void) {
-    sleep(1);
-    printf("%s(): completed!\n", __func__);
+    SetActiveApplicationMode(OS_SLEEP_MODE);
 }
 
 
 int main(void)
 {
+    setup_systick();
     signal(SIGINT, isr_handler);
     
     StartOS(OSDEFAULTAPPMODE);

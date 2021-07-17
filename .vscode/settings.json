@@ -1,6 +1,8 @@
 {
 	"files.associations": {
-		"system_error": "cpp"
+		"system_error": "cpp",
+		"time.h": "c",
+		"unistd.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled",
 	"python.pythonPath": "/usr/bin/python"
