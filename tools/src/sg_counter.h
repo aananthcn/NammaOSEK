@@ -4,14 +4,15 @@
 
 
 typedef struct {
+	u32 countval; /* continuos incrementing counter */ 
+	u32 maxallowedvalue; /* upper limit, after which counter resets to 0 */
+	u32 tickduration; /* count in nano seconds */
+	u16 ticksperbase; /* no of ticks to increment a count */ 
+	u16 mincycle; /* minimum value allowed by user to set alarms */ 
 	char* name;
-	u32 mincycle;
-	u32 maxallowedvalue;
-	u32 ticksperbase;
-	u32 tickduration;
 } OsCounterType;
 
-OsCounterType OsCounters[];
+extern OsCounterType OsCounters[];
 
 #define OS_TICK_DURATION_ns 	(1000000)
 #define OS_TICK_COUNTER_IDX 	(0)

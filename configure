@@ -36,5 +36,6 @@ fi
 
 echo "CWD := $(pwd)" > ./Makefile
 echo "include ${board_path}/${target}.mk" >> ./Makefile
+echo "include ./tools/src/sg-objs.mk" >> ./Makefile
 echo "include ./common.mk" >> ./Makefile
 echo "Configuration Success!"
