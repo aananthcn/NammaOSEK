@@ -1,6 +1,6 @@
 TARGET = osek-os
 
-OBJS	:= $(BRD_OBJS) $(LIBOBJS)
+OBJS	:= $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS)
 
 
 .PHONY: all

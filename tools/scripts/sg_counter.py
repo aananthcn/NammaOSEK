@@ -6,11 +6,12 @@ from colorama import Fore, Back, Style
 
 
 C_Counter_Type = "\n\ntypedef struct {\n\
+\tu32 countval; /* continuos incrementing counter */ \n\
+\tu32 maxallowedvalue; /* upper limit, after which counter resets to 0 */\n\
+\tu32 tickduration; /* count in nano seconds */\n\
+\tu16 ticksperbase; /* no of ticks to increment a count */ \n\
+\tu16 mincycle; /* minimum value allowed by user to set alarms */ \n\
 \tchar* name;\n\
-\tu32 mincycle;\n\
-\tu32 maxallowedvalue;\n\
-\tu32 ticksperbase;\n\
-\tu32 tickduration;\n\
 } OsCounterType;\n\n"
 
 def generate_code(path, Counters):
@@ -25,7 +26,7 @@ def generate_code(path, Counters):
     hf.write("#define ACN_OSEK_SG_COUNTER_H\n")
     hf.write("#include <osek.h>\n")
     hf.write(C_Counter_Type)
-    hf.write("OsCounterType OsCounters[];\n")
+    hf.write("extern OsCounterType OsCounters[];\n")
 
     # create source file
     filename = path + "/" + "sg_counter.c"
