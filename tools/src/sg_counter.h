@@ -3,8 +3,6 @@
 #include <osek.h>
 
 
-#define OS_MAX_COUNTERS    (2)
-
 typedef struct {
 	char* name;
 	u32 mincycle;
@@ -13,6 +11,11 @@ typedef struct {
 	u32 tickduration;
 } OsCounterType;
 
+OsCounterType OsCounters[];
+
+#define OS_TICK_DURATION_ns 	(1000000)
+#define OS_TICK_COUNTER_IDX 	(0)
+#define OS_MAX_COUNTERS    	(2)
 
 
 #endif

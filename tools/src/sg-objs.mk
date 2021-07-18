@@ -5,8 +5,7 @@ AS=${COMPILER}as
 OBJCOPY=${COMPILER}objcopy
 ARCH = x86
 
-INCDIRS  := -I ${CWD}/include \
-	    -I ${CWD}/board/linux-app 
+INCDIRS  += -I ${CWD}/tools/src 
 
 LDFLAGS  += -g
 CFLAGS   += -Werror ${INCDIRS} -g
