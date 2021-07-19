@@ -1,7 +1,13 @@
 TARGET = osek-os
 
-OBJS	:= $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS)
 
+CMN_OBJS := \
+	${CWD}/kernel/os_entry.o \
+	${CWD}/kernel/os_counter.o
+
+
+
+OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS)
 
 .PHONY: all
 
