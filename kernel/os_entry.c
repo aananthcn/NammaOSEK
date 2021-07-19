@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <board.h>
 #include <osek.h>
+#include <os_api.h>
 
 
 int OsAppMode;
@@ -39,8 +40,11 @@ void StartOS(AppModeType mode) {
 	}
 }
 
+
+/*
+ * This funtion runs in interrupt context, hence keep things as minimal as possible
+ */
 void SystemTickISR(void) {
-	static u32 counter;
-	counter++;
-	printf("%d\n", counter);
+	if (OsHandleTicks())
+		printf("Error: OsHandleTicks return errors!\n");
 }
