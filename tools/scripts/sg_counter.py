@@ -14,6 +14,9 @@ C_Counter_Type = "\n\ntypedef struct {\n\
 \tchar* name;\n\
 } OsCounterType;\n\n"
 
+def cntr_macro_name(txt):
+    return str(txt).upper()+"_INDEX"
+
 def generate_code(path, Counters):
     print_info("Generating code for counters")
     os_counter_index = -1
@@ -58,6 +61,13 @@ def generate_code(path, Counters):
     cf.write("};\n")
     # close source file
     cf.close()
+
+    # create counter index macros
+    hf.write("\n")
+    for i, cntr in enumerate(Counters):
+        hf.write("\n#define "+cntr_macro_name(cntr[CntrParams[0]])+"   \t("+str(i)+")")
+    hf.write("\n\n")
+
 
     # close header file
     if os_counter_duration == -1 or os_counter_index == -1:

@@ -11,10 +11,69 @@ import colorama
 from colorama import Fore, Back, Style
 
 Counters = []
+Alarms = []
 
 
 def print_usage(prog):
     print("Usage:\n\t python " + prog + " tools/oil-files/*.oil")
+
+
+def parse_alarm_autostart(oil_lines, line_num, alarms):
+    line = oil_lines[line_num]
+    alarms[AlarmParams[5]] = line.replace('=', '{').split('{')[1].strip()
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if "ALARMTIME" in line.split():
+            alarms[AlarmParams[6]] = line.replace('=', ';').split(';')[1].strip()
+        if "CYCLETIME" in line.split():
+            alarms[AlarmParams[7]] = line.replace('=', ';').split(';')[1].strip()
+        if "APPMODE" in line.split():
+            try:
+                alarms[AlarmParams[8]].append(line.replace('=', ';').split(';')[1].strip())
+            except KeyError:
+                alarms[AlarmParams[8]] = []
+                alarms[AlarmParams[8]].append(line.replace('=', ';').split(';')[1].strip())
+        line_num += 1
+
+    return line_num, alarms
+
+
+def parse_alarm_action(oil_lines, line_num, alarms):
+    line = oil_lines[line_num]
+    alarms[AlarmParams[2]] = line.replace('=', '{').split('{')[1].strip()
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if "TASK" in line.split():
+            alarms[AlarmParams[3]] = line.replace('=', ';').split(';')[1].strip()
+        if "EVENT" in line.split():
+            alarms[AlarmParams[4]] = line.replace('=', ';').split(';')[1].strip()
+        if "ALARMCALLBACKNAME" in line.split():
+            alarms[AlarmParams[3]] = line.replace('=', ';').split(';')[1].strip()
+        line_num += 1
+
+    return line_num, alarms
+
+
+def parse_alarms(oil_lines, line_num):
+    alarms = {}
+    alarms[AlarmParams[0]] = oil_lines[line_num].split()[1]
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if AlarmParams[1] in line:
+            alarms[AlarmParams[1]] = line.replace('=', ';').split(';')[1].strip();
+        if "ACTION" in line.split() and "{" in line:
+            line_num, alarms = parse_alarm_action(oil_lines, line_num, alarms)
+        if "AUTOSTART" in line.split() and "{" in line:
+            line_num, alarms = parse_alarm_autostart(oil_lines, line_num, alarms)
+        elif "AUTOSTART" in line.split() and "FALSE" in line:
+            alarms[AlarmParams[5]] = line.replace('=', ';').split(';')[1].strip()
+
+        line_num += 1
+
+    return line_num, alarms
 
 
 def parse_counter(oil_lines, line_num):
@@ -47,10 +106,15 @@ def main(of):
     total_lines = len(oil_lines)
     line_num = 1
     while line_num < total_lines:
-        if "COUNTER" in oil_lines[line_num] and "{" in oil_lines[line_num]:
+        words = oil_lines[line_num].split()
+        if "COUNTER" in words and "{" in oil_lines[line_num]:
             line_num, cntr = parse_counter(oil_lines, line_num)
             Counters.append(cntr)
+        if "ALARM" in words and "{" in oil_lines[line_num]:
+            line_num, alrms = parse_alarms(oil_lines, line_num)
+            Alarms.append(alrms)
         line_num += 1
+    print(Alarms)
 
     sg_counter.generate_code(path, Counters);
 
