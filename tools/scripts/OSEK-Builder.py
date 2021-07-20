@@ -27,7 +27,7 @@ def validate_column(wb, sheetname, col_header):
 
 def parse_task_data(wb, sheetname):
     # parameters / columns that has comma separated entries
-    specltasks = ["autostart", "resource", "event", "message"]
+    specltasks = ["AUTOSTART", "RESOURCE", "EVENT", "MESSAGE"]
     # find out all column numbers of all the column titles and add to a list
     param_cols, hrow = ob_utils.locate_cols(wb, sheetname, TaskParams)
     if param_cols == None:

@@ -2,8 +2,8 @@
 # OSEK Builder Global Variables (OB Globals)
 # ------------------------------------------
 # list of column titles in TASK tab of OSEX-Builder.xlsx
-TaskParams = ["Task Name", "Priority", "Schedule", "Activation", "Autostart",
-    "Resource", "Event", "Message"]
+TaskParams = ["Task Name", "PRIORITY", "SCHEDULE", "ACTIVATION", "AUTOSTART",
+    "RESOURCE", "EVENT", "MESSAGE"]
 
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE",
