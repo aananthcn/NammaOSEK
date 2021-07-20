@@ -12,6 +12,7 @@ from colorama import Fore, Back, Style
 
 Counters = []
 Alarms = []
+Tasks = []
 
 
 def print_usage(prog):
@@ -76,6 +77,56 @@ def parse_alarms(oil_lines, line_num):
     return line_num, alarms
 
 
+def parse_task_autostart(oil_lines, line_num, task):
+    line = oil_lines[line_num]
+    task[TaskParams[4]] = line.replace('=', '{').split('{')[1].strip()
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if "APPMODE" in line.split():
+            try:
+                task["AUTOSTART_APPMODE"].append(line.replace('=', ';').split(';')[1].strip())
+            except KeyError:
+                task["AUTOSTART_APPMODE"] = []
+                task["AUTOSTART_APPMODE"].append(line.replace('=', ';').split(';')[1].strip())
+        line_num += 1
+
+    return line_num, task
+
+
+def parse_tasks_item_list(line, task, param):
+    if TaskParams[param] in line.split():
+        try:
+            task[TaskParams[param]].append(line.replace('=', ';').split(';')[1].strip())
+        except KeyError:
+            task[TaskParams[param]] = []
+            task[TaskParams[param]].append(line.replace('=', ';').split(';')[1].strip())
+    return task
+
+
+def parse_tasks(oil_lines, line_num):
+    tasks = {}
+    tasks[TaskParams[0]] = oil_lines[line_num].split()[1]
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if TaskParams[1] in line:
+            tasks[TaskParams[1]] = line.replace('=', ';').split(';')[1].strip();
+        if TaskParams[2] in line:
+            tasks[TaskParams[2]] = line.replace('=', ';').split(';')[1].strip();
+        if TaskParams[3] in line:
+            tasks[TaskParams[3]] = line.replace('=', ';').split(';')[1].strip();
+        if "AUTOSTART" in line.split() and "{" in line:
+            line_num, tasks = parse_task_autostart(oil_lines, line_num, tasks)
+        elif "AUTOSTART" in line.split() and "FALSE" in line:
+            tasks[TaskParams[4]] = line.replace('=', ';').split(';')[1].strip()
+        tasks = parse_tasks_item_list(line, tasks, 5)
+        tasks = parse_tasks_item_list(line, tasks, 6)
+        tasks = parse_tasks_item_list(line, tasks, 7)
+        line_num += 1
+
+    return line_num, tasks
+
 def parse_counter(oil_lines, line_num):
     cntr = {}
     cntr[CntrParams[0]] = oil_lines[line_num].split()[1]
@@ -113,10 +164,16 @@ def main(of):
         if "ALARM" in words and "{" in oil_lines[line_num]:
             line_num, alrms = parse_alarms(oil_lines, line_num)
             Alarms.append(alrms)
+        if "TASK" in words and "{" in oil_lines[line_num]:
+            line_num, task = parse_tasks(oil_lines, line_num)
+            Tasks.append(task)
         line_num += 1
+    print(Tasks)
     print(Alarms)
 
     sg_counter.generate_code(path, Counters);
+
+
 
 if __name__ == '__main__':
     cmd_args = len(sys.argv)
