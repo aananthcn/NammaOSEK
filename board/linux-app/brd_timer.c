@@ -54,12 +54,15 @@ int brd_setup_sytimer(void) {
 }
 
 int brd_get_usec_syscount(u32 *ucount) {
+	u64 time_us;
 	struct timespec tp;
 	if (clock_gettime (CLOCK_MONOTONIC, &tp) == -1) {
         	perror ("clock_gettime");
 		return -1;
 	}
 
-	*ucount = tp.tv_nsec / 1000;
+	time_us = tp.tv_sec * 1000000 + tp.tv_nsec / 1000;
+	*ucount = (u32)time_us;
+
 	return 0;
 }
