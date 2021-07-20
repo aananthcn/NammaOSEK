@@ -35,33 +35,40 @@ int OsHandleTicks(void) {
 }
 
 int OsHandleCounters(void) {
-	int i;
-	u32 new_tick;
+	static u32 os_ticks_old, nsec_cnt_old;
+	u32 os_ticks, nsec_cnt;
 	u32 delta;
+	int i;
 
+	/* Get input from OS Counter */
+	if (brd_get_usec_syscount(&nsec_cnt)) {
+		printf("Error: brd_get_usec_syscount returns error\n");
+		return -1;
+	}
+	os_ticks = GetOsTickCnt();
+
+	/* Increment user configured OSEK Counters */
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
 		if (OsCounters[i].tickduration < ONE_MSEC_IN_NANO_SEC ) {
-			if (brd_get_usec_syscount(&new_tick)) {
-				printf("Error: brd_get_usec_syscount returns \
-					error\n");
-				return -1;
-			}
+			delta = (u32)(nsec_cnt - nsec_cnt_old);
+			printf("%u\n", OsCounters[i].countval);
 		}
 		else {
-			//TBD
-			new_tick = GetOsTickCnt();
+			delta = (u32)(os_ticks - os_ticks_old);
 		}
-		delta = new_tick - OsCounters[i].countval;
-		if (delta > OsCounters[i].ticksperbase) {
+
+		if (delta >= OsCounters[i].ticksperbase) {
 			OsCounters[i].countval += delta;
 			if (OsCounters[i].countval > OsCounters[i].maxallowedvalue) {
-				OsCounters[i].countval = (OsCounters[i].countval - 
-					OsCounters[i].maxallowedvalue);
-			} 
+				OsCounters[i].countval = 0;
+			}
 		}
-		printf("%u\n", OsCounters[i].countval);
+		//printf("maxallowedvalue = %X\t --> ", OsCounters[i].maxallowedvalue);
+		//printf("%u\t --> ", delta);
 	}
 
+	os_ticks_old = os_ticks;
+	nsec_cnt_old = nsec_cnt;
 	return 0;
 }
 
