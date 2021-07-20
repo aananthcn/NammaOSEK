@@ -14,6 +14,11 @@ typedef struct {
 
 extern OsCounterType OsCounters[];
 
+
+#define MSECCOUNTER_INDEX   	(0)
+#define USECCOUNTER_INDEX   	(1)
+
+
 #define OS_TICK_DURATION_ns 	(1000000)
 #define OS_TICK_COUNTER_IDX 	(0)
 #define OS_MAX_COUNTERS    	(2)
