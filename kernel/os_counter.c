@@ -6,6 +6,7 @@ static u32 OsTickCount;
 static u32 OsTickCount_us;
 
 //#define ENABLE_UPTIME_PRINTS	1
+#define TEMPORARY_WORKAROUND	1
 #define ONE_MSEC_IN_NANO_SEC	(1000000)
 
 
@@ -24,9 +25,11 @@ int OsHandleTicks(void) {
 
 	// TODO: Set some event for OS to process the OS Ticks
 
+#ifdef TEMPORARY_WORKAROUND
 	// The following line below is a temporary work-around. This is bad
 	// because we are processing counter within ISR. This should be avoided.
 	OsHandleCounters();
+#endif
 
 #ifdef ENABLE_UPTIME_PRINTS
 	OsComputeUpTime();
@@ -51,7 +54,6 @@ int OsHandleCounters(void) {
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
 		if (OsCounters[i].tickduration < ONE_MSEC_IN_NANO_SEC ) {
 			delta = (u32)(nsec_cnt - nsec_cnt_old);
-			printf("%u\n", OsCounters[i].countval);
 		}
 		else {
 			delta = (u32)(os_ticks - os_ticks_old);
@@ -63,8 +65,6 @@ int OsHandleCounters(void) {
 				OsCounters[i].countval = 0;
 			}
 		}
-		//printf("maxallowedvalue = %X\t --> ", OsCounters[i].maxallowedvalue);
-		//printf("%u\t --> ", delta);
 	}
 
 	os_ticks_old = os_ticks;
