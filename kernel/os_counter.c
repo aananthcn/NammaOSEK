@@ -1,11 +1,12 @@
 #include <stdio.h>
-#include <sg_counter.h>
 #include <board.h>
+
+#include <sg_counter.h>
 
 static u32 OsTickCount;
 static u32 OsTickCount_us;
 
-//#define ENABLE_UPTIME_PRINTS	1
+#define ENABLE_UPTIME_PRINTS	1
 #define TEMPORARY_WORKAROUND	1
 #define ONE_MSEC_IN_NANO_SEC	(1000000)
 
@@ -38,9 +39,9 @@ int OsHandleTicks(void) {
 }
 
 int OsHandleCounters(void) {
-	static u32 os_ticks_old, nsec_cnt_old;
-	u32 os_ticks, nsec_cnt;
-	u32 delta;
+	static TickType os_ticks_old, nsec_cnt_old;
+	TickType os_ticks, nsec_cnt;
+	TickType delta;
 	int i;
 
 	/* Get input from OS Counter */
@@ -53,15 +54,15 @@ int OsHandleCounters(void) {
 	/* Increment user configured OSEK Counters */
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
 		if (OsCounters[i].tickduration < ONE_MSEC_IN_NANO_SEC ) {
-			delta = (u32)(nsec_cnt - nsec_cnt_old);
+			delta = (TickType)(nsec_cnt - nsec_cnt_old);
 		}
 		else {
-			delta = (u32)(os_ticks - os_ticks_old);
+			delta = (TickType)(os_ticks - os_ticks_old);
 		}
 
-		if (delta >= OsCounters[i].ticksperbase) {
+		if (delta >= OsCounters[i].alarm.ticksperbase) {
 			OsCounters[i].countval += delta;
-			if (OsCounters[i].countval > OsCounters[i].maxallowedvalue) {
+			if (OsCounters[i].countval > OsCounters[i].alarm.maxallowedvalue) {
 				OsCounters[i].countval = 0;
 			}
 		}
@@ -78,15 +79,26 @@ int OsComputeUpTime(void) {
 	u64 sec_in_nano_sec = 1000000000; /* 1 sec = 1000,000,000 nano sec */
 	int days, hrs, min, sec;
 
+	/* Print all counters */
+	printf("[");
+	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
+		printf("%08X", OsCounters[i].countval);
+		if (i+1 != OS_MAX_COUNTERS)
+			printf(", ");
+	}
+	printf("] ");
+
+	/* Compute and print up-time */
 	upTime_sec = (u64) OS_TICK_DURATION_ns * GetOsTickCnt() / sec_in_nano_sec;
 	if (upTime_sec != ut_old) {
 		sec = upTime_sec % 60;
 		min = (upTime_sec / 60) % 60;
 		hrs = (upTime_sec / 3600) % 24;
 		days = (upTime_sec / (24*3600));
-		printf("Up-Time: %d days - %02d:%02d:%02d\r", days, hrs, min, sec);
-		fflush(stdout);
+		printf("Up-Time: %d days - %02d:%02d:%02d", days, hrs, min, sec);
 		ut_old = upTime_sec;
-	}	
+	}
+	printf("\r");
+	fflush(stdout);
 }
 #endif

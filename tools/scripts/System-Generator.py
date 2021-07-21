@@ -5,7 +5,10 @@ import os
 
 from common import *
 from ob_globals import *
+
 import sg_counter
+import sg_tasks
+import sg_alarms
 
 import colorama
 from colorama import Fore, Back, Style
@@ -15,8 +18,10 @@ Alarms = []
 Tasks = []
 
 
+
 def print_usage(prog):
     print("Usage:\n\t python " + prog + " tools/oil-files/*.oil")
+
 
 
 def parse_alarm_autostart(oil_lines, line_num, alarms):
@@ -40,6 +45,7 @@ def parse_alarm_autostart(oil_lines, line_num, alarms):
     return line_num, alarms
 
 
+
 def parse_alarm_action(oil_lines, line_num, alarms):
     line = oil_lines[line_num]
     alarms[AlarmParams[2]] = line.replace('=', '{').split('{')[1].strip()
@@ -55,6 +61,7 @@ def parse_alarm_action(oil_lines, line_num, alarms):
         line_num += 1
 
     return line_num, alarms
+
 
 
 def parse_alarms(oil_lines, line_num):
@@ -77,6 +84,7 @@ def parse_alarms(oil_lines, line_num):
     return line_num, alarms
 
 
+
 def parse_task_autostart(oil_lines, line_num, task):
     line = oil_lines[line_num]
     task[TaskParams[4]] = line.replace('=', '{').split('{')[1].strip()
@@ -94,6 +102,7 @@ def parse_task_autostart(oil_lines, line_num, task):
     return line_num, task
 
 
+
 def parse_tasks_item_list(line, task, param):
     if TaskParams[param] in line.split():
         try:
@@ -102,6 +111,7 @@ def parse_tasks_item_list(line, task, param):
             task[TaskParams[param]] = []
             task[TaskParams[param]].append(line.replace('=', ';').split(';')[1].strip())
     return task
+
 
 
 def parse_tasks(oil_lines, line_num):
@@ -126,6 +136,8 @@ def parse_tasks(oil_lines, line_num):
         line_num += 1
 
     return line_num, tasks
+
+
 
 def parse_counter(oil_lines, line_num):
     cntr = {}
@@ -168,10 +180,10 @@ def main(of):
             line_num, task = parse_tasks(oil_lines, line_num)
             Tasks.append(task)
         line_num += 1
-    print(Tasks)
-    print(Alarms)
 
     sg_counter.generate_code(path, Counters);
+    sg_tasks.generate_code(path, Tasks)
+    sg_alarms.generate_code(path, Alarms)
 
 
 

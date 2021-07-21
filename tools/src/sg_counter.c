@@ -3,17 +3,17 @@
 
 OsCounterType OsCounters[] =  {
 	{
-		.name = "mSecCounter",
-		.mincycle = 1,
-		.maxallowedvalue = 0xFFFFFFFF,
-		.ticksperbase = 1,
-		.tickduration = 1000000
+		.alarm.mincycle = 1,
+		.alarm.maxallowedvalue = 0xFFFFFFFF,
+		.alarm.ticksperbase = 1,
+		.tickduration = 1000000,
+		.name = "mSecCounter"
 	},
 	{
-		.name = "uSecCounter",
-		.mincycle = 100,
-		.maxallowedvalue = 0xFFFFFFFF,
-		.ticksperbase = 1,
-		.tickduration = 1000
+		.alarm.mincycle = 100,
+		.alarm.maxallowedvalue = 0xFFFFFFFF,
+		.alarm.ticksperbase = 1,
+		.tickduration = 1000,
+		.name = "uSecCounter"
 	}
 };
