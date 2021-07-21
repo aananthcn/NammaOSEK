@@ -5,12 +5,14 @@ import colorama
 from colorama import Fore, Back, Style
 
 
+#\tTickType maxallowedvalue; /* upper limit, after which counter resets to 0 */\n\
+#\tTickType mincycle; /* minimum value allowed by user to set alarms */ \n\
+#\tTickType ticksperbase; /* no of ticks to increment a count */ \n\
+
 C_Counter_Type = "\n\ntypedef struct {\n\
-\tu32 countval; /* continuos incrementing counter */ \n\
-\tu32 maxallowedvalue; /* upper limit, after which counter resets to 0 */\n\
-\tu32 tickduration; /* count in nano seconds */\n\
-\tu16 ticksperbase; /* no of ticks to increment a count */ \n\
-\tu16 mincycle; /* minimum value allowed by user to set alarms */ \n\
+\tAlarmBaseType alarm; /* contains OSEK specified attributes */ \n\
+\tTickType countval; /* continuos incrementing counter */ \n\
+\tTickType tickduration; /* count in nano seconds */\n\
 \tchar* name;\n\
 } OsCounterType;\n\n"
 
@@ -38,11 +40,11 @@ def generate_code(path, Counters):
     cf.write("\n\nOsCounterType OsCounters[] =  {\n")
     for i, cntr in enumerate(Counters):
         cf.write("\t{\n")
-        cf.write("\t\t.name = \""+ cntr[CntrParams[0]] + "\",\n")
-        cf.write("\t\t.mincycle = "+ str(cntr[CntrParams[1]]) + ",\n")
-        cf.write("\t\t.maxallowedvalue = "+ str(cntr[CntrParams[2]]) + ",\n")
-        cf.write("\t\t.ticksperbase = "+ str(cntr[CntrParams[3]]) + ",\n")
-        cf.write("\t\t.tickduration = "+ str(cntr[CntrParams[4]]) + "\n")
+        cf.write("\t\t.alarm.mincycle = "+ str(cntr[CntrParams[1]]) + ",\n")
+        cf.write("\t\t.alarm.maxallowedvalue = "+ str(cntr[CntrParams[2]]) + ",\n")
+        cf.write("\t\t.alarm.ticksperbase = "+ str(cntr[CntrParams[3]]) + ",\n")
+        cf.write("\t\t.tickduration = "+ str(cntr[CntrParams[4]]) + ",\n")
+        cf.write("\t\t.name = \""+ cntr[CntrParams[0]] + "\"\n")
         cf.write("\t}")
         if i+1 == len(Counters):
             cf.write("\n")

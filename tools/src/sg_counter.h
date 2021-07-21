@@ -4,11 +4,9 @@
 
 
 typedef struct {
-	u32 countval; /* continuos incrementing counter */ 
-	u32 maxallowedvalue; /* upper limit, after which counter resets to 0 */
-	u32 tickduration; /* count in nano seconds */
-	u16 ticksperbase; /* no of ticks to increment a count */ 
-	u16 mincycle; /* minimum value allowed by user to set alarms */ 
+	AlarmBaseType alarm; /* contains OSEK specified attributes */ 
+	TickType countval; /* continuos incrementing counter */ 
+	TickType tickduration; /* count in nano seconds */
 	char* name;
 } OsCounterType;
 
