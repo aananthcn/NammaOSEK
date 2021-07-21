@@ -5,10 +5,6 @@ import colorama
 from colorama import Fore, Back, Style
 
 
-#\tTickType maxallowedvalue; /* upper limit, after which counter resets to 0 */\n\
-#\tTickType mincycle; /* minimum value allowed by user to set alarms */ \n\
-#\tTickType ticksperbase; /* no of ticks to increment a count */ \n\
-
 C_Counter_Type = "\n\ntypedef struct {\n\
 \tAlarmBaseType alarm; /* contains OSEK specified attributes */ \n\
 \tTickType countval; /* continuos incrementing counter */ \n\

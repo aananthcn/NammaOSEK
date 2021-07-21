@@ -4,11 +4,12 @@
 #include <unistd.h>
 
 #include <osek.h>
+#include <sg_tasks.h>
 
 #include "board.h"
 
 void brd_isr_handler(int unused) {
-    SetActiveApplicationMode(OS_SLEEP_MODE);
+    SetActiveApplicationMode(OS_MODES_MAX-1);
 }
 
 

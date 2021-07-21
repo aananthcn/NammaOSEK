@@ -16,6 +16,7 @@ from colorama import Fore, Back, Style
 Counters = []
 Alarms = []
 Tasks = []
+AppModes = []
 
 
 
@@ -92,11 +93,14 @@ def parse_task_autostart(oil_lines, line_num, task):
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
         if "APPMODE" in line.split():
+            app_mode = line.replace('=', ';').split(';')[1].strip()
+            if app_mode not in AppModes:
+                AppModes.append(app_mode)
             try:
-                task["AUTOSTART_APPMODE"].append(line.replace('=', ';').split(';')[1].strip())
+                task["AUTOSTART_APPMODE"].append(app_mode)
             except KeyError:
                 task["AUTOSTART_APPMODE"] = []
-                task["AUTOSTART_APPMODE"].append(line.replace('=', ';').split(';')[1].strip())
+                task["AUTOSTART_APPMODE"].append(app_mode)
         line_num += 1
 
     return line_num, task
@@ -182,7 +186,7 @@ def main(of):
         line_num += 1
 
     sg_counter.generate_code(path, Counters);
-    sg_tasks.generate_code(path, Tasks)
+    sg_tasks.generate_code(path, Tasks, AppModes)
     sg_alarms.generate_code(path, Alarms)
 
 
