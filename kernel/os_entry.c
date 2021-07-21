@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <board.h>
 #include <osek.h>
+
 #include <os_api.h>
+#include <sg_tasks.h>
 
 
 int OsAppMode;

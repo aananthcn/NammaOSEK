@@ -51,12 +51,15 @@ typedef TaskType* TaskRefType;
  * SWS, which says "An OsAppMode called OSDEFAULTAPPMODE must always be there for
  *ISO 17356 compatibility." 
  */
+#if 0
 typedef enum eAppModeType {
 	OSDEFAULTAPPMODE, /* Default application mode, always a valid parameter to StartOS */
 	OS_SLEEP_MODE,
 	OS_ERROR_MODE,
 	OS_MODES_MAX
 } AppModeType;
+#endif
+typedef u32 AppModeType;
 
 // function prototypes
 int SetActiveApplicationMode(AppModeType mode);
