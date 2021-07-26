@@ -2,6 +2,7 @@
 #define ACN_OSEK_SG_TASKS_H
 
 #include <osek.h>
+#include <osek_com.h>
 
 
 enum eAppModeType {
@@ -12,6 +13,19 @@ enum eAppModeType {
 };
 
 
+enum eTaskType {
+	TASK_TASK_A_ID,
+	TASK_TASK_B_ID,
+	TASK_TASK_C_ID,
+	TASK_ID_MAX
+};
+
+
+#define TASK_A_APPMODES	(3)
+#define TASK_B_APPMODES	(0)
+#define TASK_C_APPMODES	(1)
+
+
 typedef void (*TaskFuncType)(void);
 
 typedef struct {
@@ -19,10 +33,19 @@ typedef struct {
     TaskFuncType handler;
     u32 priority;
     u8 sch_type;
+    u32 activation;
     bool autostart;
+    AppModeType** app_modes;
+    u32 n_app_modes;
+    MessageType** msg;
+    u32 n_msg;
+    ResourceType** res;
+    u32 n_res;
+    EventMaskType* evt_msk;
+    u32 n_evt;
 } OsTaskType;
 
-extern OsTaskType OsTaskList[];
+extern const OsTaskType OsTaskList[];
 
 
 
