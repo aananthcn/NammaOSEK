@@ -47,14 +47,29 @@ def print_app_mode(hf, am):
     hf.write("\tOS_MODES_MAX\n")
     hf.write("};\n")
 
+
 def print_task_len_macros(hf, Tasks):
     hf.write("\n\n")
+    for i in range(5, 8):
+        print(i)
     for task in Tasks:
+        # app_modes
         if "AUTOSTART_APPMODE" in task:
-            hf.write("#define "+task[TaskParams[0]].upper()+"_APPMODES\t("+
+            hf.write("#define "+task[TaskParams[0]].upper()+"_APPMODE_MAX\t("+
                 str(len(task["AUTOSTART_APPMODE"]))+")\n")
         else:
-            hf.write("#define "+task[TaskParams[0]].upper()+"_APPMODES\t(0)\n")
+            hf.write("#define "+task[TaskParams[0]].upper()+"_APPMODE_MAX\t(0)\n")
+
+        # msg, res, evt
+        for i in range(5, 8):
+            if TaskParams[i] in task:
+                hf.write("#define "+task[TaskParams[0]].upper()+"_"+TaskParams[i]+"_MAX\t("+
+                    str(len(task[TaskParams[i]]))+")\n")
+            else:
+                hf.write("#define "+task[TaskParams[0]].upper()+"_"+TaskParams[i]+"_MAX\t(0)\n")
+
+        # end of for loop
+        hf.write("\n")
 
 
 
