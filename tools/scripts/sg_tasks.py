@@ -10,7 +10,7 @@ SchTypes = {
     "FULL" : "PREMPTIVE_TSK"
 }
 
-TaskDefBlock = "\n\ntypedef void (*TaskFuncType)(void);\n\
+OsTaskType_str = "\n\ntypedef void (*TaskFuncType)(void);\n\
 \n\
 typedef struct {\n\
     TaskType id;\n\
@@ -50,8 +50,6 @@ def print_app_mode(hf, am):
 
 def print_task_len_macros(hf, Tasks):
     hf.write("\n\n")
-    for i in range(5, 8):
-        print(i)
     for task in Tasks:
         # app_modes
         if "AUTOSTART_APPMODE" in task:
@@ -72,10 +70,77 @@ def print_task_len_macros(hf, Tasks):
         hf.write("\n")
 
 
+def print_task_appmodes(cf, Tasks):
+    cf.write("\n/*  Task AppModes */\n")
+    for task in Tasks:
+        if "AUTOSTART_APPMODE" in task:
+            cf.write("const AppModeType "+task[TaskParams[0]]+"_AppModes[] = {\n")
+            max_i = len(task["AUTOSTART_APPMODE"])
+            i = 0
+            for m in task["AUTOSTART_APPMODE"]:
+                i += 1
+                cf.write("\t"+m)
+                if i != max_i:
+                    cf.write(",\n")
+                else:
+                    cf.write("\n")
+            cf.write("};\n")
+        else:
+            cf.write("const AppModeType* "+task[TaskParams[0]]+"_AppModes = NULL;\n")
+
+
+def print_task_events(path, Tasks):
+    print_info("Generating code for Tasks events")
+
+    # create header file
+    filename = path + "/" + "sg_events.h"
+    hf = open(filename, "w")
+    hf.write("#ifndef ACN_OSEK_SG_EVENTS_H\n")
+    hf.write("#define ACN_OSEK_SG_EVENTS_H\n")
+    hf.write("\n#include <osek.h>\n")
+    hf.write("\n")
+    for task in Tasks:
+        hf.write("\n/*  Event Masks for "+task[TaskParams[0]]+"  */\n")
+        if TaskParams[6] in task:
+            print(task[TaskParams[6]])
+            for i, event in enumerate(task[TaskParams[6]]):
+                hf.write("#define EVENT_MASK_"+task[TaskParams[0]]+"_"+
+                    event+"\t("+"0x{:016x}".format(1<<i)+")\n")
+    hf.write("\n\n#endif\n")
+    hf.close()
+
+
+def print_task_messages(hf, cf, Tasks):
+    banner = "\n/*  Task Messages */\n"
+    cf.write(banner)
+    messages = []
+    for task in Tasks:
+        if TaskParams[7] in task:
+            cf.write("MessageType "+task[TaskParams[0]]+"_Messages[] = {\n")
+            max_i = len(task[TaskParams[7]])
+            i = 0
+            for m in task[TaskParams[7]]:
+                i += 1
+                cf.write("\t"+m)
+                if m not in messages:
+                    messages.append(m)
+                if i != max_i:
+                    cf.write(",\n")
+                else:
+                    cf.write("\n")
+            cf.write("};\n")
+        else:
+            cf.write("const MessageType* "+task[TaskParams[0]]+"_Messages = NULL;\n")
+
+    if len(messages) > 0:
+        hf.write(banner)
+        for m in messages:
+            hf.write("extern MessageType "+m+";\n")
+
+
 
 def generate_code(path, Tasks, AppModes):
     print_info("Generating code for Tasks")
-    print("\n", AppModes, "\n")
 
     # create header file
     filename = path + "/" + "sg_tasks.h"
@@ -87,13 +152,17 @@ def generate_code(path, Tasks, AppModes):
     print_app_mode(hf, AppModes)
     print_task_ids(hf, Tasks)
     print_task_len_macros(hf, Tasks)
-    hf.write(TaskDefBlock)
+    hf.write(OsTaskType_str)
 
     # create source file
     filename = path + "/" + "sg_tasks.c"
     cf = open(filename, "w")
+    cf.write("#include <stddef.h>\n")
     cf.write("#include \"sg_tasks.h\"\n")
-    cf.write("\n\n/*   T A S K   D E F I N I T I O N   */")
+    cf.write("\n\n/*   T A S K   D E F I N I T I O N   */\n")
+    print_task_appmodes(cf, Tasks)
+    print_task_events(path, Tasks)
+    #print_task_messages(hf, cf, Tasks)
     cf.write("\nconst OsTaskType OsTaskList["+str(len(Tasks))+"];\n")
 
     # Tasks is still in construction hence print it
