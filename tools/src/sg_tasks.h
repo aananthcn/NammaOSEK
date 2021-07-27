@@ -21,9 +21,21 @@ enum eTaskType {
 };
 
 
-#define TASK_A_APPMODES	(3)
-#define TASK_B_APPMODES	(0)
-#define TASK_C_APPMODES	(1)
+#define TASK_A_APPMODE_MAX	(3)
+#define TASK_A_RESOURCE_MAX	(0)
+#define TASK_A_EVENT_MAX	(0)
+#define TASK_A_MESSAGE_MAX	(1)
+
+#define TASK_B_APPMODE_MAX	(0)
+#define TASK_B_RESOURCE_MAX	(1)
+#define TASK_B_EVENT_MAX	(1)
+#define TASK_B_MESSAGE_MAX	(1)
+
+#define TASK_C_APPMODE_MAX	(1)
+#define TASK_C_RESOURCE_MAX	(0)
+#define TASK_C_EVENT_MAX	(2)
+#define TASK_C_MESSAGE_MAX	(0)
+
 
 
 typedef void (*TaskFuncType)(void);
