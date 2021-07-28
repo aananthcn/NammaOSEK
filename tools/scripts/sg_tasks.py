@@ -19,7 +19,7 @@ typedef struct {\n\
     u8 sch_type;\n\
     u32 activation;\n\
     bool autostart;\n\
-    AppModeType** app_modes;\n\
+    const AppModeType** app_modes;\n\
     u32 n_app_modes;\n\
     MessageType** msg;\n\
     u32 n_msg;\n\
@@ -97,8 +97,9 @@ def print_task_events(path, Tasks):
     hf = open(filename, "w")
     hf.write("#ifndef ACN_OSEK_SG_EVENTS_H\n")
     hf.write("#define ACN_OSEK_SG_EVENTS_H\n")
-    hf.write("\n#include <osek.h>\n")
-    hf.write("\n")
+    hf.write("\n#include <osek.h>\n\n")
+    hf.write("\n/* OS_EVENT: This macro function allows users to get event mask using\n   the name of the event (passed as 2nd parameter) configured in the\n   OSEK-Builder.xlsx */")
+    hf.write("\n#define OS_EVENT(task, event)   (EVENT_MASK_##task##event)\n\n")
     # print event masks macros
     for task in Tasks:
         hf.write("\n/*  Event Masks for "+task[TaskParams[0]]+"  */\n")
@@ -184,7 +185,19 @@ def generate_code(path, Tasks, AppModes):
     print_task_appmodes(cf, Tasks)
     print_task_events(path, Tasks)
     #print_task_messages(hf, cf, Tasks)
-    cf.write("\nconst OsTaskType OsTaskList["+str(len(Tasks))+"];\n")
+    cf.write("\nconst OsTaskType OsTaskList["+str(len(Tasks))+"] = {\n")
+    for i, task in enumerate(Tasks):
+        cf.write("\t{\n")
+        if "AUTOSTART_APPMODE" in task:
+            cf.write("\t\t.app_modes = (const AppModeType **) &"+task[TaskParams[0]]+"_AppModes\n")
+        else:
+             cf.write("\t\t.app_modes = NULL\n")
+        cf.write("\t}")
+        if i+1 < len(Tasks):
+            cf.write(",\n")
+        else:
+            cf.write("\n")
+    cf.write("};\n")
 
     # Tasks is still in construction hence print it
     print(Tasks)

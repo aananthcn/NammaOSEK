@@ -15,4 +15,14 @@ const AppModeType Task_C_AppModes[] = {
 	OSDEFAULTAPPMODE
 };
 
-const OsTaskType OsTaskList[3];
+const OsTaskType OsTaskList[3] = {
+	{
+		.app_modes = (const AppModeType **) &Task_A_AppModes
+	},
+	{
+		.app_modes = NULL
+	},
+	{
+		.app_modes = (const AppModeType **) &Task_C_AppModes
+	}
+};
