@@ -53,7 +53,7 @@ typedef struct {
     u32 n_msg;
     ResourceType** res;
     u32 n_res;
-    EventMaskType* evt_msk;
+    EventMaskType** evt_msk;
     u32 n_evt;
 } OsTaskType;
 
