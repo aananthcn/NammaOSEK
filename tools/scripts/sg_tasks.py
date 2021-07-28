@@ -25,7 +25,7 @@ typedef struct {\n\
     u32 n_msg;\n\
     ResourceType** res;\n\
     u32 n_res;\n\
-    EventMaskType* evt_msk;\n\
+    EventMaskType** evt_msk;\n\
     u32 n_evt;\n\
 } OsTaskType;\n\
 \n\
@@ -99,15 +99,36 @@ def print_task_events(path, Tasks):
     hf.write("#define ACN_OSEK_SG_EVENTS_H\n")
     hf.write("\n#include <osek.h>\n")
     hf.write("\n")
+    # print event masks macros
     for task in Tasks:
         hf.write("\n/*  Event Masks for "+task[TaskParams[0]]+"  */\n")
         if TaskParams[6] in task:
-            print(task[TaskParams[6]])
             for i, event in enumerate(task[TaskParams[6]]):
                 hf.write("#define EVENT_MASK_"+task[TaskParams[0]]+"_"+
                     event+"\t("+"0x{:016x}".format(1<<i)+")\n")
+
+    # print event mask array declarations & definitions
+    filename = path + "/" + "sg_events.c"
+    cf = open(filename, "w")
+    cf.write("#include <osek.h>\n")
+    cf.write("#include \"sg_events.h\"\n\n")
+    for task in Tasks:
+        hf.write("\n/*  Event array for "+task[TaskParams[0]]+"  */\n")
+        if TaskParams[6] in task:
+            hf.write("extern const EventMaskType "+task[TaskParams[0]]
+                +"_EventMasks[];\n")
+                #+"_EventMasks["+str(len(task[TaskParams[6]]))+"];\n")
+            cf.write("\nconst EventMaskType "+task[TaskParams[0]]+"_EventMasks[] = {\n")
+            for i, event in enumerate(task[TaskParams[6]]):
+                cf.write("\tEVENT_MASK_"+task[TaskParams[0]]+"_"+event)
+                if i+1 < len(task[TaskParams[6]]):
+                    cf.write(",\n")
+                else:
+                    cf.write("\n")
+            cf.write("};\n")
     hf.write("\n\n#endif\n")
     hf.close()
+    cf.close()
 
 
 def print_task_messages(hf, cf, Tasks):
