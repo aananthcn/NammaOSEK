@@ -25,7 +25,7 @@ typedef struct {\n\
     u32 n_msg;\n\
     ResourceType** res;\n\
     u32 n_res;\n\
-    EventMaskType** evt_msk;\n\
+    const EventMaskType** evt_msk;\n\
     u32 n_evt;\n\
 } OsTaskType;\n\
 \n\
@@ -181,6 +181,7 @@ def generate_code(path, Tasks, AppModes):
     cf = open(filename, "w")
     cf.write("#include <stddef.h>\n")
     cf.write("#include \"sg_tasks.h\"\n")
+    cf.write("#include \"sg_events.h\"\n")
     cf.write("\n\n/*   T A S K   D E F I N I T I O N   */\n")
     print_task_appmodes(cf, Tasks)
     print_task_events(path, Tasks)
@@ -188,10 +189,18 @@ def generate_code(path, Tasks, AppModes):
     cf.write("\nconst OsTaskType OsTaskList["+str(len(Tasks))+"] = {\n")
     for i, task in enumerate(Tasks):
         cf.write("\t{\n")
+        # Init AppModes
         if "AUTOSTART_APPMODE" in task:
-            cf.write("\t\t.app_modes = (const AppModeType **) &"+task[TaskParams[0]]+"_AppModes\n")
+            cf.write("\t\t.app_modes = (const AppModeType **) &"+task[TaskParams[0]]+"_AppModes,\n")
         else:
-             cf.write("\t\t.app_modes = NULL\n")
+             cf.write("\t\t.app_modes = NULL,\n")
+        cf.write("\t\t.n_app_modes = "+task[TaskParams[0]].upper()+"_APPMODE_MAX,\n")
+        # Init EventMasks
+        if TaskParams[6] in task:
+            cf.write("\t\t.evt_msk = (const EventMaskType**) &"+task[TaskParams[0]]+"_EventMasks,\n")
+        else:
+             cf.write("\t\t.evt_msk = NULL,\n")
+        cf.write("\t\t.n_evt = "+task[TaskParams[0]].upper()+"_EVENT_MAX\n")
         cf.write("\t}")
         if i+1 < len(Tasks):
             cf.write(",\n")
