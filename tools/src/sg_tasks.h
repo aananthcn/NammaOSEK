@@ -47,7 +47,7 @@ typedef struct {
     u8 sch_type;
     u32 activation;
     bool autostart;
-    AppModeType** app_modes;
+    const AppModeType** app_modes;
     u32 n_app_modes;
     MessageType** msg;
     u32 n_msg;
