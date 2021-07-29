@@ -16,3 +16,5 @@ AlarmParams = ["Alarm Name", "COUNTER", "Action-Type", "arg1", "arg2", "IsAutost
 # Column titles for ISRs
 ISR_Params = ["ISR Name", "CATEGORY", "RESOURCE", "MESSAGE"]
 
+if __name__ == '__main__':
+	print("OSEK Builder Globals")
