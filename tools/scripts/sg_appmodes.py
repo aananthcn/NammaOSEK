@@ -13,7 +13,7 @@ def print_appmode_enum(hf, am):
     hf.write("};\n\n")
 
 
-def print_appmodes(path, Tasks, AppModes):
+def generate_code(path, AppModes, Tasks):
     # create header file
     filename = path + "/" + "sg_appmodes.h"
     hf = open(filename, "w")

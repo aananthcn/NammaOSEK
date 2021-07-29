@@ -5,7 +5,7 @@ import colorama
 from colorama import Fore, Back, Style
 
 
-def print_task_events(path, Tasks):
+def generate_code(path, Tasks):
     print_info("Generating code for Tasks events")
 
     # create header file
@@ -18,11 +18,12 @@ def print_task_events(path, Tasks):
     hf.write("\n#define OS_EVENT(task, event)   (EVENT_MASK_##task##event)\n\n")
     # print event masks macros
     for task in Tasks:
-        hf.write("\n/*  Event Masks for "+task[TaskParams[0]]+"  */\n")
         if TaskParams[6] in task:
+            hf.write("\n/*  Event Masks for "+task[TaskParams[0]]+"  */\n")
             for i, event in enumerate(task[TaskParams[6]]):
                 hf.write("#define EVENT_MASK_"+task[TaskParams[0]]+"_"+
                     event+"\t("+"0x{:016x}".format(1<<i)+")\n")
+    hf.write("\n\n")
 
     # print event mask array declarations & definitions
     filename = path + "/" + "sg_events.c"
@@ -30,8 +31,8 @@ def print_task_events(path, Tasks):
     cf.write("#include <osek.h>\n")
     cf.write("#include \"sg_events.h\"\n\n")
     for task in Tasks:
-        hf.write("\n/*  Event array for "+task[TaskParams[0]]+"  */\n")
         if TaskParams[6] in task:
+            hf.write("\n/*  Event array for "+task[TaskParams[0]]+"  */\n")
             hf.write("extern const EventMaskType "+task[TaskParams[0]]
                 +"_EventMasks[];\n")
                 #+"_EventMasks["+str(len(task[TaskParams[6]]))+"];\n")
