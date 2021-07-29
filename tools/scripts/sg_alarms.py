@@ -1,5 +1,5 @@
-from common import *
-from ob_globals import *
+from common import print_info
+from ob_globals import TaskParams
 
 import colorama
 from colorama import Fore, Back, Style

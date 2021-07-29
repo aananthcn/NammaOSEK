@@ -111,10 +111,12 @@ def locate_text_in_cell(text, sheet):
 # key text this function uses to identify it. 
 def locate_heading_row(wb, sheetname):
     if sheetname == None or len(sheetname) < 1:
-        return error.EDEFAULT
+        return -1
     # open sheet and find the number of rows
     sheet = wb[sheetname]
     col, row = locate_text_in_cell("S.No", sheet)
+    if col == -1:
+        print("Warning: locate_heading_row.locate_text_in_cell returned col == -1")
     if row == -1:
         emsg = "Error: Can't find \"S.No\" in sheet: \"" + sheetname + "\""
         print(emsg)

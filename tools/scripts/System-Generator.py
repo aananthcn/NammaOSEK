@@ -3,8 +3,8 @@
 import sys
 import os
 
-from common import *
-from ob_globals import *
+from common import import_or_install, print_info
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params
 
 import sg_counter
 import sg_tasks
@@ -72,7 +72,7 @@ def parse_alarms(oil_lines, line_num):
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
         if AlarmParams[1] in line:
-            alarms[AlarmParams[1]] = line.replace('=', ';').split(';')[1].strip();
+            alarms[AlarmParams[1]] = line.replace('=', ';').split(';')[1].strip()
         if "ACTION" in line.split() and "{" in line:
             line_num, alarms = parse_alarm_action(oil_lines, line_num, alarms)
         if "AUTOSTART" in line.split() and "{" in line:
@@ -125,11 +125,11 @@ def parse_tasks(oil_lines, line_num):
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
         if TaskParams[1] in line:
-            tasks[TaskParams[1]] = line.replace('=', ';').split(';')[1].strip();
+            tasks[TaskParams[1]] = line.replace('=', ';').split(';')[1].strip()
         if TaskParams[2] in line:
-            tasks[TaskParams[2]] = line.replace('=', ';').split(';')[1].strip();
+            tasks[TaskParams[2]] = line.replace('=', ';').split(';')[1].strip()
         if TaskParams[3] in line:
-            tasks[TaskParams[3]] = line.replace('=', ';').split(';')[1].strip();
+            tasks[TaskParams[3]] = line.replace('=', ';').split(';')[1].strip()
         if "AUTOSTART" in line.split() and "{" in line:
             line_num, tasks = parse_task_autostart(oil_lines, line_num, tasks)
         elif "AUTOSTART" in line.split() and "FALSE" in line:
@@ -150,13 +150,13 @@ def parse_counter(oil_lines, line_num):
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
         if CntrParams[1] in line:
-            cntr[CntrParams[1]] = int(line.replace('=', ';').split(';')[1]);
+            cntr[CntrParams[1]] = int(line.replace('=', ';').split(';')[1])
         if CntrParams[2] in line:
-            cntr[CntrParams[2]] = line.replace('=', ';').split(';')[1].strip();
+            cntr[CntrParams[2]] = line.replace('=', ';').split(';')[1].strip()
         if CntrParams[3] in line:
-            cntr[CntrParams[3]] = int(line.replace('=', ';').split(';')[1]);
+            cntr[CntrParams[3]] = int(line.replace('=', ';').split(';')[1])
         if CntrParams[4] in line:
-            cntr[CntrParams[4]] = int(line.replace('=', ';').split(';')[1]);
+            cntr[CntrParams[4]] = int(line.replace('=', ';').split(';')[1])
         line_num += 1
     return line_num, cntr
 
@@ -185,7 +185,7 @@ def main(of):
             Tasks.append(task)
         line_num += 1
 
-    sg_counter.generate_code(path, Counters);
+    sg_counter.generate_code(path, Counters)
     sg_tasks.generate_code(path, Tasks, AppModes)
     sg_alarms.generate_code(path, Alarms)
 

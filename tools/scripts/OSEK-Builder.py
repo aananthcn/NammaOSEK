@@ -2,11 +2,11 @@
 # as output.
 
 import sys
-import ob_utils
 import os
 
-from ob_globals import *
-from common import *
+import ob_utils
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params
+from common import print_info, import_or_install
 import oil
 
 import colorama
@@ -41,7 +41,7 @@ def parse_task_data(wb, sheetname):
     for i in range(hrow, active_rows):
         row = i + 1
         for tsk_item in TaskParams:
-            if tsk_item.lower() in specltasks:
+            if tsk_item in specltasks:
                 lvalue = str(sheet[param_cols[tsk_item]+str(row)].value).split(",")
                 stripped = [s.strip() for s in lvalue]
                 TaskData[task_count][tsk_item] = stripped
@@ -91,6 +91,9 @@ def parse_os_data(wb, sheetname):
     if attr_col == None:
         print("Error: sheet validation failed ("+ sheetname +")")
         return None
+    if attr_row == -1:
+        print("Warning: validate_column() return row = -1")
+
     sheet = wb[sheetname]
     OsData   = {}
 
@@ -118,6 +121,8 @@ def parse_counters(wb, sheetname):
         return None
     # find out all column numbers of all the column titles and add to a list
     param_cols, hrow = ob_utils.locate_cols(wb, sheetname, CntrParams)
+    if hrow == -1:
+        print("Warning: parse_counters.ob_utils.locate_cols return a negative row!")
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
@@ -143,6 +148,8 @@ def parse_alarms(wb, sheetname, Counters):
         return None
     # find out all column numbers of all the column titles and add to a list
     param_cols, hrow = ob_utils.locate_cols(wb, sheetname, AlarmParams)
+    if hrow == -1:
+        print("Warning: parse_alarms.ob_utils.locate_cols returned a negative row!")
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None
@@ -172,6 +179,8 @@ def parse_ISRs(wb, sheetname):
         return None
     # find out all column numbers of all the column titles and add to a list
     param_cols, hrow = ob_utils.locate_cols(wb, sheetname, ISR_Params)
+    if hrow == -1:
+        print("Warning: parse_ISRs.ob_utils.locate_cols returned a negative row!")
     if param_cols == None:
         print("Error: Task Column location failed!")
         return None

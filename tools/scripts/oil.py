@@ -1,6 +1,6 @@
 import os
 
-from ob_globals import *
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params
 
 
 
