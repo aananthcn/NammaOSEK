@@ -4,6 +4,15 @@
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 TaskParams = ["Task Name", "PRIORITY", "SCHEDULE", "ACTIVATION", "AUTOSTART",
     "RESOURCE", "EVENT", "MESSAGE"]
+TNMI = 0
+PRII = 1
+SCHI = 2
+ACTI = 3
+ATSI = 4
+RESI = 5
+EVTI = 6
+MSGI = 7
+
 
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE",

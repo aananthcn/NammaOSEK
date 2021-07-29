@@ -4,7 +4,7 @@ import sys
 import os
 
 from common import import_or_install, print_info
-from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI
 
 import sg_counter
 import sg_tasks
@@ -123,7 +123,7 @@ def parse_tasks_item_list(line, task, param):
 
 def parse_tasks(oil_lines, line_num):
     tasks = {}
-    tasks[TaskParams[0]] = oil_lines[line_num].split()[1]
+    tasks[TaskParams[TNMI]] = oil_lines[line_num].split()[1]
     line_num += 1
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
@@ -191,7 +191,7 @@ def main(of):
     sg_counter.generate_code(path, Counters)
     sg_appmodes.generate_code(path, AppModes, Tasks)
     sg_events.generate_code(path, Tasks)
-    #sg_messages.generate_code(path, Tasks)
+    sg_messages.generate_code(path, Tasks)
     sg_tasks.generate_code(path, Tasks)
     sg_alarms.generate_code(path, Alarms)
 

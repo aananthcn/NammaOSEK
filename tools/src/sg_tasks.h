@@ -39,14 +39,14 @@ typedef struct {
     u8 sch_type;
     u32 activation;
     bool autostart;
-    const AppModeType** app_modes;
-    u32 n_app_modes;
-    MessageType** msg;
-    u32 n_msg;
-    ResourceType** res;
-    u32 n_res;
-    const EventMaskType** evt_msk;
-    u32 n_evt;
+    const AppModeType** appmodes;
+    u32 n_appmodes;
+    MessageType** msglist;
+    u32 n_msglist;
+    ResourceType** reslist;
+    u32 n_reslist;
+    const EventMaskType** evtmsks;
+    u32 n_evtmsks;
 } OsTaskType;
 
 extern const OsTaskType OsTaskList[];
