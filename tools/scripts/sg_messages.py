@@ -18,7 +18,6 @@ def generate_code(path, Tasks):
     filename = path + "/" + "sg_messages.c"
     cf = open(filename, "w")
     cf.write("#include <stddef.h>\n")
-    cf.write("#include <osek.h>\n")
     cf.write("#include \"sg_messages.h\"\n")
 
     # collect & create all individual messages
@@ -52,8 +51,6 @@ def generate_code(path, Tasks):
                 else:
                     cf.write("\n")
             cf.write("};\n\n")
-        #else:
-        #    cf.write("MessageType* "+task[TaskParams[TNMI]]+"_Messages = NULL;\n\n")
 
     hf.write("\n\n#endif\n")
     hf.close()

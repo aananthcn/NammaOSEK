@@ -12,6 +12,7 @@ import sg_alarms
 import sg_appmodes
 import sg_events
 import sg_messages
+import sg_resources
 
 import colorama
 from colorama import Fore, Back, Style
@@ -192,6 +193,7 @@ def main(of):
     sg_appmodes.generate_code(path, AppModes, Tasks)
     sg_events.generate_code(path, Tasks)
     sg_messages.generate_code(path, Tasks)
+    sg_resources.generate_code(path, Tasks)
     sg_tasks.generate_code(path, Tasks)
     sg_alarms.generate_code(path, Alarms)
 
