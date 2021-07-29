@@ -106,9 +106,10 @@ def generate_code(path, Tasks):
 
         # Init Messages
         if TaskParams[MSGI] in task:
-            cf.write("\t\t.msglist = (MessageType**) &"+task[TaskParams[TNMI]]+"_Messages\n")
+            cf.write("\t\t.msglist = (MessageType**) &"+task[TaskParams[TNMI]]+"_Messages,\n")
         else:
-            cf.write("\t\t.msglist = NULL\n")
+            cf.write("\t\t.msglist = NULL,\n")
+        cf.write("\t\t.n_msglist = "+task[TaskParams[TNMI]].upper()+"_MESSAGE_MAX\n")
 
         cf.write("\t}")
         if i+1 < len(Tasks):
