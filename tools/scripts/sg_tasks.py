@@ -1,7 +1,5 @@
 from common import print_info
 from ob_globals import TaskParams
-from sg_appmodes import print_appmodes
-from sg_events import print_task_events
 
 import colorama
 from colorama import Fore, Back, Style
@@ -64,7 +62,7 @@ def print_task_len_macros(hf, Tasks):
         hf.write("\n")
 
 
-def generate_code(path, Tasks, AppModes):
+def generate_code(path, Tasks):
     print_info("Generating code for Tasks")
 
     # create header file
@@ -87,9 +85,6 @@ def generate_code(path, Tasks, AppModes):
     cf.write("#include \"sg_appmodes.h\"\n")
     cf.write("#include \"sg_events.h\"\n")
     cf.write("\n\n/*   T A S K   D E F I N I T I O N   */\n")
-    print_appmodes(path, Tasks, AppModes)
-    print_task_events(path, Tasks)
-    #print_task_messages(hf, cf, Tasks)
     cf.write("\nconst OsTaskType OsTaskList["+str(len(Tasks))+"] = {\n")
     for i, task in enumerate(Tasks):
         cf.write("\t{\n")

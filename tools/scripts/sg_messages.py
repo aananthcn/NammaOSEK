@@ -5,7 +5,7 @@ import colorama
 from colorama import Fore, Back, Style
 
 
-def print_task_messages(hf, cf, Tasks):
+def generate_code(path, Tasks):
     banner = "\n/*  Task Messages */\n"
     cf.write(banner)
     messages = []

@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #include <osek.h>
-#include <sg_tasks.h>
+#include <sg_appmodes.h>
 
 #include "board.h"
 
