@@ -37,7 +37,7 @@ typedef struct {
     TaskFuncType handler;
     u32 priority;
     u8 sch_type;
-    u32 activation;
+    u32 activations;
     bool autostart;
     const AppModeType** appmodes;
     u32 n_appmodes;
@@ -52,5 +52,8 @@ typedef struct {
 extern const OsTaskType OsTaskList[];
 
 
+DeclareTask(Task_A);
+DeclareTask(Task_B);
+DeclareTask(Task_C);
 
 #endif

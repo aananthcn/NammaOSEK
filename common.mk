@@ -7,7 +7,7 @@ CMN_OBJS := \
 
 
 
-OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS)
+OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
 
 .PHONY: all
 

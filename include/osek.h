@@ -40,10 +40,18 @@ typedef u32 TaskType;
 typedef TaskType* TaskRefType;
 
 /*
+ * Scheduling types
+ */
+enum eSchTypes {
+	NON_PREEMPTIVE,
+	FULL_PREEMPTIVE
+};
+
+/*
  * Task Declarations & Definitions
  */
-#define DeclareTask(TaskName)) void OSEK_Task_##TaskName)(void)
-#define TASK(TaskName)) void OSEK_Task_##TaskName)(void)
+#define DeclareTask(TaskName) void OSEK_Task_##TaskName(void)
+#define TASK(TaskName) void OSEK_Task_##TaskName(void)
 
 
 /* 
