@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams
+from ob_globals import TaskParams, TNMI, EVTI
 
 import colorama
 from colorama import Fore, Back, Style
@@ -18,10 +18,10 @@ def generate_code(path, Tasks):
     hf.write("\n#define OS_EVENT(task, event)   (EVENT_MASK_##task##event)\n\n")
     # print event masks macros
     for task in Tasks:
-        if TaskParams[6] in task:
-            hf.write("\n/*  Event Masks for "+task[TaskParams[0]]+"  */\n")
-            for i, event in enumerate(task[TaskParams[6]]):
-                hf.write("#define EVENT_MASK_"+task[TaskParams[0]]+"_"+
+        if TaskParams[EVTI] in task:
+            hf.write("\n/*  Event Masks for "+task[TaskParams[TNMI]]+"  */\n")
+            for i, event in enumerate(task[TaskParams[EVTI]]):
+                hf.write("#define EVENT_MASK_"+task[TaskParams[TNMI]]+"_"+
                     event+"\t("+"0x{:016x}".format(1<<i)+")\n")
     hf.write("\n\n")
 
@@ -31,15 +31,15 @@ def generate_code(path, Tasks):
     cf.write("#include <osek.h>\n")
     cf.write("#include \"sg_events.h\"\n\n")
     for task in Tasks:
-        if TaskParams[6] in task:
-            hf.write("\n/*  Event array for "+task[TaskParams[0]]+"  */\n")
-            hf.write("extern const EventMaskType "+task[TaskParams[0]]
+        if TaskParams[EVTI] in task:
+            hf.write("\n/*  Event array for "+task[TaskParams[TNMI]]+"  */\n")
+            hf.write("extern const EventMaskType "+task[TaskParams[TNMI]]
                 +"_EventMasks[];\n")
-                #+"_EventMasks["+str(len(task[TaskParams[6]]))+"];\n")
-            cf.write("\nconst EventMaskType "+task[TaskParams[0]]+"_EventMasks[] = {\n")
-            for i, event in enumerate(task[TaskParams[6]]):
-                cf.write("\tEVENT_MASK_"+task[TaskParams[0]]+"_"+event)
-                if i+1 < len(task[TaskParams[6]]):
+                #+"_EventMasks["+str(len(task[TaskParams[EVTI]]))+"];\n")
+            cf.write("\nconst EventMaskType "+task[TaskParams[TNMI]]+"_EventMasks[] = {\n")
+            for i, event in enumerate(task[TaskParams[EVTI]]):
+                cf.write("\tEVENT_MASK_"+task[TaskParams[TNMI]]+"_"+event)
+                if i+1 < len(task[TaskParams[EVTI]]):
                     cf.write(",\n")
                 else:
                     cf.write("\n")

@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams
+from ob_globals import TaskParams, TNMI
 
 import colorama
 from colorama import Fore, Back, Style
@@ -31,7 +31,7 @@ def generate_code(path, AppModes, Tasks):
     cf.write("\n/*  Task AppModes */\n")
     for task in Tasks:
         if "AUTOSTART_APPMODE" in task:
-            cf.write("const AppModeType "+task[TaskParams[0]]+"_AppModes[] = {\n")
+            cf.write("const AppModeType "+task[TaskParams[TNMI]]+"_AppModes[] = {\n")
             max_i = len(task["AUTOSTART_APPMODE"])
             i = 0
             for m in task["AUTOSTART_APPMODE"]:
@@ -42,10 +42,10 @@ def generate_code(path, AppModes, Tasks):
                 else:
                     cf.write("\n")
             cf.write("};\n\n")
-            hf.write("extern const AppModeType "+task[TaskParams[0]]+"_AppModes[];\n")
-        else:
-            cf.write("const AppModeType* "+task[TaskParams[0]]+"_AppModes = NULL;\n\n")
-            hf.write("extern const AppModeType* "+task[TaskParams[0]]+"_AppModes;\n")
+            hf.write("extern const AppModeType "+task[TaskParams[TNMI]]+"_AppModes[];\n")
+        #else:
+        #    cf.write("const AppModeType* "+task[TaskParams[TNMI]]+"_AppModes = NULL;\n\n")
+        #    hf.write("extern const AppModeType* "+task[TaskParams[TNMI]]+"_AppModes;\n")
 
     cf.close()
     hf.write("\n\n#endif\n")
