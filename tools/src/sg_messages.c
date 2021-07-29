@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <osek.h>
 #include "sg_messages.h"
 
 

@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams, TNMI, EVTI, MSGI
+from ob_globals import TaskParams, TNMI, EVTI, MSGI, ATSI, RESI
 
 import colorama
 from colorama import Fore, Back, Style
@@ -81,14 +81,19 @@ def generate_code(path, Tasks):
     filename = path + "/" + "sg_tasks.c"
     cf = open(filename, "w")
     cf.write("#include <stddef.h>\n")
+    cf.write("#include <stdbool.h>\n")
     cf.write("#include \"sg_tasks.h\"\n")
     cf.write("#include \"sg_appmodes.h\"\n")
     cf.write("#include \"sg_events.h\"\n")
     cf.write("#include \"sg_messages.h\"\n")
+    cf.write("#include \"sg_resources.h\"\n")
     cf.write("\n\n/*   T A S K   D E F I N I T I O N S   */\n")
     cf.write("const OsTaskType OsTaskList["+str(len(Tasks))+"] = {\n")
     for i, task in enumerate(Tasks):
         cf.write("\t{\n")
+
+        # Init Autostart
+        cf.write("\t\t.autostart = "+task[TaskParams[ATSI]].lower()+",\n")
 
         # Init AppModes
         if "AUTOSTART_APPMODE" in task:
@@ -109,7 +114,14 @@ def generate_code(path, Tasks):
             cf.write("\t\t.msglist = (MessageType**) &"+task[TaskParams[TNMI]]+"_Messages,\n")
         else:
             cf.write("\t\t.msglist = NULL,\n")
-        cf.write("\t\t.n_msglist = "+task[TaskParams[TNMI]].upper()+"_MESSAGE_MAX\n")
+        cf.write("\t\t.n_msglist = "+task[TaskParams[TNMI]].upper()+"_MESSAGE_MAX,\n")
+
+        # Init Resources
+        if TaskParams[RESI] in task:
+            cf.write("\t\t.reslist = (ResourceType**) &"+task[TaskParams[TNMI]]+"_Resources,\n")
+        else:
+            cf.write("\t\t.reslist = NULL,\n")
+        cf.write("\t\t.n_reslist = "+task[TaskParams[TNMI]].upper()+"_RESOURCE_MAX\n")
 
         cf.write("\t}")
         if i+1 < len(Tasks):

@@ -18,6 +18,7 @@ SG_OBJS	:= \
 	${CWD}/tools/src/sg_counter.o \
 	${CWD}/tools/src/sg_appmodes.o \
 	${CWD}/tools/src/sg_events.o \
+	${CWD}/tools/src/sg_resources.o \
 	${CWD}/tools/src/sg_messages.o \
 	${CWD}/tools/src/sg_tasks.o
 
