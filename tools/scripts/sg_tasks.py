@@ -88,13 +88,14 @@ def generate_code(path, Tasks):
     cf.write("#include \"sg_messages.h\"\n")
     cf.write("#include \"sg_resources.h\"\n")
     cf.write("\n\n/*   T A S K   D E F I N I T I O N S   */\n")
-    cf.write("const OsTaskType OsTaskList["+str(len(Tasks))+"] = {\n")
+    cf.write("const OsTaskType OsTaskList[] = {\n")
     for i, task in enumerate(Tasks):
         cf.write("\t{\n")
 
-        # Declar and Init tasks
+        # TaskID, Declarations of tasks and Init tasks
         hf.write("\nDeclareTask("+task[TaskParams[TNMI]]+");")
         cf.write("\t\t.handler = OSEK_Task_"+task[TaskParams[TNMI]]+",\n")
+        cf.write("\t\t.id = "+str(i)+",\n")
 
         # Init Schedule Type, priority
         cf.write("\t\t.sch_type = "+task[TaskParams[SCHI]]+"_PREEMPTIVE,\n")
@@ -140,11 +141,6 @@ def generate_code(path, Tasks):
         else:
             cf.write("\n")
     cf.write("};\n")
-
-    # Tasks is still in construction hence print it
-    print(Tasks)
-    print("\nTASKs in construction\n\n")
-
     cf.close()
     hf.write("\n\n#endif\n")
     hf.close()

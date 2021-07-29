@@ -8,9 +8,10 @@
 
 
 /*   T A S K   D E F I N I T I O N S   */
-const OsTaskType OsTaskList[3] = {
+const OsTaskType OsTaskList[] = {
 	{
 		.handler = OSEK_Task_Task_A,
+		.id = 0,
 		.sch_type = NON_PREEMPTIVE,
 		.priority = 1,
 		.activations = 1,
@@ -26,6 +27,7 @@ const OsTaskType OsTaskList[3] = {
 	},
 	{
 		.handler = OSEK_Task_Task_B,
+		.id = 1,
 		.sch_type = NON_PREEMPTIVE,
 		.priority = 2,
 		.activations = 1,
@@ -41,6 +43,7 @@ const OsTaskType OsTaskList[3] = {
 	},
 	{
 		.handler = OSEK_Task_Task_C,
+		.id = 2,
 		.sch_type = NON_PREEMPTIVE,
 		.priority = 3,
 		.activations = 1,
