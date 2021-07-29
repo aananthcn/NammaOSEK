@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams, TNMI, EVTI, MSGI, ATSI, RESI
+from ob_globals import TaskParams, TNMI, EVTI, MSGI, ATSI, RESI, ACTI, SCHI, PRII
 
 import colorama
 from colorama import Fore, Back, Style
@@ -17,7 +17,7 @@ typedef struct {\n\
     TaskFuncType handler;\n\
     u32 priority;\n\
     u8 sch_type;\n\
-    u32 activation;\n\
+    u32 activations;\n\
     bool autostart;\n\
     const AppModeType** appmodes;\n\
     u32 n_appmodes;\n\
@@ -91,6 +91,17 @@ def generate_code(path, Tasks):
     cf.write("const OsTaskType OsTaskList["+str(len(Tasks))+"] = {\n")
     for i, task in enumerate(Tasks):
         cf.write("\t{\n")
+
+        # Declar and Init tasks
+        hf.write("\nDeclareTask("+task[TaskParams[TNMI]]+");")
+        cf.write("\t\t.handler = OSEK_Task_"+task[TaskParams[TNMI]]+",\n")
+
+        # Init Schedule Type, priority
+        cf.write("\t\t.sch_type = "+task[TaskParams[SCHI]]+"_PREEMPTIVE,\n")
+        cf.write("\t\t.priority = "+task[TaskParams[PRII]]+",\n")
+
+        # Init Activations
+        cf.write("\t\t.activations = "+task[TaskParams[ACTI]]+",\n")
 
         # Init Autostart
         cf.write("\t\t.autostart = "+task[TaskParams[ATSI]].lower()+",\n")

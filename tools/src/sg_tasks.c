@@ -10,6 +10,10 @@
 /*   T A S K   D E F I N I T I O N S   */
 const OsTaskType OsTaskList[3] = {
 	{
+		.handler = OSEK_Task_Task_A,
+		.sch_type = NON_PREEMPTIVE,
+		.priority = 1,
+		.activations = 1,
 		.autostart = true,
 		.appmodes = (const AppModeType **) &Task_A_AppModes,
 		.n_appmodes = TASK_A_APPMODE_MAX,
@@ -21,6 +25,10 @@ const OsTaskType OsTaskList[3] = {
 		.n_reslist = TASK_A_RESOURCE_MAX
 	},
 	{
+		.handler = OSEK_Task_Task_B,
+		.sch_type = NON_PREEMPTIVE,
+		.priority = 2,
+		.activations = 1,
 		.autostart = false,
 		.appmodes = NULL,
 		.n_appmodes = TASK_B_APPMODE_MAX,
@@ -32,6 +40,10 @@ const OsTaskType OsTaskList[3] = {
 		.n_reslist = TASK_B_RESOURCE_MAX
 	},
 	{
+		.handler = OSEK_Task_Task_C,
+		.sch_type = NON_PREEMPTIVE,
+		.priority = 3,
+		.activations = 1,
 		.autostart = true,
 		.appmodes = (const AppModeType **) &Task_C_AppModes,
 		.n_appmodes = TASK_C_APPMODE_MAX,
