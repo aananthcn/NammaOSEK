@@ -5,14 +5,6 @@
 #include <osek_com.h>
 
 
-enum eAppModeType {
-	OSDEFAULTAPPMODE,
-	MANUFACT_MODE,
-	HW_TEST_MODE,
-	OS_MODES_MAX
-};
-
-
 enum eTaskType {
 	TASK_TASK_A_ID,
 	TASK_TASK_B_ID,
