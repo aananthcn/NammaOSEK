@@ -2,7 +2,12 @@
 	"files.associations": {
 		"system_error": "cpp",
 		"time.h": "c",
-		"unistd.h": "c"
+		"unistd.h": "c",
+		"typeinfo": "cpp",
+		"array": "c",
+		"string_view": "c",
+		"initializer_list": "c",
+		"utility": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled",
 	"python.pythonPath": "/usr/bin/python"
