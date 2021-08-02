@@ -3,6 +3,7 @@
 #include <osek.h>
 
 #include <os_api.h>
+#include <os_fifo.h>
 
 #include <sg_appmodes.h>
 #include <sg_tasks.h>
@@ -24,7 +25,19 @@ AppModeType GetActiveApplicationMode(void) {
 	return OsAppMode;
 }
 
-void SetupScheduler() {
+void SetupScheduler(AppModeType mode) {
+	int t, m;
+
+	// check all tasks marked as autostart
+	for (t=0; t < TASK_ID_MAX; t++) {
+		for (m=0; m < OsTaskList[t].n_appmodes; m++) {
+			/* check if task 't' is configured to run in this mode */
+			if (mode == *(((AppModeType*) OsTaskList[t].appmodes)+m)) {
+				OsFifoWrite(OS_QUEUE_READY, t);
+			}
+		}
+	}
+	// add them to right fifo
 	printf("%s:%s() under construction\n", __FILE__, __func__);
 }
 
@@ -37,7 +50,7 @@ void StartOS(AppModeType mode) {
 		return;
 	}
 	
-	SetupScheduler();
+	SetupScheduler(mode);
 
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		// code your OSEK scheduling logic here
