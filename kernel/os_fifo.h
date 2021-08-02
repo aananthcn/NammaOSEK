@@ -9,6 +9,7 @@ typedef struct {
 	u32 head;
 	u32 tail;
 	const u32 size;
+	bool full;
 } OsFifoType;
 
 
@@ -29,10 +30,12 @@ typedef enum {
 			.task = (OsTaskType**) &name##_buffer, \
 			.head = 0, \
 			.tail = 0, \
-			.size = (u32) len \
+			.size = (u32) len, \
+			.full = false \
 		};
 
 #endif
 
 
 int OsFifoWrite(OsQueueType QueueID, TaskType TaskID);
+OsTaskType* OsFifoRead(OsQueueType QueueID);
