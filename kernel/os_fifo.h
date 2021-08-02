@@ -5,7 +5,7 @@
 #include <sg_tasks.h>
 
 typedef struct {
-	OsTaskType* entry;
+	OsTaskType** task;
 	u32 head;
 	u32 tail;
 	const u32 size;
@@ -26,10 +26,13 @@ typedef enum {
 #define DefineFifoQueue(name, len) \
 		OsTaskType* OS_TASK_BUF(name, len); \
 		OsFifoType OS_FIFO(name) = { \
-			.entry = (OsTaskType*) &name##_buffer, \
+			.task = (OsTaskType**) &name##_buffer, \
 			.head = 0, \
 			.tail = 0, \
 			.size = (u32) len \
 		};
 
 #endif
+
+
+int OsFifoWrite(OsQueueType QueueID, TaskType TaskID);
