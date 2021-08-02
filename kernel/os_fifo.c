@@ -1,9 +1,8 @@
 #include <stdio.h>
+#include <sg_tasks.h>
 
 #include "os_fifo.h"
 
-#define OS_FIFO_TESTING	1
-#define OS_FIFO_SIZE (7)
 
 
 DefineFifoQueue(OS_QUEUE_WAITING, OS_FIFO_SIZE);
@@ -19,40 +18,6 @@ OsFifoType* TaskQueues[] = {
 	&OS_FIFO(OS_QUEUE_RUNNING)
 };
 
-#ifdef OS_FIFO_TESTING
-int main(void)
-{
-	int i;
-	for (i = 0; i < OS_QUEUE_MAX; i++) {
-		printf("size[%d] = %d\n", i, TaskQueues[i]->size);
-	}
-	
-	OsFifoWrite(OS_QUEUE_WAITING, 2);
-	OsFifoWrite(OS_QUEUE_WAITING, 2);
-	OsFifoWrite(OS_QUEUE_WAITING, 2);
-	OsFifoWrite(OS_QUEUE_WAITING, 2);
-	OsFifoRead(OS_QUEUE_WAITING);
-	OsFifoRead(OS_QUEUE_WAITING);
-	OsFifoRead(OS_QUEUE_WAITING);
-	OsFifoRead(OS_QUEUE_WAITING);
-	/* Expecting 2 x 2 FIFO full errors */
-	for (i = 0; i < OS_FIFO_SIZE+2; i++) {
-		OsFifoWrite(OS_QUEUE_WAITING, 2);
-		OsFifoWrite(OS_QUEUE_RUNNING, 1);
-	}
-
-	/* Expecting 2 FIFO empty errors */
-	for (i = 0; i < OS_FIFO_SIZE+2; i++) {
-		OsFifoRead(OS_QUEUE_WAITING);
-	}
-
-	/* Expecting no errors here */
-	OsFifoWrite(OS_QUEUE_WAITING, 2);
-	OsFifoRead(OS_QUEUE_WAITING);
-	OsFifoWrite(OS_QUEUE_WAITING, 2);
-	OsFifoRead(OS_QUEUE_WAITING);
-}
-#endif
 
 
 int OsFifoWrite(OsQueueType QueueID, TaskType TaskID) {
@@ -69,11 +34,9 @@ int OsFifoWrite(OsQueueType QueueID, TaskType TaskID) {
 	}
 
 	/* Push to FIFO head as long as the head does't eat the tail */
-	if (false == TaskQueues[QueueID]->full) {
+	if (!TaskQueues[QueueID]->full) {
 		head = TaskQueues[QueueID]->head;
-#if (OS_FIFO_TESTING != 1)
-		TaskQueues[QueueID]->task[head] = (OsTaskype*)&OsTaskList[TaskID];
-#endif
+		TaskQueues[QueueID]->task[head] = (OsTaskType*)&OsTaskList[TaskID];
 		TaskQueues[QueueID]->head = (TaskQueues[QueueID]->head + 1) %
 				(TaskQueues[QueueID]->size);
 		if (TaskQueues[QueueID]->head == TaskQueues[QueueID]->tail) {
@@ -98,7 +61,7 @@ OsTaskType* OsFifoRead(OsQueueType QueueID) {
 
 	/* Read from FIFO tail, always, but don't go beyond head */
 	if ((TaskQueues[QueueID]->tail != TaskQueues[QueueID]->head) ||
-		(TaskQueues[QueueID]->full == true)) {
+		(TaskQueues[QueueID]->full)) {
 		task = TaskQueues[QueueID]->task[TaskQueues[QueueID]->tail];
 		TaskQueues[QueueID]->full = false;
 		TaskQueues[QueueID]->tail = (TaskQueues[QueueID]->tail + 1) %

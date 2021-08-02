@@ -22,6 +22,8 @@ typedef enum {
 }OsQueueType;
 
 
+#define OS_FIFO_SIZE (128)
+
 #define OS_FIFO(x)              (x##_fifo)
 #define OS_TASK_BUF(x, y)       (x##_buffer[y])
 #define DefineFifoQueue(name, len) \
