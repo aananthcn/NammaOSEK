@@ -5,6 +5,7 @@
 
 #include <osek.h>
 #include <sg_appmodes.h>
+#include <os_api.h>
 
 #include "board.h"
 
@@ -20,7 +21,7 @@ int main(void)
     
     StartOS(OSDEFAULTAPPMODE);
     /* The execution should never reach here */
-    printf("Info: StartOS() function returned!! OS Exits!\n");
+    pr_log("Info: StartOS() function returned!! OS Exits!\n");
 
     return 0;
 }
