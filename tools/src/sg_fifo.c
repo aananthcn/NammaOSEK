@@ -17,6 +17,9 @@ OsFifoType WaitingFifo_1 = {
 	.size = 3,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "WaitingFifo_1",
+#endif
 	.full = false
 };
 
@@ -25,6 +28,9 @@ OsFifoType SuspendedFifo_1 = {
 	.size = 3,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "SuspendedFifo_1",
+#endif
 	.full = false
 };
 
@@ -33,6 +39,9 @@ OsFifoType ReadyFifo_1 = {
 	.size = 3,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "ReadyFifo_1",
+#endif
 	.full = false
 };
 
@@ -42,6 +51,9 @@ OsFifoType WaitingFifo_4 = {
 	.size = 1,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "WaitingFifo_4",
+#endif
 	.full = false
 };
 
@@ -50,6 +62,9 @@ OsFifoType SuspendedFifo_4 = {
 	.size = 1,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "SuspendedFifo_4",
+#endif
 	.full = false
 };
 
@@ -58,6 +73,9 @@ OsFifoType ReadyFifo_4 = {
 	.size = 1,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "ReadyFifo_4",
+#endif
 	.full = false
 };
 
@@ -67,6 +85,9 @@ OsFifoType RunningFifo = {
 	.size = 1,
 	.head = 0,
 	.tail = 0,
+#ifdef DEBUG
+	.name = "RunningFifo",
+#endif
 	.full = false
 };
 
