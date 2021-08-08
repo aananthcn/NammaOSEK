@@ -19,5 +19,7 @@ typedef struct {
 int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID);
 OsTaskType* OsFifoRead(OsFifoType* pFifoQ);
 
+int AddTaskToFifoQueue(const OsTaskType task, const OsFifoType* fq[]);
+
 
 #endif

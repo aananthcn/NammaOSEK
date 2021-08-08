@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sg_tasks.h>
+#include <sg_fifo.h>
 
 #include "os_fifo.h"
 
@@ -62,4 +63,32 @@ OsTaskType* OsFifoRead(OsFifoType* pFifoQ) {
 	}
 
 	return task;
+}
+
+
+int AddTaskToFifoQueue(const OsTaskType task, const OsFifoType* fq[]) {
+	OsFifoType* pFifo;
+
+	/* validate inputs */
+	if (&task == NULL) {
+		printf("Error: %s(), task argument is NULL!", __func__);
+		return -1;
+	}
+	if (fq == NULL) {
+		printf("Error: %s(), FIFO Queue argument is NULL!", __func__);
+		return -1;
+	}
+
+	/* pick the right FIFO buffer based on priority */
+	if (task.priority < SG_FIFO_QUEUE_MAX_LEN) {
+		pFifo = (OsFifoType*) fq[task.priority];
+		OsFifoWrite(pFifo, task.id);
+	}
+	else {
+		printf("Error: task ID:%d has invalid priority: %d\n",
+				task.id, task.priority);
+		return -1;
+	}
+
+	return 0;
 }

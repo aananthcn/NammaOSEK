@@ -4,6 +4,7 @@ TARGET = osek-os
 CMN_OBJS := \
 	${CWD}/kernel/os_entry.o \
 	${CWD}/kernel/os_fifo.o \
+	${CWD}/kernel/os_task.o \
 	${CWD}/kernel/os_counter.o
 
 
