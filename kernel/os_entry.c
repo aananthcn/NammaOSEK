@@ -9,13 +9,14 @@
 #include <sg_appmodes.h>
 #include <sg_tasks.h>
 #include <sg_fifo.h>
+#include <os_api.h>
 
 
 int OsAppMode;
 
 int SetActiveApplicationMode(AppModeType mode) {
 	if (mode >= OS_MODES_MAX) {
-		printf("Error: Invalid mode! New mode %d > MAX (%d)\n", mode, OS_MODES_MAX);
+		pr_log("Error: Invalid mode! New mode %d > MAX (%d)\n", mode, OS_MODES_MAX);
 		return -1;
 	}
 
@@ -32,8 +33,8 @@ AppModeType GetActiveApplicationMode(void) {
 void StartOS(AppModeType mode) {
 	SetActiveApplicationMode(mode);
 	if (mode != OSDEFAULTAPPMODE) {
-		printf("%s::%s(): Error: Invalid OS START mode!\n", __FILE__, __func__);
-		printf("Info: Expected mode == %d mode, actual == %d!\n", 
+		pr_log("%s::%s(): Error: Invalid OS START mode!\n", __FILE__, __func__);
+		pr_log("Info: Expected mode == %d mode, actual == %d!\n", 
 			OSDEFAULTAPPMODE, mode);
 		return;
 	}
@@ -51,5 +52,5 @@ void StartOS(AppModeType mode) {
  */
 void SystemTickISR(void) {
 	if (OsHandleTicks())
-		printf("Error: OsHandleTicks return errors!\n");
+		pr_log("Error: OsHandleTicks return errors!\n");
 }

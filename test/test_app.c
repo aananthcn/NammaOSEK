@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <osek.h>
-
+#include <os_api.h>
 
 TASK(Task_A) {
-	printf("%s\n", __func__);
+	pr_log("%s\n", __func__);
 }
 
 TASK(Task_B) {
-	printf("%s\n", __func__);
+	pr_log("%s\n", __func__);
 }
 
 TASK(Task_C) {
-	printf("%s\n", __func__);
+	pr_log("%s\n", __func__);
 }

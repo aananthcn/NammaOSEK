@@ -3,6 +3,7 @@
 #include <os_fifo.h>
 #include <sg_tasks.h>
 #include <sg_fifo.h>
+#include <os_api.h>
 
 
 OsTaskCtrlType OsTaskCtrlBlk[TASK_ID_MAX];
@@ -18,7 +19,7 @@ void SetupScheduler(AppModeType mode) {
 		for (m=0; m < OsTaskList[t].n_appmodes; m++) {
 			/* do sanity check - for any hand modification of sg code */
 			if (t != OsTaskList[t].id) {
-				printf("Error: %s(), task.id (%d) != id (%d)!",
+				pr_log("Error: %s(), task.id (%d) != id (%d)!",
 					__func__, OsTaskList[t].id, t);
 			}
 

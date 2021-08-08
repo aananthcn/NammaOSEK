@@ -2,6 +2,7 @@
 #include <board.h>
 
 #include <sg_counter.h>
+#include <os_api.h>
 
 static u32 OsTickCount;
 static u32 OsTickCount_us;
@@ -22,7 +23,7 @@ u32 GetOsTickCnt(void) {
 int OsHandleTicks(void) {
 	OsTickCount++;
 	if (brd_get_usec_syscount(&OsTickCount_us))
-		printf("Error: brd_get_usec_syscount returned non-zero\n");
+		pr_log("Error: brd_get_usec_syscount returned non-zero\n");
 
 	// TODO: Set some event for OS to process the OS Ticks
 
@@ -46,7 +47,7 @@ int OsHandleCounters(void) {
 
 	/* Get input from OS Counter */
 	if (brd_get_usec_syscount(&nsec_cnt)) {
-		printf("Error: brd_get_usec_syscount returns error\n");
+		pr_log("Error: brd_get_usec_syscount returns error\n");
 		return -1;
 	}
 	os_ticks = GetOsTickCnt();
