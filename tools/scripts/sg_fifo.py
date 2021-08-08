@@ -6,13 +6,13 @@ from colorama import Fore, Back, Style
 
 
 def populate_queue(f, qstr, maxPrio, fifoInfo):
-    f.write("const OsFifoType "+qstr+"Queue[] = {\n")
+    f.write("const OsFifoType* "+qstr+"Queue[] = {\n")
     if maxPrio == 0:
-        f.write("\t"+qstr+"Fifo\n")
+        f.write("\t&"+qstr+"Fifo\n")
     else:
         for prio in range(maxPrio+1):
             if str(prio) in fifoInfo:
-                f.write("\t"+qstr+"Fifo_"+str(prio))
+                f.write("\t&"+qstr+"Fifo_"+str(prio))
             else:
                 f.write("\tNULL")
             if prio != maxPrio:
@@ -44,15 +44,16 @@ def generate_code(path, Tasks):
     hf.write("\n\n#define SG_FIFO_QUEUE_MAX_LEN   ("+str(maxPrio+1)+")\n\n")
 
     # print queue declarations
-    hf.write("extern const OsFifoType WaitingQueue[];\n")
-    hf.write("extern const OsFifoType SuspendedQueue[];\n")
-    hf.write("extern const OsFifoType ReadyQueue[];\n")
-    hf.write("extern const OsFifoType RunningQueue[];\n")
+    hf.write("extern const OsFifoType* WaitingQueue[];\n")
+    hf.write("extern const OsFifoType* SuspendedQueue[];\n")
+    hf.write("extern const OsFifoType* ReadyQueue[];\n")
+    hf.write("extern const OsFifoType* RunningQueue[];\n")
 
 
     # create source file
     filename = path + "/" + "sg_fifo.c"
     cf = open(filename, "w")
+    cf.write("#include <stddef.h>\n")
     cf.write("#include \"sg_fifo.h\"\n")
     cf.write("\n/* Allocate Buffers in RAM */\n")
 
@@ -71,7 +72,6 @@ def generate_code(path, Tasks):
             cf.write("OsTaskType* SuspendedTasks_"+str(prio)+"["+str(qsize)+"];\n")
             cf.write("OsTaskType* ReadyTasks_"+str(prio)+"["+str(qsize)+"];\n")
     cf.write("OsTaskType* RunningTasks[1];\n")
-    #hf.write("extern const OsTaskType** RunningQueue;\n")
 
 
     # 2nd level - define FIFOs
@@ -81,10 +81,6 @@ def generate_code(path, Tasks):
         if str(prio) in fifoInfo:
             qsize = fifoInfo[str(prio)]
         if qsize == 0:
-            #cf.write("OsFifoType WaitingFifo_"+str(prio)+" = NULL;\n")
-            #cf.write("OsFifoType SuspendedFifo_"+str(prio)+" = NULL;\n")
-            #cf.write("OsFifoType ReadyFifo_"+str(prio)+" = NULL;\n")
-            #cf.write("\n")
             continue
         cf.write("\nOsFifoType WaitingFifo_"+str(prio)+" = {\n")
         cf.write("\t.task = WaitingTasks_"+str(prio)+",\n")
@@ -108,6 +104,9 @@ def generate_code(path, Tasks):
         cf.write("\t.full = false\n")
         cf.write("};\n")
         cf.write("\n")
+
+    # RunningFifo is a special case, as there can be max 1 task running at any
+    # given point of time. Hence this will be intialized with .size = 1
     cf.write("\nOsFifoType RunningFifo = {\n")
     cf.write("\t.task = RunningTasks,\n")
     cf.write("\t.size = 1,\n")
