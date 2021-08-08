@@ -13,7 +13,7 @@ CPU cortex_m4 {
 	TASK Task_A {
 		PRIORITY = 1;
 		SCHEDULE = NON;
-		ACTIVATION = 1;
+		ACTIVATION = 2;
 		AUTOSTART = TRUE {
 			APPMODE = OSDEFAULTAPPMODE;
 			APPMODE = MANUFACT_MODE;
@@ -22,7 +22,7 @@ CPU cortex_m4 {
 		MESSAGE = inter_task_message;
 	};
 	TASK Task_B {
-		PRIORITY = 2;
+		PRIORITY = 1;
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = FALSE;
@@ -31,7 +31,7 @@ CPU cortex_m4 {
 		MESSAGE = inter_task_message;
 	};
 	TASK Task_C {
-		PRIORITY = 3;
+		PRIORITY = 4;
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = TRUE {
