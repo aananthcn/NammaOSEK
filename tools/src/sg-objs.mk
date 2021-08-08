@@ -20,5 +20,6 @@ SG_OBJS	:= \
 	${CWD}/tools/src/sg_events.o \
 	${CWD}/tools/src/sg_resources.o \
 	${CWD}/tools/src/sg_messages.o \
+	${CWD}/tools/src/sg_fifo.o \
 	${CWD}/tools/src/sg_tasks.o
 

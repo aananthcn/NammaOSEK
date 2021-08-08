@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include "sg_fifo.h"
 
 /* Allocate Buffers in RAM */
@@ -71,31 +72,31 @@ OsFifoType RunningFifo = {
 
 
 /* Prioritized OSEK FIFO queues in Flash */
-const OsFifoType WaitingQueue[] = {
+const OsFifoType* WaitingQueue[] = {
 	NULL,
-	WaitingFifo_1,
+	&WaitingFifo_1,
 	NULL,
 	NULL,
-	WaitingFifo_4
+	&WaitingFifo_4
 };
 
-const OsFifoType SuspendedQueue[] = {
+const OsFifoType* SuspendedQueue[] = {
 	NULL,
-	SuspendedFifo_1,
+	&SuspendedFifo_1,
 	NULL,
 	NULL,
-	SuspendedFifo_4
+	&SuspendedFifo_4
 };
 
-const OsFifoType ReadyQueue[] = {
+const OsFifoType* ReadyQueue[] = {
 	NULL,
-	ReadyFifo_1,
+	&ReadyFifo_1,
 	NULL,
 	NULL,
-	ReadyFifo_4
+	&ReadyFifo_4
 };
 
-const OsFifoType RunningQueue[] = {
-	RunningFifo
+const OsFifoType* RunningQueue[] = {
+	&RunningFifo
 };
 
