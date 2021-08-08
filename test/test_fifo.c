@@ -6,9 +6,53 @@
 #include <osek.h>
 
 
+typedef enum {
+	OS_QUEUE_WAITING,
+	OS_QUEUE_SUSPENDED,
+	OS_QUEUE_READY,
+	OS_QUEUE_RUNNING,
+        OS_QUEUE_MAX
+}OsQueueType;
+
+
+#define OS_FIFO_SIZE (128)
+
+#define OS_FIFO(x)              (x##_fifo)
+#define OS_TASK_BUF(x, y)       (x##_buffer[y])
+#define DefineFifoQueue(name, len) \
+		OsTaskType* OS_TASK_BUF(name, len); \
+		OsFifoType OS_FIFO(name) = { \
+			.task = (OsTaskType**) &name##_buffer, \
+			.head = 0, \
+			.tail = 0, \
+			.size = (u32) len, \
+			.full = false \
+		};
+
+#endif
+
+
+
 extern OsFifoType* TaskQueues[];
 
 const OsTaskType OsTaskList[10];
+
+
+DefineFifoQueue(OS_QUEUE_WAITING, OS_FIFO_SIZE);
+DefineFifoQueue(OS_QUEUE_SUSPENDED, OS_FIFO_SIZE);
+DefineFifoQueue(OS_QUEUE_READY, OS_FIFO_SIZE);
+DefineFifoQueue(OS_QUEUE_RUNNING, OS_FIFO_SIZE);
+
+
+OsFifoType* TaskQueues[] = {
+	&OS_FIFO(OS_QUEUE_WAITING),
+	&OS_FIFO(OS_QUEUE_SUSPENDED),
+	&OS_FIFO(OS_QUEUE_READY),
+	&OS_FIFO(OS_QUEUE_RUNNING)
+};
+
+
+
 
 
 void print(const char *str, ...)

@@ -62,9 +62,6 @@ def generate_code(path, Tasks):
         qsize = 0
         if str(prio) in fifoInfo:
             qsize = fifoInfo[str(prio)]
-            print(str(prio) + ": Yes - ", fifoInfo[str(prio)])
-        else:
-            print(str(prio) + ": None")
         
         # print queue definitions
         if qsize > 0:
@@ -87,6 +84,9 @@ def generate_code(path, Tasks):
         cf.write("\t.size = "+str(qsize)+",\n")
         cf.write("\t.head = 0,\n")
         cf.write("\t.tail = 0,\n")
+        cf.write("#ifdef DEBUG\n")
+        cf.write("\t.name = \"WaitingFifo_"+str(prio)+"\",\n")
+        cf.write("#endif\n")
         cf.write("\t.full = false\n")
         cf.write("};\n")
         cf.write("\nOsFifoType SuspendedFifo_"+str(prio)+" = {\n")
@@ -94,6 +94,9 @@ def generate_code(path, Tasks):
         cf.write("\t.size = "+str(qsize)+",\n")
         cf.write("\t.head = 0,\n")
         cf.write("\t.tail = 0,\n")
+        cf.write("#ifdef DEBUG\n")
+        cf.write("\t.name = \"SuspendedFifo_"+str(prio)+"\",\n")
+        cf.write("#endif\n")
         cf.write("\t.full = false\n")
         cf.write("};\n")
         cf.write("\nOsFifoType ReadyFifo_"+str(prio)+" = {\n")
@@ -101,6 +104,9 @@ def generate_code(path, Tasks):
         cf.write("\t.size = "+str(qsize)+",\n")
         cf.write("\t.head = 0,\n")
         cf.write("\t.tail = 0,\n")
+        cf.write("#ifdef DEBUG\n")
+        cf.write("\t.name = \"ReadyFifo_"+str(prio)+"\",\n")
+        cf.write("#endif\n")
         cf.write("\t.full = false\n")
         cf.write("};\n")
         cf.write("\n")
@@ -112,6 +118,9 @@ def generate_code(path, Tasks):
     cf.write("\t.size = 1,\n")
     cf.write("\t.head = 0,\n")
     cf.write("\t.tail = 0,\n")
+    cf.write("#ifdef DEBUG\n")
+    cf.write("\t.name = \"RunningFifo\",\n")
+    cf.write("#endif\n")
     cf.write("\t.full = false\n")
     cf.write("};\n")
 

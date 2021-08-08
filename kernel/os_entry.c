@@ -7,6 +7,7 @@
 
 #include <sg_appmodes.h>
 #include <sg_tasks.h>
+#include <sg_fifo.h>
 
 
 int OsAppMode;
@@ -26,14 +27,23 @@ AppModeType GetActiveApplicationMode(void) {
 }
 
 void SetupScheduler(AppModeType mode) {
-	int t, m;
+	int t, m, prio;
+	OsFifoType* pFifo;
 
 	// check all tasks marked as autostart
 	for (t=0; t < TASK_ID_MAX; t++) {
 		for (m=0; m < OsTaskList[t].n_appmodes; m++) {
 			/* check if task 't' is configured to run in this mode */
 			if (mode == *(((AppModeType*) OsTaskList[t].appmodes)+m)) {
-				OsFifoWrite(OS_QUEUE_READY, t);
+				prio = OsTaskList[t].priority;
+				if (prio < SG_FIFO_QUEUE_MAX_LEN) {
+					pFifo = (OsFifoType*) ReadyQueue[prio];
+					OsFifoWrite(pFifo, t);
+				}
+				else {
+					printf("Error: task ID:%d has invalid priority: %d\n",
+						 OsTaskList[t].id, prio);
+				}
 			}
 		}
 	}
