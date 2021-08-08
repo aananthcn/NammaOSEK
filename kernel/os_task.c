@@ -31,11 +31,13 @@ void SetupScheduler(AppModeType mode) {
 }
 
 int ScheduleTasks(void) {
-	static bool print_once = false;
-	// do nothing
+	OsTaskType* task;
+	int i;
 
-	if (print_once == false) {
-		print_once = true;
-		printf("%s:%s() under construction\n", __FILE__, __func__);
+	for (i = SG_FIFO_QUEUE_MAX_LEN-1; i >= 0; i--) {
+		task = GetTaskFromFifoQueue(ReadyQueue, i);
+		if (task != NULL) {
+			task->handler();
+		}
 	}
 }

@@ -46,7 +46,7 @@ OsTaskType* OsFifoRead(OsFifoType* pFifoQ) {
 
 	/* Validate input */
 	if (pFifoQ == NULL) {
-		printf("Error: %s() invalid pFifoQ\n", __func__);
+		printf("Error: %s() pFifoQ is NULL!\n", __func__);
 		return NULL;
 	}
 
@@ -58,9 +58,11 @@ OsTaskType* OsFifoRead(OsFifoType* pFifoQ) {
 		pFifoQ->tail = (pFifoQ->tail + 1) %
 				(pFifoQ->size);
 	}
+#ifdef DEBUG
 	else {
-		printf("Error: %s() FIFO Empty!\n", __func__);
+		printf("Debug Info: %s() FIFO Empty!\n", __func__);
 	}
+#endif
 
 	return task;
 }
@@ -78,17 +80,35 @@ int AddTaskToFifoQueue(const OsTaskType task, const OsFifoType* fq[]) {
 		printf("Error: %s(), FIFO Queue argument is NULL!", __func__);
 		return -1;
 	}
-
-	/* pick the right FIFO buffer based on priority */
-	if (task.priority < SG_FIFO_QUEUE_MAX_LEN) {
-		pFifo = (OsFifoType*) fq[task.priority];
-		OsFifoWrite(pFifo, task.id);
-	}
-	else {
+	if (task.priority >= SG_FIFO_QUEUE_MAX_LEN) {
 		printf("Error: task ID:%d has invalid priority: %d\n",
 				task.id, task.priority);
 		return -1;
 	}
 
+	pFifo = (OsFifoType*) fq[task.priority];
+	OsFifoWrite(pFifo, task.id);
+
 	return 0;
+}
+
+
+OsTaskType* GetTaskFromFifoQueue(const OsFifoType* fq[], u32 prio) {
+	OsTaskType* task = NULL;
+
+	/* validate inputs */
+	if (fq == NULL) {
+		printf("Error: %s(), FIFO Queue argument is NULL!", __func__);
+		return NULL;
+	}
+	if (prio >= SG_FIFO_QUEUE_MAX_LEN) {
+		printf("Error: %s(), invalid priority: %d\n", __func__, prio);
+		return NULL;
+	}
+
+	if (fq[prio] != NULL) {
+		task = OsFifoRead((OsFifoType*)fq[prio]);
+	}
+
+	return task;
 }

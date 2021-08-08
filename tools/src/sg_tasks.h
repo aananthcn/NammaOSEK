@@ -56,6 +56,4 @@ DeclareTask(Task_A);
 DeclareTask(Task_B);
 DeclareTask(Task_C);
 
-#define DEBUG 1
-
 #endif
