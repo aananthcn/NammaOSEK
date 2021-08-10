@@ -50,7 +50,7 @@ int brd_setup_sytimer(void) {
 	if (sigprocmask(SIG_BLOCK, &set, NULL) == -1)
 		perror("sigprocmask");
 
-	pr_log("%s() success!\n", __func__);
+	pr_log("%s: timer successfully initialized!\n", __func__);
 	return 0;
 }
 

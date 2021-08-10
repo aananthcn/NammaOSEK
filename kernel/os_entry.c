@@ -31,6 +31,7 @@ AppModeType GetActiveApplicationMode(void) {
 
 
 void StartOS(AppModeType mode) {
+	pr_log("Entering %s.\n", __func__);
 	SetActiveApplicationMode(mode);
 	if (mode != OSDEFAULTAPPMODE) {
 		pr_log("%s::%s(): Error: Invalid OS START mode!\n", __FILE__, __func__);
@@ -41,6 +42,7 @@ void StartOS(AppModeType mode) {
 	
 	SetupScheduler(mode);
 
+	pr_log("Scheduler setup done! Scheduling Tasks Starts!\n");
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		ScheduleTasks();
 	}
