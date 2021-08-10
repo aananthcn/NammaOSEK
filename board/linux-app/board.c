@@ -16,6 +16,7 @@ void brd_isr_handler(int unused) {
 
 int main(void)
 {
+    pr_log_init();
     brd_setup_sytimer();
     signal(SIGINT, brd_isr_handler);
     

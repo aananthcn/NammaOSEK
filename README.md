@@ -1,3 +1,6 @@
+FreeOSEK
+========
+
 This is created to learn OSEK standard practically. And therefore setting a path towards learning AUTOSAR.
 
 Some of this work is derived from Zephyr OS, hence most of the files here would have the same content and license information (Apache 2.0)

@@ -7,6 +7,7 @@ u32 GetOsTickCnt(void);
 int OsHandleTicks(void);
 
 int pr_log(const char *format, ...);
+int pr_log_init(void);
 
 
 #endif
