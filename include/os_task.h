@@ -11,5 +11,7 @@ extern OsTaskCtrlType OsTaskCtrlBlk[];
 
 void SetupScheduler(AppModeType mode);
 int ScheduleTasks(void);
+void ClearActivationsCounts(void);
+
 
 #endif

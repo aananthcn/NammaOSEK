@@ -3,6 +3,7 @@
 
 #include <sg_counter.h>
 #include <os_api.h>
+#include <os_task.h>
 
 static u32 OsTickCount;
 static u32 OsTickCount_us;
@@ -25,6 +26,7 @@ int OsHandleTicks(void) {
 	if (brd_get_usec_syscount(&OsTickCount_us))
 		pr_log("Error: brd_get_usec_syscount returned non-zero\n");
 
+	ClearActivationsCounts();
 	// TODO: Set some event for OS to process the OS Ticks
 
 #ifdef TEMPORARY_WORKAROUND
