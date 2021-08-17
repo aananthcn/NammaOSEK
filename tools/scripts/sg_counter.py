@@ -6,10 +6,10 @@ from colorama import Fore, Back, Style
 
 
 C_Counter_Type = "\n\ntypedef struct {\n\
-\tAlarmBaseType alarm; /* contains OSEK specified attributes */ \n\
-\tTickType countval; /* continuos incrementing counter */ \n\
-\tTickType tickduration; /* count in nano seconds */\n\
-\tchar* name;\n\
+    AlarmBaseType alarm; /* contains OSEK specified attributes */ \n\
+    TickType countval; /* continuos incrementing counter */ \n\
+    TickType tickduration; /* count in nano seconds */\n\
+    char* name;\n\
 } OsCounterType;\n\n"
 
 def cntr_macro_name(txt):
