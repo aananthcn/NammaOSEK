@@ -21,6 +21,15 @@ CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE",
 # Column titles for Alarms
 AlarmParams = ["Alarm Name", "COUNTER", "Action-Type", "arg1", "arg2", "IsAutostart",
 	"ALARMTIME", "CYCLETIME", "APPMODE[]" ]
+ANME = 0
+ACNT = 1
+AAAT = 2
+AAT1 = 3
+AAT2 = 4
+AIAS = 5
+ATIM = 6
+ACYT = 7
+AAPM = 8
 
 # Column titles for ISRs
 ISR_Params = ["ISR Name", "CATEGORY", "RESOURCE", "MESSAGE"]
