@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import AlarmParams, ANME, AAAT
+from ob_globals import AlarmParams, ANME, AAAT, AAT1, AAT2, AIAS, ATIM, ACYT
 
 import colorama
 from colorama import Fore, Back, Style
@@ -60,6 +60,23 @@ def generate_code(path, Alarms):
         cf.write("\t\t.name = "+alarm[AlarmParams[ANME]]+",\n")
         cf.write("\t\t.cntr_id = "+str(i)+",\n")
         cf.write("\t\t.aat = "+AAT_PyList[alarm[AlarmParams[AAAT]]]+",\n")
+        if AlarmParams[AAT1] in alarm:
+            cf.write("\t\t.aat_arg1 = "+str(alarm[AlarmParams[AAT1]]).replace('"','')+",\n")
+        else:
+	        cf.write("\t\t.aat_arg1 = NULL,\n")
+        if AlarmParams[AAT2] in alarm:
+            cf.write("\t\t.aat_arg2 = "+alarm[AlarmParams[AAT2]]+",\n")
+        else:
+	        cf.write("\t\t.aat_arg2 = NULL,\n")
+        cf.write("\t\t.is_autostart = "+alarm[AlarmParams[AIAS]]+",\n")
+        if AlarmParams[ATIM] in alarm:
+            cf.write("\t\t.alarmtime = "+str(alarm[AlarmParams[ATIM]])+",\n")
+        else:
+	        cf.write("\t\t.alarmtime = 0,\n")
+        if AlarmParams[ACYT] in alarm:
+            cf.write("\t\t.cycletime = "+str(alarm[AlarmParams[ACYT]])+",\n")
+        else:
+	        cf.write("\t\t.cycletime = 0,\n")
 
         cf.write("\t}")
         if i+1 < len(Alarms):
