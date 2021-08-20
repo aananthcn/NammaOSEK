@@ -45,7 +45,7 @@ def generate_code(path, Alarms):
     hf.write("#include <osek.h>\n")
     hf.write(C_AlarmAction_Type)
     hf.write(C_Alarm_Type)
-    hf.write("extern AppAlarmType AppAlarms[];\n")
+    hf.write("extern const AppAlarmType AppAlarms[];\n")
 
     # create source file
     filename = path + "/" + "sg_alarms.c"
@@ -53,8 +53,11 @@ def generate_code(path, Alarms):
     cf.write("#include <stddef.h>\n")
     cf.write("#include <stdbool.h>\n")
     cf.write("#include \"sg_alarms.h\"\n")
+    cf.write("#include \"sg_appmodes.h\"\n")
+    cf.write("#include \"sg_tasks.h\"\n")
 
     # define app mode structure and macros first
+    cf.write("\n\n#define TRUE    true\n#define FALSE    false");
     cf.write("\n\n/*   A P P M O D E S   F O R   A L A R M S   */\n")
     for alarm in Alarms:
         if "APPMODE[]" in alarm:
@@ -77,7 +80,7 @@ def generate_code(path, Alarms):
     cf.write("const AppAlarmType AppAlarms[] = {\n")
     for i, alarm in enumerate(Alarms):
         cf.write("\t{\n")
-        cf.write("\t\t.name = "+alarm[AlarmParams[ANME]]+",\n")
+        cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
         cf.write("\t\t.cntr_id = "+str(i)+",\n")
         cf.write("\t\t.aat = "+AAT_PyList[alarm[AlarmParams[AAAT]]]+",\n")
         if AlarmParams[AAT1] in alarm:

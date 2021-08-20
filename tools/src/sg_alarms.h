@@ -24,7 +24,7 @@ typedef struct {
     u32 n_appmodes;                 /* how may appmodes for this entry? */
 } AppAlarmType;
 
-extern AppAlarmType AppAlarms[];
+extern const AppAlarmType AppAlarms[];
 extern const AppModeType Alarm_WakeTaskA_AppModes[];
 
 
