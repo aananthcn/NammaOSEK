@@ -53,6 +53,26 @@ def generate_code(path, Alarms):
     cf.write("#include <stddef.h>\n")
     cf.write("#include <stdbool.h>\n")
     cf.write("#include \"sg_alarms.h\"\n")
+
+    # define app mode structure and macros first
+    cf.write("\n\n/*   A P P M O D E S   F O R   A L A R M S   */\n")
+    for alarm in Alarms:
+        if "APPMODE[]" in alarm:
+            max_i = len(alarm["APPMODE[]"])
+            cf.write("#define ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX ("+str(max_i)+")\n")
+            cf.write("const AppModeType Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes[] = {\n")
+            i = 0
+            for m in alarm["APPMODE[]"]:
+                i += 1
+                cf.write("\t"+m)
+                if i != max_i:
+                    cf.write(",\n")
+                else:
+                    cf.write("\n")
+            cf.write("};\n\n")
+            hf.write("extern const AppModeType Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes[];\n")
+
+    # define the alarms configured in OSEK builder or oil file
     cf.write("\n\n/*   A L A R M S   D E F I N I T I O N S   */\n")
     cf.write("const AppAlarmType AppAlarms[] = {\n")
     for i, alarm in enumerate(Alarms):
@@ -77,6 +97,13 @@ def generate_code(path, Alarms):
             cf.write("\t\t.cycletime = "+str(alarm[AlarmParams[ACYT]])+",\n")
         else:
 	        cf.write("\t\t.cycletime = 0,\n")
+
+        if "APPMODE[]" in alarm:
+            cf.write("\t\t.n_appmodes = ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX,\n")
+            cf.write("\t\t.appmodes = Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
+        else:
+            cf.write("\t\t.n_appmodes = 0,\n")
+            cf.write("\t\t.appmodes = NULL\n")
 
         cf.write("\t}")
         if i+1 < len(Alarms):

@@ -25,6 +25,7 @@ typedef struct {
 } AppAlarmType;
 
 extern AppAlarmType AppAlarms[];
+extern const AppModeType Alarm_WakeTaskA_AppModes[];
 
 
 #endif

@@ -3,6 +3,15 @@
 #include "sg_alarms.h"
 
 
+/*   A P P M O D E S   F O R   A L A R M S   */
+#define ALARM_WAKETASKA_APPMODES_MAX (2)
+const AppModeType Alarm_WakeTaskA_AppModes[] = {
+	OSDEFAULTAPPMODE,
+	MANUFACT_MODE
+};
+
+
+
 /*   A L A R M S   D E F I N I T I O N S   */
 const AppAlarmType AppAlarms[] = {
 	{
@@ -14,6 +23,8 @@ const AppAlarmType AppAlarms[] = {
 		.is_autostart = TRUE,
 		.alarmtime = 20,
 		.cycletime = 4,
+		.n_appmodes = ALARM_WAKETASKA_APPMODES_MAX,
+		.appmodes = Alarm_WakeTaskA_AppModes
 	},
 	{
 		.name = WakeTaskB,
@@ -24,6 +35,8 @@ const AppAlarmType AppAlarms[] = {
 		.is_autostart = FALSE,
 		.alarmtime = 0,
 		.cycletime = 0,
+		.n_appmodes = 0,
+		.appmodes = NULL
 	},
 	{
 		.name = uSecAlarm,
@@ -34,5 +47,7 @@ const AppAlarmType AppAlarms[] = {
 		.is_autostart = FALSE,
 		.alarmtime = 0,
 		.cycletime = 0,
+		.n_appmodes = 0,
+		.appmodes = NULL
 	}
 };
