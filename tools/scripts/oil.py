@@ -112,7 +112,7 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
             indent += 1
             f.write(indent*"\t" +"ALARMTIME = " + str(alrm[AlarmParams[6]]) + ";\n")
             f.write(indent*"\t" +"CYCLETIME = " + str(alrm[AlarmParams[7]]) + ";\n")
-            alrm_app_modes = alrm[AlarmParams[8]].split(',')
+            alrm_app_modes = str(alrm[AlarmParams[8]]).split(',')
             for mode in alrm_app_modes:
                 f.write(indent*"\t" +"APPMODE = " + str(AppMode[int(mode)-1]) + ";\n")
             # End of Autostart
