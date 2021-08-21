@@ -10,7 +10,7 @@
 /*   T A S K   D E F I N I T I O N S   */
 const OsTaskType OsTaskList[] = {
 	{
-		.handler = OSEK_Task_Task_A,
+		.handler = OS_TASK(Task_A),
 		.id = 0,
 		.sch_type = NON_PREEMPTIVE,
 		.priority = 1,
@@ -26,7 +26,7 @@ const OsTaskType OsTaskList[] = {
 		.n_reslist = TASK_A_RESOURCE_MAX
 	},
 	{
-		.handler = OSEK_Task_Task_B,
+		.handler = OS_TASK(Task_B),
 		.id = 1,
 		.sch_type = NON_PREEMPTIVE,
 		.priority = 1,
@@ -42,7 +42,7 @@ const OsTaskType OsTaskList[] = {
 		.n_reslist = TASK_B_RESOURCE_MAX
 	},
 	{
-		.handler = OSEK_Task_Task_C,
+		.handler = OS_TASK(Task_C),
 		.id = 2,
 		.sch_type = NON_PREEMPTIVE,
 		.priority = 4,

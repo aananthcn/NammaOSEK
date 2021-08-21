@@ -82,7 +82,8 @@ def generate_code(path, Alarms):
         cf.write("\t{\n")
         cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
         cf.write("\t\t.cntr_id = "+str(i)+",\n")
-        cf.write("\t\t.aat = "+AAT_PyList[alarm[AlarmParams[AAAT]]]+",\n")
+        alarmActionType = AAT_PyList[alarm[AlarmParams[AAAT]]]
+        cf.write("\t\t.aat = "+alarmActionType+",\n")
         if AlarmParams[AAT1] in alarm:
             cf.write("\t\t.aat_arg1 = "+str(alarm[AlarmParams[AAT1]]).replace('"','')+",\n")
         else:

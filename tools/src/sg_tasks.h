@@ -52,11 +52,10 @@ typedef struct {
 extern const OsTaskType OsTaskList[];
 
 
-#define Task_A OSEK_Task_Task_A
+#define OS_TASK(task)    (OSEK_Task_##task)
+
 DeclareTask(Task_A);
-#define Task_B OSEK_Task_Task_B
 DeclareTask(Task_B);
-#define Task_C OSEK_Task_Task_C
 DeclareTask(Task_C);
 
 #endif
