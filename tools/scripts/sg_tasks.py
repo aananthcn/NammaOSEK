@@ -72,10 +72,10 @@ def generate_code(path, Tasks):
     hf.write("#define ACN_OSEK_SG_TASKS_H\n")
     hf.write("\n#include <osek.h>\n")
     hf.write("#include <osek_com.h>\n")
-    #print_appmode_enum(hf, AppModes)
     print_task_ids(hf, Tasks)
     print_task_len_macros(hf, Tasks)
     hf.write(OsTaskType_str)
+    hf.write("\n#define OS_TASK(task)    (OSEK_Task_##task)\n")
 
     # create source file
     filename = path + "/" + "sg_tasks.c"
@@ -93,9 +93,9 @@ def generate_code(path, Tasks):
         cf.write("\t{\n")
 
         # TaskID, Declarations of tasks and Init tasks
-        hf.write("\n#define "+task[TaskParams[TNMI]]+" OSEK_Task_"+task[TaskParams[TNMI]])
+        ##hf.write("\n#define "+task[TaskParams[TNMI]]+" OSEK_Task_"+task[TaskParams[TNMI]])
         hf.write("\nDeclareTask("+task[TaskParams[TNMI]]+");")
-        cf.write("\t\t.handler = OSEK_Task_"+task[TaskParams[TNMI]]+",\n")
+        cf.write("\t\t.handler = OS_TASK("+task[TaskParams[TNMI]]+"),\n")
         cf.write("\t\t.id = "+str(i)+",\n")
 
         # Init Schedule Type, priority
