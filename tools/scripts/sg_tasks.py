@@ -93,7 +93,6 @@ def generate_code(path, Tasks):
         cf.write("\t{\n")
 
         # TaskID, Declarations of tasks and Init tasks
-        ##hf.write("\n#define "+task[TaskParams[TNMI]]+" OSEK_Task_"+task[TaskParams[TNMI]])
         hf.write("\nDeclareTask("+task[TaskParams[TNMI]]+");")
         cf.write("\t\t.handler = OS_TASK("+task[TaskParams[TNMI]]+"),\n")
         cf.write("\t\t.id = "+str(i)+",\n")

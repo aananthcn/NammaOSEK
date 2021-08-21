@@ -3,6 +3,7 @@
 #include "sg_alarms.h"
 #include "sg_appmodes.h"
 #include "sg_tasks.h"
+#include "sg_events.h"
 
 
 #define TRUE    true
@@ -23,20 +24,20 @@ const AppAlarmType AppAlarms[] = {
 		.name = "WakeTaskA",
 		.cntr_id = 0,
 		.aat = AAT_ACTIVATETASK,
-		.aat_arg1 = Task_A,
+		.aat_arg1 = OS_TASK(Task_A),
 		.aat_arg2 = NULL,
 		.is_autostart = TRUE,
 		.alarmtime = 20,
 		.cycletime = 4,
 		.n_appmodes = ALARM_WAKETASKA_APPMODES_MAX,
-		.appmodes = Alarm_WakeTaskA_AppModes
+		.appmodes = (const AppModeType **) Alarm_WakeTaskA_AppModes
 	},
 	{
 		.name = "WakeTaskB",
 		.cntr_id = 1,
 		.aat = AAT_SETEVENT,
-		.aat_arg1 = Task_B,
-		.aat_arg2 = event1,
+		.aat_arg1 = (void*) OS_TASK(Task_B),
+		.aat_arg2 = (void*) OS_EVENT(Task_B, event1),
 		.is_autostart = FALSE,
 		.alarmtime = 0,
 		.cycletime = 0,

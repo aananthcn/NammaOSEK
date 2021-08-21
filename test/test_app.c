@@ -13,3 +13,7 @@ TASK(Task_B) {
 TASK(Task_C) {
 	pr_log("%s\n", __func__);
 }
+
+void Alarm_uSecAlarm_callback(void) {
+	pr_log("%s\n", __func__);
+}
