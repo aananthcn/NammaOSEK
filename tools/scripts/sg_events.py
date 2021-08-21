@@ -15,7 +15,7 @@ def generate_code(path, Tasks):
     hf.write("#define ACN_OSEK_SG_EVENTS_H\n")
     hf.write("\n#include <osek.h>\n\n")
     hf.write("\n/* OS_EVENT: This macro function allows users to get event mask using\n   the name of the event (passed as 2nd parameter) configured in the\n   OSEK-Builder.xlsx */")
-    hf.write("\n#define OS_EVENT(task, event)   (EVENT_MASK_##task##event)\n\n")
+    hf.write("\n#define OS_EVENT(task, event)   (EVENT_MASK_##task##_##event)\n\n")
     # print event masks macros
     for task in Tasks:
         if TaskParams[EVTI] in task:
@@ -35,7 +35,6 @@ def generate_code(path, Tasks):
             hf.write("\n/*  Event array for "+task[TaskParams[TNMI]]+"  */\n")
             hf.write("extern const EventMaskType "+task[TaskParams[TNMI]]
                 +"_EventMasks[];\n")
-                #+"_EventMasks["+str(len(task[TaskParams[EVTI]]))+"];\n")
             cf.write("\nconst EventMaskType "+task[TaskParams[TNMI]]+"_EventMasks[] = {\n")
             for i, event in enumerate(task[TaskParams[EVTI]]):
                 cf.write("\tEVENT_MASK_"+task[TaskParams[TNMI]]+"_"+event)

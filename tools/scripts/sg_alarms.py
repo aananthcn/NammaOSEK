@@ -34,6 +34,48 @@ C_Alarm_Type = "\n\ntypedef struct {\n\
 } AppAlarmType;\n\n"
 
 
+def alarm_action_type_args(aat, alarm, cf, hf):
+    aat_arg1 = str(alarm[AlarmParams[AAT1]]).replace('"','')
+
+    if aat == "ACTIVATETASK":
+        if AlarmParams[AAT1] in alarm:
+            cf.write("\t\t.aat_arg1 = OS_TASK("+aat_arg1+"),\n")
+        else:
+            print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
+            cf.write("\t\t.aat_arg1 = NULL,\n")
+
+        # for ACTIVATETASK type, arg2 is not required
+        cf.write("\t\t.aat_arg2 = NULL,\n")
+
+    elif aat == "SETEVENT":
+        if AlarmParams[AAT1] in alarm:
+            cf.write("\t\t.aat_arg1 = (void*) OS_TASK("+aat_arg1+"),\n")
+        else:
+            print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
+        if AlarmParams[AAT2] in alarm:
+            cf.write("\t\t.aat_arg2 = (void*) OS_EVENT("+aat_arg1+", "+alarm[AlarmParams[AAT2]]+"),\n")
+        else:
+            print(Fore.RED+"Error: Event to trigger for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
+            cf.write("\t\t.aat_arg2 = NULL,\n")
+
+    elif aat == "ALARMCALLBACK":
+        if AlarmParams[AAT1] in alarm:
+            cf.write("\t\t.aat_arg1 = "+aat_arg1+",\n")
+        else:
+            print(Fore.RED+"Error: Callback for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
+
+        # for ALARMCALLBACK type, arg2 is not required
+        cf.write("\t\t.aat_arg2 = NULL,\n")
+
+        # declare call back function here. Definition will be part of "app"
+        hf.write("extern void "+ aat_arg1 +"(void);\n")
+
+    else:
+        print(Fore.RED+"Error: Unknown action type for alarm: "+alarm[AlarmParams[ANME]]+"!\n")
+        print("\n\n",aat, "\n\n")
+
+
+
 def generate_code(path, Alarms):
     print_info("Generating code for Alarms")
 
@@ -45,7 +87,7 @@ def generate_code(path, Alarms):
     hf.write("#include <osek.h>\n")
     hf.write(C_AlarmAction_Type)
     hf.write(C_Alarm_Type)
-    hf.write("extern const AppAlarmType AppAlarms[];\n")
+    hf.write("\nextern const AppAlarmType AppAlarms[];\n")
 
     # create source file
     filename = path + "/" + "sg_alarms.c"
@@ -55,13 +97,18 @@ def generate_code(path, Alarms):
     cf.write("#include \"sg_alarms.h\"\n")
     cf.write("#include \"sg_appmodes.h\"\n")
     cf.write("#include \"sg_tasks.h\"\n")
+    cf.write("#include \"sg_events.h\"\n")
 
     # define app mode structure and macros first
     cf.write("\n\n#define TRUE    true\n#define FALSE    false");
     cf.write("\n\n/*   A P P M O D E S   F O R   A L A R M S   */\n")
+    new_line_for_app_alarm = False
     for alarm in Alarms:
         if "APPMODE[]" in alarm:
             max_i = len(alarm["APPMODE[]"])
+            # this block is added to beautify sg_alarms.h :-)
+            if not new_line_for_app_alarm:
+                new_line_for_app_alarm = True
             cf.write("#define ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX ("+str(max_i)+")\n")
             cf.write("const AppModeType Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes[] = {\n")
             i = 0
@@ -74,6 +121,8 @@ def generate_code(path, Alarms):
                     cf.write("\n")
             cf.write("};\n\n")
             hf.write("extern const AppModeType Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes[];\n")
+    if new_line_for_app_alarm:
+        hf.write("\n\n") # beautify sg_alarms.h
 
     # define the alarms configured in OSEK builder or oil file
     cf.write("\n\n/*   A L A R M S   D E F I N I T I O N S   */\n")
@@ -82,16 +131,11 @@ def generate_code(path, Alarms):
         cf.write("\t{\n")
         cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
         cf.write("\t\t.cntr_id = "+str(i)+",\n")
-        alarmActionType = AAT_PyList[alarm[AlarmParams[AAAT]]]
-        cf.write("\t\t.aat = "+alarmActionType+",\n")
-        if AlarmParams[AAT1] in alarm:
-            cf.write("\t\t.aat_arg1 = "+str(alarm[AlarmParams[AAT1]]).replace('"','')+",\n")
-        else:
-	        cf.write("\t\t.aat_arg1 = NULL,\n")
-        if AlarmParams[AAT2] in alarm:
-            cf.write("\t\t.aat_arg2 = "+alarm[AlarmParams[AAT2]]+",\n")
-        else:
-	        cf.write("\t\t.aat_arg2 = NULL,\n")
+        alarmActionType = alarm[AlarmParams[AAAT]]
+        cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
+
+        alarm_action_type_args(alarmActionType, alarm, cf, hf)
+
         cf.write("\t\t.is_autostart = "+alarm[AlarmParams[AIAS]]+",\n")
         if AlarmParams[ATIM] in alarm:
             cf.write("\t\t.alarmtime = "+str(alarm[AlarmParams[ATIM]])+",\n")
@@ -104,7 +148,7 @@ def generate_code(path, Alarms):
 
         if "APPMODE[]" in alarm:
             cf.write("\t\t.n_appmodes = ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX,\n")
-            cf.write("\t\t.appmodes = Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
+            cf.write("\t\t.appmodes = (const AppModeType **) Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
         else:
             cf.write("\t\t.n_appmodes = 0,\n")
             cf.write("\t\t.appmodes = NULL\n")

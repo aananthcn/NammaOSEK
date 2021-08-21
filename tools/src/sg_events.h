@@ -7,7 +7,7 @@
 /* OS_EVENT: This macro function allows users to get event mask using
    the name of the event (passed as 2nd parameter) configured in the
    OSEK-Builder.xlsx */
-#define OS_EVENT(task, event)   (EVENT_MASK_##task##event)
+#define OS_EVENT(task, event)   (EVENT_MASK_##task##_##event)
 
 
 /*  Event Masks for Task_B  */
