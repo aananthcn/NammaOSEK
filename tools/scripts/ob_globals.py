@@ -17,6 +17,7 @@ MSGI = 7
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE",
      "TICKDURATION"]
+CNME = 0
 
 # Column titles for Alarms
 AlarmParams = ["Alarm Name", "COUNTER", "Action-Type", "arg1", "arg2", "IsAutostart",

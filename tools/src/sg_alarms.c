@@ -17,9 +17,8 @@ const AppModeType Alarm_WakeTaskA_AppModes[] = {
 };
 
 
-
 /*   A L A R M S   D E F I N I T I O N S   */
-const AppAlarmType AppAlarms[] = {
+const AppAlarmType AppAlarms_mSecCounter[] = {
 	{
 		.name = "WakeTaskA",
 		.cntr_id = 0,
@@ -34,7 +33,7 @@ const AppAlarmType AppAlarms[] = {
 	},
 	{
 		.name = "WakeTaskB",
-		.cntr_id = 1,
+		.cntr_id = 0,
 		.aat = AAT_SETEVENT,
 		.aat_arg1 = (void*) OS_TASK(Task_B),
 		.aat_arg2 = (void*) OS_EVENT(Task_B, event1),
@@ -43,10 +42,13 @@ const AppAlarmType AppAlarms[] = {
 		.cycletime = 0,
 		.n_appmodes = 0,
 		.appmodes = NULL
-	},
+	}
+};
+
+const AppAlarmType AppAlarms_uSecCounter[] = {
 	{
 		.name = "uSecAlarm",
-		.cntr_id = 2,
+		.cntr_id = 1,
 		.aat = AAT_ALARMCALLBACK,
 		.aat_arg1 = Alarm_uSecAlarm_callback,
 		.aat_arg2 = NULL,
@@ -57,3 +59,10 @@ const AppAlarmType AppAlarms[] = {
 		.appmodes = NULL
 	}
 };
+
+
+const AppAlarmType* AppAlarms[] = {
+	AppAlarms_mSecCounter,
+	AppAlarms_uSecCounter,
+};
+

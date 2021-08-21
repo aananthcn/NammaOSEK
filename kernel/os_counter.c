@@ -21,14 +21,12 @@ u32 GetOsTickCnt(void) {
 	return OsTickCount;
 }
 
+
 int OsHandleTicks(void) {
 	OsTickCount++;
-	if (brd_get_usec_syscount(&OsTickCount_us))
-		pr_log("Error: brd_get_usec_syscount returned non-zero\n");
-
 	ClearActivationsCounts();
-	// TODO: Set some event for OS to process the OS Ticks
 
+	// TODO: Set some event for OS to process the OS Ticks
 #ifdef TEMPORARY_WORKAROUND
 	// The following line below is a temporary work-around. This is bad
 	// because we are processing counter within ISR. This should be avoided.
@@ -40,6 +38,7 @@ int OsHandleTicks(void) {
 #endif
 	return 0;
 }
+
 
 int OsHandleCounters(void) {
 	static TickType os_ticks_old, nsec_cnt_old;
@@ -75,6 +74,7 @@ int OsHandleCounters(void) {
 	nsec_cnt_old = nsec_cnt;
 	return 0;
 }
+
 
 #ifdef ENABLE_UPTIME_PRINTS
 int OsComputeUpTime(void) {
