@@ -1,5 +1,6 @@
 from common import print_info
-from ob_globals import AlarmParams, ANME, AAAT, AAT1, AAT2, AIAS, ATIM, ACYT
+from ob_globals import AlarmParams, ANME, AAAT, AAT1, AAT2, AIAS, ATIM, ACYT, ACNT
+from ob_globals import CntrParams, CNME
 
 import colorama
 from colorama import Fore, Back, Style
@@ -76,7 +77,7 @@ def alarm_action_type_args(aat, alarm, cf, hf):
 
 
 
-def generate_code(path, Alarms):
+def generate_code(path, Alarms, Counters):
     print_info("Generating code for Alarms")
 
     # create header file
@@ -87,7 +88,6 @@ def generate_code(path, Alarms):
     hf.write("#include <osek.h>\n")
     hf.write(C_AlarmAction_Type)
     hf.write(C_Alarm_Type)
-    hf.write("\nextern const AppAlarmType AppAlarms[];\n")
 
     # create source file
     filename = path + "/" + "sg_alarms.c"
@@ -121,45 +121,70 @@ def generate_code(path, Alarms):
                     cf.write("\n")
             cf.write("};\n\n")
             hf.write("extern const AppModeType Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes[];\n")
+
+    # compute how many times each counters are used in alarms
+    CounterSizeList = {}
+    for alarm in Alarms:
+        if alarm[AlarmParams[ACNT]] not in CounterSizeList:
+            CounterSizeList[alarm[AlarmParams[ACNT]]] = 1
+        else:
+            CounterSizeList[alarm[AlarmParams[ACNT]]] += 1
+    hf.write("\n#define MAX_APP_ALARMS  ("+str(len(CounterSizeList))+")\n")
+    hf.write("extern const AppAlarmType* AppAlarms[];\n")
     if new_line_for_app_alarm:
         hf.write("\n\n") # beautify sg_alarms.h
 
     # define the alarms configured in OSEK builder or oil file
-    cf.write("\n\n/*   A L A R M S   D E F I N I T I O N S   */\n")
-    cf.write("const AppAlarmType AppAlarms[] = {\n")
-    for i, alarm in enumerate(Alarms):
-        cf.write("\t{\n")
-        cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
-        cf.write("\t\t.cntr_id = "+str(i)+",\n")
-        alarmActionType = alarm[AlarmParams[AAAT]]
-        cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
+    cf.write("\n/*   A L A R M S   D E F I N I T I O N S   */\n")
+    for i, cntr in enumerate(Counters):
+        cf.write("const AppAlarmType AppAlarms_"+cntr[CntrParams[CNME]]+"[] = {\n")
+        print_count = 0
+        for alarm in Alarms:
+            if cntr[CntrParams[CNME]] != alarm[AlarmParams[ACNT]]:
+                continue
+            cf.write("\t{\n")
+            cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
+            cf.write("\t\t.cntr_id = "+str(i)+",\n")
+            alarmActionType = alarm[AlarmParams[AAAT]]
+            cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
 
-        alarm_action_type_args(alarmActionType, alarm, cf, hf)
+            alarm_action_type_args(alarmActionType, alarm, cf, hf)
 
-        cf.write("\t\t.is_autostart = "+alarm[AlarmParams[AIAS]]+",\n")
-        if AlarmParams[ATIM] in alarm:
-            cf.write("\t\t.alarmtime = "+str(alarm[AlarmParams[ATIM]])+",\n")
-        else:
-	        cf.write("\t\t.alarmtime = 0,\n")
-        if AlarmParams[ACYT] in alarm:
-            cf.write("\t\t.cycletime = "+str(alarm[AlarmParams[ACYT]])+",\n")
-        else:
-	        cf.write("\t\t.cycletime = 0,\n")
+            cf.write("\t\t.is_autostart = "+alarm[AlarmParams[AIAS]]+",\n")
+            if AlarmParams[ATIM] in alarm:
+                cf.write("\t\t.alarmtime = "+str(alarm[AlarmParams[ATIM]])+",\n")
+            else:
+                cf.write("\t\t.alarmtime = 0,\n")
+            if AlarmParams[ACYT] in alarm:
+                cf.write("\t\t.cycletime = "+str(alarm[AlarmParams[ACYT]])+",\n")
+            else:
+                cf.write("\t\t.cycletime = 0,\n")
 
-        if "APPMODE[]" in alarm:
-            cf.write("\t\t.n_appmodes = ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX,\n")
-            cf.write("\t\t.appmodes = (const AppModeType **) Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
-        else:
-            cf.write("\t\t.n_appmodes = 0,\n")
-            cf.write("\t\t.appmodes = NULL\n")
+            if "APPMODE[]" in alarm:
+                cf.write("\t\t.n_appmodes = ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX,\n")
+                cf.write("\t\t.appmodes = (const AppModeType **) Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
+            else:
+                cf.write("\t\t.n_appmodes = 0,\n")
+                cf.write("\t\t.appmodes = NULL\n")
 
-        cf.write("\t}")
-        if i+1 < len(Alarms):
-            cf.write(",\n")
-        else:
-            cf.write("\n")
-    cf.write("};\n")
-    print(Alarms)
-    print("Alarms generate_code, is under construction\n")
+            cf.write("\t}")
+
+            # if this is the last element in this list, then don't print a comma
+            print_count += 1
+            if print_count < CounterSizeList[alarm[AlarmParams[ACNT]]]:
+                cf.write(",\n")
+            else:
+                cf.write("\n")
+        # for alarms loop
+        cf.write("};\n\n")
+
+
+    # define - const AppAlarmType* AppAlarms[];
+    cf.write("\nconst AppAlarmType* AppAlarms[] = {\n")
+    for cntr in Counters:
+        cf.write("\tAppAlarms_"+cntr[CntrParams[CNME]]+",\n")
+    cf.write("};\n\n")
+
     hf.write("\n\n#endif\n")
     hf.close()
+    cf.close()
