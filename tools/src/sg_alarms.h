@@ -14,7 +14,7 @@ typedef enum {
 typedef struct {
     char* name;                     /* short name of alarm */ 
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ 
-    AlarmType* pcntr;               /* pointer to location in AppAlarmCounters */ 
+    TickType* pcntr;                /* pointer to location in AppAlarmCounters */ 
     AlarmActionType aat;            /* Refer enum AlarmActionType */ 
     void* aat_arg1;                 /* arg1: task_name | callback_fun */
     void* aat_arg2;                 /* arg2: event | NULL */
@@ -38,7 +38,7 @@ typedef struct {
 #define MAX_APP_ALARMS  (2)
 extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];
 #define MAX_APP_ALARM_COUNTERS    (3)
-extern AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
+extern TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
 
 
 extern void Alarm_uSecAlarm_callback(void);

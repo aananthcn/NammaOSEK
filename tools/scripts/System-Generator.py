@@ -196,7 +196,7 @@ def main(of):
     sg_messages.generate_code(path, Tasks)
     sg_resources.generate_code(path, Tasks)
     sg_tasks.generate_code(path, Tasks)
-    sg_alarms.generate_code(path, Alarms, Counters)
+    sg_alarms.generate_code(path, Alarms, Counters, Tasks)
     sg_fifo.generate_code(path, Tasks)
 
 
