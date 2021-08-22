@@ -9,7 +9,7 @@
 			"name": "gcc - Build and debug active file",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${fileDirname}/../osek-os.elf",
+			"program": "/mnt/e/projects/oss/FreeOSEK/osek-os.elf",
 			"args": [],
 			"stopAtEntry": false,
 			"cwd": "${fileDirname}",

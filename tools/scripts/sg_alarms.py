@@ -77,6 +77,13 @@ def alarm_action_type_args(aat, alarm, cf, hf):
 
 
 
+C_AlarmCtrlBlock_Type = "\n\ntypedef struct {\n\
+    /* some-type aldata; */\n\
+    const AppAlarmType* alarm;\n\
+    u32 len;\n\
+} AppAlarmCtrlBlockType;\n\n"
+
+
 def generate_code(path, Alarms, Counters):
     print_info("Generating code for Alarms")
 
@@ -129,8 +136,9 @@ def generate_code(path, Alarms, Counters):
             CounterSizeList[alarm[AlarmParams[ACNT]]] = 1
         else:
             CounterSizeList[alarm[AlarmParams[ACNT]]] += 1
+    hf.write(C_AlarmCtrlBlock_Type);
     hf.write("\n#define MAX_APP_ALARMS  ("+str(len(CounterSizeList))+")\n")
-    hf.write("extern const AppAlarmType* AppAlarms[];\n")
+    hf.write("extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];\n")
     if new_line_for_app_alarm:
         hf.write("\n\n") # beautify sg_alarms.h
 
@@ -179,10 +187,15 @@ def generate_code(path, Alarms, Counters):
         cf.write("};\n\n")
 
 
-    # define - const AppAlarmType* AppAlarms[];
-    cf.write("\nconst AppAlarmType* AppAlarms[] = {\n")
+    # define AppAlarms[];
+    cf.write("\nconst AppAlarmCtrlBlockType AppAlarms[] = {\n")
+    print(CounterSizeList)
+    print(Counters)
     for cntr in Counters:
-        cf.write("\tAppAlarms_"+cntr[CntrParams[CNME]]+",\n")
+        cf.write("\t{\n")
+        cf.write("\t\t.alarm = (const AppAlarmType *) &AppAlarms_"+cntr[CntrParams[CNME]]+",\n")
+        cf.write("\t\t.len = "+str(CounterSizeList[cntr[CntrParams[CNME]]])+"\n")
+        cf.write("\t},\n")
     cf.write("};\n\n")
 
     hf.write("\n\n#endif\n")

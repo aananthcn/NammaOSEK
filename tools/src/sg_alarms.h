@@ -26,8 +26,16 @@ typedef struct {
 
 extern const AppModeType Alarm_WakeTaskA_AppModes[];
 
+
+typedef struct {
+    /* some-type aldata; */
+    const AppAlarmType* alarm;
+    u32 len;
+} AppAlarmCtrlBlockType;
+
+
 #define MAX_APP_ALARMS  (2)
-extern const AppAlarmType* AppAlarms[];
+extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];
 
 
 extern void Alarm_uSecAlarm_callback(void);
