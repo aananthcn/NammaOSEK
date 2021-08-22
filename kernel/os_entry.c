@@ -40,11 +40,11 @@ void StartOS(AppModeType mode) {
 		return;
 	}
 	
-	SetupScheduler(mode);
+	OsSetupScheduler(mode);
+	OsInitializeAlarms(mode);
 
-	pr_log("Scheduler setup done! Scheduling Tasks Starts!\n");
 	while (OsAppMode == OSDEFAULTAPPMODE) {
-		ScheduleTasks();
+		OsScheduleTasks();
 	}
 }
 

@@ -9,9 +9,10 @@ typedef struct {
 
 extern OsTaskCtrlType OsTaskCtrlBlk[];
 
-void SetupScheduler(AppModeType mode);
-int ScheduleTasks(void);
-void ClearActivationsCounts(void);
+void OsSetupScheduler(AppModeType mode);
+int OsScheduleTasks(void);
+void OsClearActivationsCounts(void);
+int OsInitializeAlarms(AppModeType mode);
 
 
 #endif

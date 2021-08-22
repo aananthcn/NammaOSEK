@@ -6,7 +6,7 @@ CMN_OBJS := \
 	${CWD}/kernel/os_fifo.o \
 	${CWD}/kernel/os_task.o \
 	${CWD}/kernel/os_log.o \
-	${CWD}/kernel/os_counter.o
+	${CWD}/kernel/os_alarm.o
 
 
 

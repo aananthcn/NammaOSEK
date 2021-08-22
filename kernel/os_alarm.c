@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <board.h>
 
-#include <sg_counter.h>
-#include <sg_alarms.h>
 #include <os_api.h>
 #include <os_task.h>
+
+#include <sg_counter.h>
+#include <sg_alarms.h>
+#include <sg_appmodes.h>
 
 static u32 OsTickCount;
 static u32 OsTickCount_us;
@@ -25,7 +27,7 @@ u32 GetOsTickCnt(void) {
 
 int OsHandleTicks(void) {
 	OsTickCount++;
-	ClearActivationsCounts();
+	OsClearActivationsCounts();
 
 	// TODO: Set some event for OS to process the OS Ticks
 #ifdef TEMPORARY_WORKAROUND
@@ -39,6 +41,43 @@ int OsHandleTicks(void) {
 #endif
 	return 0;
 }
+
+
+int OsInitializeAlarms(AppModeType mode) {
+	int ctr, alm, m;
+	bool is_mode_ok = false;
+	const AppAlarmType* alarm;
+
+	if (mode >= OS_MODES_MAX) {
+		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Alarm init failed!\n", mode);
+		return -1;
+	}
+
+	for (ctr = 0; ctr < MAX_APP_ALARMS; ctr++) {
+		for (alm = 0; alm < AppAlarms[ctr].len; alm++) {
+			alarm = &AppAlarms[ctr].alarm[alm];
+			if (alarm->is_autostart != true) {
+				continue;
+			}
+			for (m = 0; m < alarm->n_appmodes; m++) {
+				if (alarm->appmodes[m] == mode) {
+					is_mode_ok = true;
+					break;
+				}
+			}
+			if (!is_mode_ok) {
+				continue;
+			}
+
+			/* reaching here means, we need to trigger alarms */
+			*alarm->pcntr = alarm->alarmtime;
+		}
+	}
+
+	pr_log("OSEK Alarms intialization done!\n");
+	return 0;
+}
+
 
 int OsHandleAlarms(int cntr_id) {
 	int i;
@@ -82,7 +121,7 @@ int OsHandleCounters(void) {
 				OsCounters[i].countval = 0;
 			}
 		}
-		OsHandleAlarms(i);
+		//OsHandleAlarms(i);
 	}
 
 	os_ticks_old = os_ticks;
