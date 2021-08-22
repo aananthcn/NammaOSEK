@@ -2,6 +2,7 @@
 #include <board.h>
 
 #include <sg_counter.h>
+#include <sg_alarms.h>
 #include <os_api.h>
 #include <os_task.h>
 
@@ -39,6 +40,19 @@ int OsHandleTicks(void) {
 	return 0;
 }
 
+int OsHandleAlarms(int cntr_id) {
+	int i;
+
+	if (cntr_id >= MAX_APP_ALARMS) {
+		pr_log("Error: Counter ID %d is invalid in %s()\n", cntr_id, __func__);
+		return -1;
+	}
+
+	for (i = 0; i < AppAlarms[cntr_id].len; i++) {
+		pr_log("Name = %s\n", AppAlarms[cntr_id].alarm[i].name);
+	}
+}
+
 
 int OsHandleCounters(void) {
 	static TickType os_ticks_old, nsec_cnt_old;
@@ -68,6 +82,7 @@ int OsHandleCounters(void) {
 				OsCounters[i].countval = 0;
 			}
 		}
+		OsHandleAlarms(i);
 	}
 
 	os_ticks_old = os_ticks;

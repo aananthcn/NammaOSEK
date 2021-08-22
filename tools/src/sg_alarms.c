@@ -61,8 +61,14 @@ const AppAlarmType AppAlarms_uSecCounter[] = {
 };
 
 
-const AppAlarmType* AppAlarms[] = {
-	AppAlarms_mSecCounter,
-	AppAlarms_uSecCounter,
+const AppAlarmCtrlBlockType AppAlarms[] = {
+	{
+		.alarm = (const AppAlarmType *) &AppAlarms_mSecCounter,
+		.len = 2
+	},
+	{
+		.alarm = (const AppAlarmType *) &AppAlarms_uSecCounter,
+		.len = 1
+	},
 };
 
