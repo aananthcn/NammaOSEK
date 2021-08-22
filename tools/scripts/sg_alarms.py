@@ -24,13 +24,14 @@ AAT_PyList = {
 C_Alarm_Type = "\n\ntypedef struct {\n\
     char* name;                     /* short name of alarm */ \n\
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ \n\
+    AlarmType* pcntr;               /* pointer to location in AppAlarmCounters */ \n\
     AlarmActionType aat;            /* Refer enum AlarmActionType */ \n\
     void* aat_arg1;                 /* arg1: task_name | callback_fun */\n\
     void* aat_arg2;                 /* arg2: event | NULL */\n\
     bool is_autostart;              /* does this alarm start at startup? */\n\
     u32 alarmtime;                  /* when does it expire? */\n\
     u32 cycletime;                  /* cyclic time - for repetition */\n\
-    const AppModeType** appmodes;   /* alarm active in which modes? */\n\
+    const AppModeType* appmodes;    /* alarm active in which modes? */\n\
     u32 n_appmodes;                 /* how may appmodes for this entry? */\n\
 } AppAlarmType;\n\n"
 
@@ -139,20 +140,24 @@ def generate_code(path, Alarms, Counters):
     hf.write(C_AlarmCtrlBlock_Type);
     hf.write("\n#define MAX_APP_ALARMS  ("+str(len(CounterSizeList))+")\n")
     hf.write("extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];\n")
+    hf.write("#define MAX_APP_ALARM_COUNTERS    ("+str(len(Alarms))+")\n")
+    hf.write("extern AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
     if new_line_for_app_alarm:
         hf.write("\n\n") # beautify sg_alarms.h
 
     # define the alarms configured in OSEK builder or oil file
     cf.write("\n/*   A L A R M S   D E F I N I T I O N S   */\n")
+    cf.write("AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
     for i, cntr in enumerate(Counters):
         cf.write("const AppAlarmType AppAlarms_"+cntr[CntrParams[CNME]]+"[] = {\n")
         print_count = 0
-        for alarm in Alarms:
+        for j, alarm in enumerate(Alarms):
             if cntr[CntrParams[CNME]] != alarm[AlarmParams[ACNT]]:
                 continue
             cf.write("\t{\n")
             cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
             cf.write("\t\t.cntr_id = "+str(i)+",\n")
+            cf.write("\t\t.pcntr = &AppAlarmCounters["+str(j)+"],\n")
             alarmActionType = alarm[AlarmParams[AAAT]]
             cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
 
@@ -170,7 +175,7 @@ def generate_code(path, Alarms, Counters):
 
             if "APPMODE[]" in alarm:
                 cf.write("\t\t.n_appmodes = ALARM_"+alarm[AlarmParams[ANME]].upper()+"_APPMODES_MAX,\n")
-                cf.write("\t\t.appmodes = (const AppModeType **) Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
+                cf.write("\t\t.appmodes = (const AppModeType *) &Alarm_"+alarm[AlarmParams[ANME]]+"_AppModes\n")
             else:
                 cf.write("\t\t.n_appmodes = 0,\n")
                 cf.write("\t\t.appmodes = NULL\n")

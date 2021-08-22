@@ -1,23 +1,30 @@
 #include <stdio.h>
 #include <string.h>
+
 #include <os_task.h>
 #include <os_fifo.h>
+
 #include <sg_tasks.h>
 #include <sg_fifo.h>
 #include <os_api.h>
-
+#include <sg_appmodes.h>
 
 OsTaskCtrlType OsTaskCtrlBlk[TASK_ID_MAX];
 
 
-void ClearActivationsCounts(void) {
+void OsClearActivationsCounts(void) {
 	memset(OsTaskCtrlBlk, 0, sizeof(OsTaskCtrlBlk));
 }
 
 
-void SetupScheduler(AppModeType mode) {
+void OsSetupScheduler(AppModeType mode) {
 	int t, m;
 	OsFifoType* pFifo;
+
+	if (mode >= OS_MODES_MAX) {
+		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!\n", mode);
+		return;
+	}
 
 	/* check all tasks marked as autostart */
 	for (t=0; t < TASK_ID_MAX; t++) {
@@ -44,9 +51,10 @@ void SetupScheduler(AppModeType mode) {
 			AddTaskToFifoQueue(OsTaskList[t], ReadyQueue);
 		}
 	}
+	pr_log("Scheduler setup done!\n");
 }
 
-int ScheduleTasks(void) {
+int OsScheduleTasks(void) {
 	OsTaskType* task;
 	int i;
 

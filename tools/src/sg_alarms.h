@@ -14,13 +14,14 @@ typedef enum {
 typedef struct {
     char* name;                     /* short name of alarm */ 
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ 
+    AlarmType* pcntr;               /* pointer to location in AppAlarmCounters */ 
     AlarmActionType aat;            /* Refer enum AlarmActionType */ 
     void* aat_arg1;                 /* arg1: task_name | callback_fun */
     void* aat_arg2;                 /* arg2: event | NULL */
     bool is_autostart;              /* does this alarm start at startup? */
     u32 alarmtime;                  /* when does it expire? */
     u32 cycletime;                  /* cyclic time - for repetition */
-    const AppModeType** appmodes;   /* alarm active in which modes? */
+    const AppModeType* appmodes;    /* alarm active in which modes? */
     u32 n_appmodes;                 /* how may appmodes for this entry? */
 } AppAlarmType;
 
@@ -36,6 +37,8 @@ typedef struct {
 
 #define MAX_APP_ALARMS  (2)
 extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];
+#define MAX_APP_ALARM_COUNTERS    (3)
+extern AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
 
 
 extern void Alarm_uSecAlarm_callback(void);
