@@ -79,8 +79,38 @@ int OsInitializeAlarms(AppModeType mode) {
 }
 
 
-int OsHandleAlarms(int cntr_id) {
+int OsTriggerAlarm(const AppAlarmType* alarm) {
+	int retval = 0;
+
+	if (alarm == NULL) {
+		pr_log("Error: %s() invalid argument!\n", __func__);
+		return -1;
+	}
+
+	switch (alarm->aat) {
+	case AAT_ACTIVATETASK:
+		ActivateTask((TaskType)((u64)alarm->aat_arg1));
+		break;
+	case AAT_SETEVENT:
+		SetEvent((TaskType)(u64)alarm->aat_arg1, (EventMaskType)alarm->aat_arg2);
+		break;
+	case AAT_ALARMCALLBACK:
+		((void (*)(void))alarm->aat_arg1)();
+		break;
+	default:
+		pr_log("Error: Invalid Alarm Action Type in %s()\n", __func__);
+		retval = -1;
+		break;
+	};
+
+	return retval;
+}
+
+
+int OsHandleAlarms(int cntr_id, TickType cnt) {
 	int i;
+	const AppAlarmType* alarm;
+
 
 	if (cntr_id >= MAX_APP_ALARMS) {
 		pr_log("Error: Counter ID %d is invalid in %s()\n", cntr_id, __func__);
@@ -88,7 +118,10 @@ int OsHandleAlarms(int cntr_id) {
 	}
 
 	for (i = 0; i < AppAlarms[cntr_id].len; i++) {
-		pr_log("Name = %s\n", AppAlarms[cntr_id].alarm[i].name);
+		alarm = &AppAlarms[cntr_id].alarm[i];
+		if (cnt >= *alarm->pcntr) {
+			OsTriggerAlarm(alarm);
+		}
 	}
 }
 
@@ -121,7 +154,7 @@ int OsHandleCounters(void) {
 				OsCounters[i].countval = 0;
 			}
 		}
-		//OsHandleAlarms(i);
+		OsHandleAlarms(i, OsCounters[i].countval);
 	}
 
 	os_ticks_old = os_ticks;

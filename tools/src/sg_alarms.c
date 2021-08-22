@@ -18,14 +18,14 @@ const AppModeType Alarm_WakeTaskA_AppModes[] = {
 
 
 /*   A L A R M S   D E F I N I T I O N S   */
-AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
+TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
 const AppAlarmType AppAlarms_mSecCounter[] = {
 	{
 		.name = "WakeTaskA",
 		.cntr_id = 0,
 		.pcntr = &AppAlarmCounters[0],
 		.aat = AAT_ACTIVATETASK,
-		.aat_arg1 = OS_TASK(Task_A),
+		.aat_arg1 = (void*) 0,
 		.aat_arg2 = NULL,
 		.is_autostart = TRUE,
 		.alarmtime = 20,
@@ -38,7 +38,7 @@ const AppAlarmType AppAlarms_mSecCounter[] = {
 		.cntr_id = 0,
 		.pcntr = &AppAlarmCounters[1],
 		.aat = AAT_SETEVENT,
-		.aat_arg1 = (void*) OS_TASK(Task_B),
+		.aat_arg1 = (void*) 1,
 		.aat_arg2 = (void*) OS_EVENT(Task_B, event1),
 		.is_autostart = FALSE,
 		.alarmtime = 0,

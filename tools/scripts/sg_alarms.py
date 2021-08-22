@@ -1,6 +1,7 @@
 from common import print_info
 from ob_globals import AlarmParams, ANME, AAAT, AAT1, AAT2, AIAS, ATIM, ACYT, ACNT
 from ob_globals import CntrParams, CNME
+from ob_globals import TaskParams, TNMI
 
 import colorama
 from colorama import Fore, Back, Style
@@ -24,7 +25,7 @@ AAT_PyList = {
 C_Alarm_Type = "\n\ntypedef struct {\n\
     char* name;                     /* short name of alarm */ \n\
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ \n\
-    AlarmType* pcntr;               /* pointer to location in AppAlarmCounters */ \n\
+    TickType* pcntr;                /* pointer to location in AppAlarmCounters */ \n\
     AlarmActionType aat;            /* Refer enum AlarmActionType */ \n\
     void* aat_arg1;                 /* arg1: task_name | callback_fun */\n\
     void* aat_arg2;                 /* arg2: event | NULL */\n\
@@ -35,13 +36,22 @@ C_Alarm_Type = "\n\ntypedef struct {\n\
     u32 n_appmodes;                 /* how may appmodes for this entry? */\n\
 } AppAlarmType;\n\n"
 
+def get_task_id(Tasks, taskName):
+    retval = "TASK_ID_MAX"
+    for i, task in enumerate(Tasks):
+        if task[TaskParams[TNMI]] == taskName:
+            retval = str(i)
+            break
+    return retval
 
-def alarm_action_type_args(aat, alarm, cf, hf):
+
+def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
     aat_arg1 = str(alarm[AlarmParams[AAT1]]).replace('"','')
 
     if aat == "ACTIVATETASK":
         if AlarmParams[AAT1] in alarm:
-            cf.write("\t\t.aat_arg1 = OS_TASK("+aat_arg1+"),\n")
+            print(alarm)
+            cf.write("\t\t.aat_arg1 = (void*) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
             print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
             cf.write("\t\t.aat_arg1 = NULL,\n")
@@ -51,7 +61,8 @@ def alarm_action_type_args(aat, alarm, cf, hf):
 
     elif aat == "SETEVENT":
         if AlarmParams[AAT1] in alarm:
-            cf.write("\t\t.aat_arg1 = (void*) OS_TASK("+aat_arg1+"),\n")
+            print(alarm)
+            cf.write("\t\t.aat_arg1 = (void*) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
             print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
         if AlarmParams[AAT2] in alarm:
@@ -85,7 +96,7 @@ C_AlarmCtrlBlock_Type = "\n\ntypedef struct {\n\
 } AppAlarmCtrlBlockType;\n\n"
 
 
-def generate_code(path, Alarms, Counters):
+def generate_code(path, Alarms, Counters, Tasks):
     print_info("Generating code for Alarms")
 
     # create header file
@@ -141,13 +152,13 @@ def generate_code(path, Alarms, Counters):
     hf.write("\n#define MAX_APP_ALARMS  ("+str(len(CounterSizeList))+")\n")
     hf.write("extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];\n")
     hf.write("#define MAX_APP_ALARM_COUNTERS    ("+str(len(Alarms))+")\n")
-    hf.write("extern AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
+    hf.write("extern TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
     if new_line_for_app_alarm:
         hf.write("\n\n") # beautify sg_alarms.h
 
     # define the alarms configured in OSEK builder or oil file
     cf.write("\n/*   A L A R M S   D E F I N I T I O N S   */\n")
-    cf.write("AlarmType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
+    cf.write("TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
     for i, cntr in enumerate(Counters):
         cf.write("const AppAlarmType AppAlarms_"+cntr[CntrParams[CNME]]+"[] = {\n")
         print_count = 0
@@ -161,7 +172,7 @@ def generate_code(path, Alarms, Counters):
             alarmActionType = alarm[AlarmParams[AAAT]]
             cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
 
-            alarm_action_type_args(alarmActionType, alarm, cf, hf)
+            alarm_action_type_args(alarmActionType, alarm, cf, hf, Tasks)
 
             cf.write("\t\t.is_autostart = "+alarm[AlarmParams[AIAS]]+",\n")
             if AlarmParams[ATIM] in alarm:
@@ -194,8 +205,6 @@ def generate_code(path, Alarms, Counters):
 
     # define AppAlarms[];
     cf.write("\nconst AppAlarmCtrlBlockType AppAlarms[] = {\n")
-    print(CounterSizeList)
-    print(Counters)
     for cntr in Counters:
         cf.write("\t{\n")
         cf.write("\t\t.alarm = (const AppAlarmType *) &AppAlarms_"+cntr[CntrParams[CNME]]+",\n")
