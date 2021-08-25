@@ -12,6 +12,21 @@
 OsTaskCtrlType OsTaskCtrlBlk[TASK_ID_MAX];
 
 
+
+StatusType ActivateTask(TaskType TaskID) {
+	StatusType stat = E_OK;
+
+	if (TaskID >= TASK_ID_MAX) {
+		pr_log("Error: %s() called with invalid TaskID %d\n", __func__, TaskID);
+		return E_OS_ID;
+	}
+
+	stat = AddTaskToFifoQueue(OsTaskList[TaskID], ReadyQueue);
+
+	return stat;
+}
+
+
 void OsClearActivationsCounts(void) {
 	memset(OsTaskCtrlBlk, 0, sizeof(OsTaskCtrlBlk));
 }

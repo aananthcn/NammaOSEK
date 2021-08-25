@@ -75,16 +75,16 @@ int AddTaskToFifoQueue(const OsTaskType task, const OsFifoType* fq[]) {
 	/* validate inputs */
 	if (&task == NULL) {
 		pr_log("Error: %s(), task argument is NULL!", __func__);
-		return -1;
+		return E_OS_ARG_FAIL;
 	}
 	if (fq == NULL) {
 		pr_log("Error: %s(), FIFO Queue argument is NULL!", __func__);
-		return -1;
+		return E_OS_ARG_FAIL;
 	}
 	if (task.priority >= SG_FIFO_QUEUE_MAX_LEN) {
 		pr_log("Error: task ID:%d has invalid priority: %d\n",
 				task.id, task.priority);
-		return -1;
+		return E_OS_ID;
 	}
 
 	pFifo = (OsFifoType*) fq[task.priority];

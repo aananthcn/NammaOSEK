@@ -15,6 +15,7 @@ typedef struct {
     char* name;                     /* short name of alarm */ 
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ 
     TickType* pcntr;                /* pointer to location in AppAlarmCounters */ 
+    bool* pcntr_state;              /* pointer to the state of AppAlarmCounters */ 
     AlarmActionType aat;            /* Refer enum AlarmActionType */ 
     void* aat_arg1;                 /* arg1: task_name | callback_fun */
     void* aat_arg2;                 /* arg2: event | NULL */
@@ -29,7 +30,6 @@ extern const AppModeType Alarm_WakeTaskA_AppModes[];
 
 
 typedef struct {
-    /* some-type aldata; */
     const AppAlarmType* alarm;
     u32 len;
 } AppAlarmCtrlBlockType;
@@ -39,6 +39,7 @@ typedef struct {
 extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];
 #define MAX_APP_ALARM_COUNTERS    (3)
 extern TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
+extern bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];
 
 
 extern void Alarm_uSecAlarm_callback(void);

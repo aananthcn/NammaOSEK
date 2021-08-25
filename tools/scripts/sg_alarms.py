@@ -26,6 +26,7 @@ C_Alarm_Type = "\n\ntypedef struct {\n\
     char* name;                     /* short name of alarm */ \n\
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ \n\
     TickType* pcntr;                /* pointer to location in AppAlarmCounters */ \n\
+    bool* pcntr_state;              /* pointer to the state of AppAlarmCounters */ \n\
     AlarmActionType aat;            /* Refer enum AlarmActionType */ \n\
     void* aat_arg1;                 /* arg1: task_name | callback_fun */\n\
     void* aat_arg2;                 /* arg2: event | NULL */\n\
@@ -50,7 +51,6 @@ def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
 
     if aat == "ACTIVATETASK":
         if AlarmParams[AAT1] in alarm:
-            print(alarm)
             cf.write("\t\t.aat_arg1 = (void*) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
             print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
@@ -61,7 +61,6 @@ def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
 
     elif aat == "SETEVENT":
         if AlarmParams[AAT1] in alarm:
-            print(alarm)
             cf.write("\t\t.aat_arg1 = (void*) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
             print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
@@ -90,7 +89,6 @@ def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
 
 
 C_AlarmCtrlBlock_Type = "\n\ntypedef struct {\n\
-    /* some-type aldata; */\n\
     const AppAlarmType* alarm;\n\
     u32 len;\n\
 } AppAlarmCtrlBlockType;\n\n"
@@ -153,12 +151,14 @@ def generate_code(path, Alarms, Counters, Tasks):
     hf.write("extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];\n")
     hf.write("#define MAX_APP_ALARM_COUNTERS    ("+str(len(Alarms))+")\n")
     hf.write("extern TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
+    hf.write("extern bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];\n")
     if new_line_for_app_alarm:
         hf.write("\n\n") # beautify sg_alarms.h
 
     # define the alarms configured in OSEK builder or oil file
     cf.write("\n/*   A L A R M S   D E F I N I T I O N S   */\n")
     cf.write("TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
+    cf.write("bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];\n")
     for i, cntr in enumerate(Counters):
         cf.write("const AppAlarmType AppAlarms_"+cntr[CntrParams[CNME]]+"[] = {\n")
         print_count = 0
@@ -169,6 +169,7 @@ def generate_code(path, Alarms, Counters, Tasks):
             cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
             cf.write("\t\t.cntr_id = "+str(i)+",\n")
             cf.write("\t\t.pcntr = &AppAlarmCounters["+str(j)+"],\n")
+            cf.write("\t\t.pcntr_state = &AppAlarmStates["+str(j)+"],\n")
             alarmActionType = alarm[AlarmParams[AAAT]]
             cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
 

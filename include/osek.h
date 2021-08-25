@@ -16,6 +16,7 @@ typedef enum eStatusType {
 	E_OS_RESOURCE = 6,
 	E_OS_STATE = 7,
 	E_OS_VALUE = 8,
+	E_OS_ARG_FAIL = 100,
 	E_OS_STATUS_TYPE_MAX
 } StatusType;
 
