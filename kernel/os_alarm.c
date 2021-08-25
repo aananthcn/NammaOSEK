@@ -11,7 +11,7 @@
 static u32 OsTickCount;
 static u32 OsTickCount_us;
 
-#define ENABLE_UPTIME_PRINTS	1
+#define ENABLE_UPTIME_PRINTS	0 // set this to 1 if you want up-time to be printed.
 #define TEMPORARY_WORKAROUND	1
 #define ONE_MSEC_IN_NANO_SEC	(1000000)
 
@@ -36,7 +36,7 @@ int OsHandleTicks(void) {
 	OsHandleCounters();
 #endif
 
-#ifdef ENABLE_UPTIME_PRINTS
+#if ENABLE_UPTIME_PRINTS != 0
 	OsComputeUpTime();
 #endif
 	return 0;
@@ -71,6 +71,7 @@ int OsInitializeAlarms(AppModeType mode) {
 
 			/* reaching here means, we need to trigger alarms */
 			*alarm->pcntr = alarm->alarmtime;
+			*alarm->pcntr_state = true;
 		}
 	}
 
@@ -119,8 +120,14 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 
 	for (i = 0; i < AppAlarms[cntr_id].len; i++) {
 		alarm = &AppAlarms[cntr_id].alarm[i];
-		if (cnt >= *alarm->pcntr) {
+		if ((cnt >= *alarm->pcntr) && (*alarm->pcntr_state)) {
 			OsTriggerAlarm(alarm);
+			if (alarm->cycletime > 0) {
+				*alarm->pcntr = cnt + alarm->cycletime;
+			}
+			else {
+				*alarm->pcntr_state = false;
+			}
 		}
 	}
 }
@@ -163,7 +170,7 @@ int OsHandleCounters(void) {
 }
 
 
-#ifdef ENABLE_UPTIME_PRINTS
+#if ENABLE_UPTIME_PRINTS != 0
 int OsComputeUpTime(void) {
 	static u64 upTime_sec, ut_old;
 	u64 sec_in_nano_sec = 1000000000; /* 1 sec = 1000,000,000 nano sec */
