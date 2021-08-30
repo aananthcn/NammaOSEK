@@ -4,6 +4,7 @@
 
 TASK(Task_A) {
 	AlarmBaseType info;
+	TickType tick_left;
 	pr_log("%s\n", __func__);
 
 #ifdef ALARM_BASE_TEST
@@ -14,6 +15,12 @@ TASK(Task_A) {
 	if (E_OK == GetAlarmBase(2, &info))
 		pr_log("2: ticks/base = %d\n", info.ticksperbase);
 #endif
+
+#ifdef GET_ALARM_TEST
+	if (E_OK == GetAlarm(0, &tick_left))
+		pr_log("0: ticks remaining = %d\n", tick_left);
+#endif
+
 }
 
 TASK(Task_B) {

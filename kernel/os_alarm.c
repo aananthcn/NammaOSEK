@@ -28,7 +28,7 @@ StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 
 	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
 		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
-		return E_OS_ARG_FAIL;
+		return E_OS_ID;
 	}
 
 	if (Info == NULL) {
@@ -43,6 +43,43 @@ StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 	}
 
 	*Info = OsCounters[counter_id].alarm;
+	return E_OK;
+}
+
+
+StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
+	AlarmType counter_id;
+	TickType ticks_curr, ticks_futr, delta;
+
+	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		return E_OS_ID;
+	}
+
+	if (Tick == NULL) {
+		pr_log("Error: %s() Tick pointer is NULL\n", __func__);
+		return E_OS_ARG_FAIL;
+	}
+
+	counter_id = AlarmID2CounterID_map[AlarmID];
+	if (counter_id >= OS_MAX_COUNTERS) {
+		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		return E_OS_STATE;
+	}
+
+	ticks_futr = AppAlarmCounters[AlarmID];
+	if (OsCounters[counter_id].tickduration < ONE_MSEC_IN_NANO_SEC) {
+		if (brd_get_usec_syscount(&ticks_curr)) {
+			pr_log("Error: brd_get_usec_syscount returns error\n");
+			return -1;
+		}
+		*Tick = (TickType)(ticks_futr - ticks_curr);
+	}
+	else {
+		ticks_curr = GetOsTickCnt();
+		*Tick = (TickType)(ticks_futr - ticks_curr);
+	}
+
 	return E_OK;
 }
 
