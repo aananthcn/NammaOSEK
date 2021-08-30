@@ -15,6 +15,7 @@ StatusType SetEvent(TaskType TaskID, EventMaskType Mask) {
 	}
 
 	EventMasks[TaskID] |= Mask;
+	ActivateTask(TaskID);
 
 	return E_OK; 
 }

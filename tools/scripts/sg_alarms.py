@@ -37,10 +37,20 @@ C_Alarm_Type = "\n\ntypedef struct {\n\
     u32 n_appmodes;                 /* how may appmodes for this entry? */\n\
 } AppAlarmType;\n\n"
 
+
 def get_task_id(Tasks, taskName):
     retval = "TASK_ID_MAX"
     for i, task in enumerate(Tasks):
         if task[TaskParams[TNMI]] == taskName:
+            retval = str(i)
+            break
+    return retval
+
+
+def get_counter_id(Counters, cntrName):
+    retval = "OS_MAX_COUNTERS"
+    for i, cntr in enumerate(Counters):
+        if cntr[CntrParams[CNME]] == cntrName:
             retval = str(i)
             break
     return retval
@@ -212,6 +222,13 @@ def generate_code(path, Alarms, Counters, Tasks):
         cf.write("\t\t.len = "+str(CounterSizeList[cntr[CntrParams[CNME]]])+"\n")
         cf.write("\t},\n")
     cf.write("};\n\n")
+
+    # define AlarmID to CounterID mapping
+    hf.write("\nextern const AlarmType AlarmID2CounterID_map[];")
+    cf.write("\nconst AlarmType AlarmID2CounterID_map[] = {\n\t")
+    for alarm in Alarms:
+        cf.write(get_counter_id(Counters, alarm[AlarmParams[ACNT]])+", ")
+    cf.write("\n};\n")
 
     hf.write("\n\n#endif\n")
     hf.close()

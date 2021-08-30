@@ -9,6 +9,8 @@
 #include <os_api.h>
 #include <sg_appmodes.h>
 
+
+
 OsTaskCtrlType OsTaskCtrlBlk[TASK_ID_MAX];
 
 
