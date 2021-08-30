@@ -44,5 +44,6 @@ extern bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];
 
 extern void Alarm_uSecAlarm_callback(void);
 
+extern const AlarmType AlarmID2CounterID_map[];
 
 #endif

@@ -20,6 +20,35 @@ int OsComputeUpTime(void);
 int OsHandleCounters(void);
 
 
+
+///////////////////////////////////////////////////////////////////////////////
+// OSEK Functions
+StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
+	AlarmType counter_id;
+
+	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		return E_OS_ARG_FAIL;
+	}
+
+	if (Info == NULL) {
+		pr_log("Error: %s() Info pointer is NULL\n", __func__);
+		return E_OS_ARG_FAIL;
+	}
+
+	counter_id = AlarmID2CounterID_map[AlarmID];
+	if (counter_id >= OS_MAX_COUNTERS) {
+		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		return E_OS_STATE;
+	}
+
+	*Info = OsCounters[counter_id].alarm;
+	return E_OK;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Core OS Alarm / Counter Functions
 u32 GetOsTickCnt(void) {
 	return OsTickCount;
 }

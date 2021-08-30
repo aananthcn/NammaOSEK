@@ -80,3 +80,7 @@ const AppAlarmCtrlBlockType AppAlarms[] = {
 	},
 };
 
+
+const AlarmType AlarmID2CounterID_map[] = {
+	0, 0, 1, 
+};
