@@ -2,9 +2,12 @@
 #include <osek.h>
 #include <os_api.h>
 
+#define GET_ALARM_TEST
+
 TASK(Task_A) {
 	AlarmBaseType info;
 	TickType tick_left;
+	static bool cycle_started = false;
 	pr_log("%s\n", __func__);
 
 #ifdef ALARM_BASE_TEST
@@ -20,6 +23,11 @@ TASK(Task_A) {
 	if (E_OK == GetAlarm(0, &tick_left))
 		pr_log("0: ticks remaining = %d\n", tick_left);
 #endif
+
+	if (!cycle_started) {
+		SetRelAlarm(0, 250, 2000);
+		cycle_started = true;
+	}
 
 }
 
