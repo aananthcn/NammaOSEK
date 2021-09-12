@@ -19,12 +19,14 @@ const AppModeType Alarm_WakeTaskA_AppModes[] = {
 
 /*   A L A R M S   D E F I N I T I O N S   */
 TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
+TickType AppAlarmCycles[MAX_APP_ALARM_COUNTERS];
 bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];
 const AppAlarmType AppAlarms_mSecCounter[] = {
 	{
 		.name = "WakeTaskA",
 		.cntr_id = 0,
 		.pcntr = &AppAlarmCounters[0],
+		.pcycle = &AppAlarmCycles[0],
 		.pcntr_state = &AppAlarmStates[0],
 		.aat = AAT_ACTIVATETASK,
 		.aat_arg1 = (void*) 0,
@@ -39,6 +41,7 @@ const AppAlarmType AppAlarms_mSecCounter[] = {
 		.name = "WakeTaskB",
 		.cntr_id = 0,
 		.pcntr = &AppAlarmCounters[1],
+		.pcycle = &AppAlarmCycles[1],
 		.pcntr_state = &AppAlarmStates[1],
 		.aat = AAT_SETEVENT,
 		.aat_arg1 = (void*) 1,
@@ -56,6 +59,7 @@ const AppAlarmType AppAlarms_uSecCounter[] = {
 		.name = "uSecAlarm",
 		.cntr_id = 1,
 		.pcntr = &AppAlarmCounters[2],
+		.pcycle = &AppAlarmCycles[2],
 		.pcntr_state = &AppAlarmStates[2],
 		.aat = AAT_ALARMCALLBACK,
 		.aat_arg1 = Alarm_uSecAlarm_callback,
