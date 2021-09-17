@@ -23,6 +23,15 @@ int OsHandleCounters(void);
 
 ///////////////////////////////////////////////////////////////////////////////
 // OSEK Functions
+/*/
+Function: GetAlarmBase
+
+Description: The system service GetAlarmBase reads the alarm base characteristics. 
+The return value <Info> is a structure in which the information of data type 
+AlarmBaseType is stored.
+
+Particularities: Allowed on task level, ISR, and in several hook routines.
+/*/
 StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 	AlarmType counter_id;
 
@@ -46,7 +55,16 @@ StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 	return E_OK;
 }
 
+/*/
+Function: GetAlarm
 
+Description: The system service GetAlarm returns the relative value in ticks 
+before the alarm <AlarmID> expires.
+
+Particularities: It is up to the application to decide whether for example a 
+CancelAlarm may still be useful. If <AlarmID> is not in use, <Tick> is not 
+defined. Allowed on task level, ISR, and in several hook routines
+/*/
 StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 	AlarmType counter_id;
 	TickType ticks_curr, ticks_futr, delta;
@@ -83,7 +101,27 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 	return E_OK;
 }
 
+/*/
+Function: SetRelAlarm
 
+Description: The system service occupies the alarm <AlarmID> element. After 
+<increment> ticks have elapsed, the task assigned to the alarm <AlarmID> is 
+activated or the assigned event (only for extended tasks) is set or the 
+alarm-callback routine is called.
+
+Particularities: The behaviour of <increment> equal to 0 is up to the 
+implementation.
+If the relative value <increment> is very small, the alarm may expire, and the
+task may become ready or the alarm-callback may be called before the system 
+service returns to the user.
+If <cycle> is unequal zero, the alarm element is logged on again immediately 
+after expiry with the relative value <cycle>.
+The alarm <AlarmID> must not already be in use.
+To change values of alarms already in use the alarm shall be cancelled first.
+If the alarm is already in use, this call will be ignored and the error 
+E_OS_STATE is returned.
+Allowed on task level and in ISR, but not in hook routines.
+/*/
 StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 	AlarmType counter_id;
 
@@ -113,6 +151,77 @@ StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 	/* All inputs are validated, just configure alarms */
 	AppAlarmCounters[AlarmID] = (TickType)(OsTickCount + increment);
 	AppAlarmCycles[AlarmID] = cycle;
+	AppAlarmStates[AlarmID] = true;
+	return E_OK;
+}
+
+/*/
+Function: SetAbsAlarm
+
+Parameters:
+  AlarmID  Reference to the alarm element
+  start    Absolute value in ticks
+  cycle    Cycle value in case of cyclic alarm. In case of single alarms,
+           cycle shall be zero.
+
+Description: The system service occupies the alarm <AlarmID> element. 
+When <start> ticks are reached, the task assigned to the alarm <AlarmID> 
+is activated or the assigned event (only for extended tasks) is set or 
+the alarm-callback routine is called.
+/*/
+StatusType SetAbsAlarm(AlarmType AlarmID, TickType start, TickType cycle) {
+	AlarmType counter_id;
+
+	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		return E_OS_ID;
+	}
+
+	counter_id = AlarmID2CounterID_map[AlarmID];
+	if (counter_id >= OS_MAX_COUNTERS) {
+		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		return E_OS_STATE;
+	}
+
+	if (start > OsCounters[counter_id].alarm.maxallowedvalue) {
+		pr_log("Error: %s(), start arg (=%d) > maxallowedvalue!\n",
+			__func__, start);
+		return E_OS_LIMIT;
+	}
+
+	if (cycle < OsCounters[counter_id].alarm.mincycle) {
+		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
+			cycle);
+		return E_OS_LIMIT;
+	}
+
+	/* All inputs are validated, just configure alarms */
+	AppAlarmCounters[AlarmID] = start;
+	AppAlarmCycles[AlarmID] = cycle;
+	AppAlarmStates[AlarmID] = true;
+	return E_OK;
+}
+
+
+/*/
+Function: CancelAlarm
+
+Parameters:
+  AlarmID  Reference to the alarm element
+
+Description: The system service cancels the alarm <AlarmID>.
+Particularities: Allowed on task level and in ISR, but not in hook routines.
+/*/
+StatusType CancelAlarm(AlarmType AlarmID) {
+	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		return E_OS_ID;
+	}
+
+	/* All inputs are validated, just configure alarms */
+	AppAlarmStates[AlarmID] = false;
+	AppAlarmCounters[AlarmID] = 0;
+	AppAlarmCycles[AlarmID] = 0;
 	return E_OK;
 }
 
@@ -175,9 +284,9 @@ int OsInitializeAlarms(AppModeType mode) {
 			}
 
 			/* reaching here means, we need to trigger alarms */
-			*alarm->pcntr = alarm->alarmtime;
+			*alarm->pacntr = alarm->alarmtime;
 			*alarm->pcycle = alarm->cycletime;
-			*alarm->pcntr_state = true;
+			*alarm->palrm_state = true;
 		}
 	}
 
@@ -237,14 +346,14 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 
 	for (i = 0; i < AppAlarms[cntr_id].len; i++) {
 		alarm = &AppAlarms[cntr_id].alarm[i];
-		if ((cnt >= *alarm->pcntr) && (*alarm->pcntr_state)) {
+		if ((cnt >= *alarm->pacntr) && (*alarm->palrm_state)) {
 			OsTriggerAlarm(alarm);
 			/* if cycletime is set, go for next round */
 			if (*alarm->pcycle > 0) {
-				*alarm->pcntr = cnt + *alarm->pcycle;
+				*alarm->pacntr = cnt + *alarm->pcycle;
 			}
 			else {
-				*alarm->pcntr_state = false;
+				*alarm->palrm_state = false;
 			}
 		}
 	}
