@@ -14,9 +14,9 @@ typedef enum {
 typedef struct {
     char* name;                     /* short name of alarm */ 
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ 
-    TickType* pcntr;                /* pointer to AppAlarmCounters */ 
+    TickType* pacntr;               /* pointer to AppAlarmCounters */ 
     TickType* pcycle;               /* pointer to AppAlarmCycle */ 
-    bool* pcntr_state;              /* pointer to the state of AppAlarmCounters */ 
+    bool* palrm_state;              /* pointer to the state of AppAlarmCounters */ 
     AlarmActionType aat;            /* Refer enum AlarmActionType */ 
     void* aat_arg1;                 /* arg1: task_name | callback_fun */
     void* aat_arg2;                 /* arg2: event | NULL */

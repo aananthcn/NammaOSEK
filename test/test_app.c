@@ -2,7 +2,7 @@
 #include <osek.h>
 #include <os_api.h>
 
-#define GET_ALARM_TEST
+#define CANCEL_ALARM
 
 TASK(Task_A) {
 	AlarmBaseType info;
@@ -24,15 +24,29 @@ TASK(Task_A) {
 		pr_log("0: ticks remaining = %d\n", tick_left);
 #endif
 
+#ifdef SET_REL_ALARM
 	if (!cycle_started) {
 		SetRelAlarm(0, 250, 2000);
 		cycle_started = true;
 	}
+#endif
 
+#ifdef SET_ABS_ALARM
+	SetAbsAlarm(1, 5000, 1500); // start at 5th sec and repeat every 1.5 sec
+#endif
+
+#ifdef CANCEL_ALARM
+	SetAbsAlarm(1, 1, 1); // start at 5th sec and repeat every 1.5 sec
+#endif
 }
 
 TASK(Task_B) {
 	pr_log("%s\n", __func__);
+#ifdef CANCEL_ALARM
+	static int i = 10;
+	if (i-- <= 0) 
+		CancelAlarm(1);
+#endif
 }
 
 TASK(Task_C) {

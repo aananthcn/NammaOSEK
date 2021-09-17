@@ -25,9 +25,9 @@ AAT_PyList = {
 C_Alarm_Type = "\n\ntypedef struct {\n\
     char* name;                     /* short name of alarm */ \n\
     AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ \n\
-    TickType* pcntr;                /* pointer to AppAlarmCounters */ \n\
+    TickType* pacntr;               /* pointer to AppAlarmCounters */ \n\
     TickType* pcycle;               /* pointer to AppAlarmCycle */ \n\
-    bool* pcntr_state;              /* pointer to the state of AppAlarmCounters */ \n\
+    bool* palrm_state;              /* pointer to the state of AppAlarmCounters */ \n\
     AlarmActionType aat;            /* Refer enum AlarmActionType */ \n\
     void* aat_arg1;                 /* arg1: task_name | callback_fun */\n\
     void* aat_arg2;                 /* arg2: event | NULL */\n\
@@ -181,9 +181,9 @@ def generate_code(path, Alarms, Counters, Tasks):
             cf.write("\t{\n")
             cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
             cf.write("\t\t.cntr_id = "+str(i)+",\n")
-            cf.write("\t\t.pcntr = &AppAlarmCounters["+str(j)+"],\n")
+            cf.write("\t\t.pacntr = &AppAlarmCounters["+str(j)+"],\n")
             cf.write("\t\t.pcycle = &AppAlarmCycles["+str(j)+"],\n")
-            cf.write("\t\t.pcntr_state = &AppAlarmStates["+str(j)+"],\n")
+            cf.write("\t\t.palrm_state = &AppAlarmStates["+str(j)+"],\n")
             alarmActionType = alarm[AlarmParams[AAAT]]
             cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
 
