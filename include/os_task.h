@@ -2,12 +2,14 @@
 #define ACN_OSEK_OS_TASK_H
 
 #include <osek.h>
+#include <sg_tasks.h>
 
 typedef struct {
 	u32 activations;
 } OsTaskCtrlType;
 
 extern OsTaskCtrlType OsTaskCtrlBlk[];
+extern OsTaskType OsCurrentTask;
 
 void OsSetupScheduler(AppModeType mode);
 int OsScheduleTasks(void);

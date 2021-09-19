@@ -15,7 +15,7 @@ int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID) {
 		pr_log("Error: %s() invalid TaskID: %d\n", __func__, TaskID);
 		return -1;
 	}
-	if (pFifoQ == NULL) {
+	if ((pFifoQ == NULL) || (pFifoQ->size > TASK_ID_MAX)) {
 		pr_log("Error: %s() invalid pFifoQ\n", __func__);
 		return -1;
 	}
