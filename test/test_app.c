@@ -2,7 +2,7 @@
 #include <osek.h>
 #include <os_api.h>
 
-#define EVENT_SET_CLEAR_TEST
+#define GETEVENT_TEST
 
 TASK(Task_A) {
 	AlarmBaseType info;
@@ -46,6 +46,20 @@ TASK(Task_A) {
 		SetEvent(1, 1);
 	}
 #endif
+
+#ifdef GETEVENT_TEST
+	static bool toggle_bit;
+	EventMaskType Event;
+	if (toggle_bit) {
+		toggle_bit = false;
+		SetEvent(1, 0x101);
+		GetEvent(1, &Event);
+		printf("Event = %lX\n", Event);
+	}
+	else {
+		toggle_bit = true;
+	}
+#endif
 }
 
 TASK(Task_B) {
@@ -57,6 +71,12 @@ TASK(Task_B) {
 #endif
 #ifdef EVENT_SET_CLEAR_TEST
 	ClearEvent(1);
+#endif
+#ifdef GETEVENT_TEST
+	EventMaskType Event;
+	ClearEvent(0x101);
+	GetEvent(1, &Event);
+	printf("Event = %lX\n", Event);
 #endif
 }
 

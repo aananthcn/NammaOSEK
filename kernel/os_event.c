@@ -6,6 +6,8 @@
 #include <sg_tasks.h>
 #include <sg_fifo.h>
 
+#include <stddef.h>
+
 
 static EventMaskType EventMasks[TASK_ID_MAX];
 
@@ -59,5 +61,36 @@ StatusType ClearEvent(EventMaskType Mask) {
 	}
 
 	EventMasks[task_id] &= ~Mask;
+	return E_OK;
+}
+
+
+/*/
+Function: GetEvent
+Parameters:
+  TaskID  Task whose event mask is to be returned.
+  Event   Reference to the memory of the return data.
+
+Description: This service returns the current state of all event bits of the 
+task <TaskID>, not the events that the task is waiting for.
+The service may be called from interrupt service routines, task level and some
+hook routines
+
+Particularities: The system service ClearEvent is restricted to extended tasks
+which own the event.
+/*/
+StatusType GetEvent(TaskType TaskID, EventMaskRefType Event) {
+	if (TaskID >= TASK_ID_MAX) {
+		pr_log("Error: %s() called with invalid TaskID %d\n", __func__,
+			TaskID);
+		return E_OS_ID;
+	}
+
+	if (Event == NULL) {
+		pr_log("Error: %s() Event pointer is NULL\n", __func__);
+		return E_OS_ARG_FAIL;
+	}
+
+	*Event = EventMasks[TaskID];
 	return E_OK;
 }
