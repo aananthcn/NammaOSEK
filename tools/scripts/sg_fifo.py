@@ -7,18 +7,15 @@ from colorama import Fore, Back, Style
 
 def populate_queue(f, qstr, maxPrio, fifoInfo):
     f.write("const OsFifoType* "+qstr+"Queue[] = {\n")
-    if maxPrio == 0:
-        f.write("\t&"+qstr+"Fifo\n")
-    else:
-        for prio in range(maxPrio+1):
-            if str(prio) in fifoInfo:
-                f.write("\t&"+qstr+"Fifo_"+str(prio))
-            else:
-                f.write("\tNULL")
-            if prio != maxPrio:
-                f.write(",\n")
-            else:
-                f.write("\n")
+    for prio in range(maxPrio+1):
+        if str(prio) in fifoInfo:
+            f.write("\t&"+qstr+"Fifo_"+str(prio))
+        else:
+            f.write("\tNULL")
+        if prio != maxPrio:
+            f.write(",\n")
+        else:
+            f.write("\n")
     f.write("};\n\n")
 
 
@@ -112,24 +109,13 @@ def generate_code(path, Tasks):
         cf.write("\n")
 
     # RunningFifo is a special case, as there can be max 1 task running at any
-    # given point of time. Hence this will be intialized with .size = 1
-    cf.write("\nOsFifoType RunningFifo = {\n")
-    cf.write("\t.task = RunningTasks,\n")
-    cf.write("\t.size = 1,\n")
-    cf.write("\t.head = 0,\n")
-    cf.write("\t.tail = 0,\n")
-    cf.write("#ifdef DEBUG\n")
-    cf.write("\t.name = \"RunningFifo\",\n")
-    cf.write("#endif\n")
-    cf.write("\t.full = false\n")
-    cf.write("};\n")
+    # given point of time. Hence Queue is not generated for RunningFifo
 
     # populate waiting queue
     cf.write("\n\n/* Prioritized OSEK FIFO queues in Flash */\n")
     populate_queue(cf, "Waiting", maxPrio, fifoInfo)
     populate_queue(cf, "Suspended", maxPrio, fifoInfo)
     populate_queue(cf, "Ready", maxPrio, fifoInfo)
-    populate_queue(cf, "Running", 0, fifoInfo)
 
 
     hf.write("\n\n#endif")

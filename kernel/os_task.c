@@ -12,6 +12,7 @@
 
 
 OsTaskCtrlType OsTaskCtrlBlk[TASK_ID_MAX];
+OsTaskType OsCurrentTask;
 
 
 
@@ -78,7 +79,8 @@ int OsScheduleTasks(void) {
 	for (i = SG_FIFO_QUEUE_MAX_LEN-1; i >= 0; i--) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {
-			task->handler();
+			OsCurrentTask = *task;
+			OsCurrentTask.handler();
 		}
 	}
 }

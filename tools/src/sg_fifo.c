@@ -80,17 +80,6 @@ OsFifoType ReadyFifo_4 = {
 };
 
 
-OsFifoType RunningFifo = {
-	.task = RunningTasks,
-	.size = 1,
-	.head = 0,
-	.tail = 0,
-#ifdef DEBUG
-	.name = "RunningFifo",
-#endif
-	.full = false
-};
-
 
 /* Prioritized OSEK FIFO queues in Flash */
 const OsFifoType* WaitingQueue[] = {
@@ -115,9 +104,5 @@ const OsFifoType* ReadyQueue[] = {
 	NULL,
 	NULL,
 	&ReadyFifo_4
-};
-
-const OsFifoType* RunningQueue[] = {
-	&RunningFifo
 };
 
