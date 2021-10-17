@@ -16,6 +16,15 @@ OsTaskType OsCurrentTask;
 
 
 
+/*/
+Function: ActivateTask
+Parameters:
+  TaskID  Task reference.
+
+Description: The task <TaskID> is transferred from the suspended state into the
+ready state. The operating system ensures that the task code is being executed
+from the first statement.
+/*/
 StatusType ActivateTask(TaskType TaskID) {
 	StatusType stat = E_OK;
 
@@ -27,6 +36,20 @@ StatusType ActivateTask(TaskType TaskID) {
 	stat = AddTaskToFifoQueue(OsTaskList[TaskID], ReadyQueue);
 
 	return stat;
+}
+
+
+/*/
+Function: TerminateTask
+Parameters: None
+Description: This service causes the termination of the calling task. The 
+calling task is transferred from the running state into the suspended state.
+/*/
+StatusType TerminateTask(void) {
+	// TODO: this functions to be redesigned to work on a microcontroller
+	// environment by stack manipulation (i.e, saving and restoring uC 
+	// registers). In Linux world this is not possible.
+	return E_OK;
 }
 
 

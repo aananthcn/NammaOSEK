@@ -94,3 +94,23 @@ StatusType GetEvent(TaskType TaskID, EventMaskRefType Event) {
 	*Event = EventMasks[TaskID];
 	return E_OK;
 }
+
+
+/*/
+Function: WaitEvent
+Parameters:
+  Mask  Mask of the events waited for.
+
+Description: The state of the calling task is set to waiting, unless at least 
+one of the events specified in <Mask> has already been set.
+
+Particularities: This call enforces rescheduling, if the wait condition occurs.
+If rescheduling takes place, the internal resource of the task is released 
+while the task is in the waiting state.
+/*/
+StatusType WaitEvent(EventMaskType Mask) {
+	// TODO: this functions to be redesigned to work on a microcontroller
+	// environment by stack manipulation (i.e, saving and restoring uC 
+	// registers). In Linux world this is not possible.
+	return E_OK;
+}
