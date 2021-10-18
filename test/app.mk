@@ -9,7 +9,7 @@ INCDIRS  += -I ${CWD}/test
 
 LDFLAGS  += -g
 CFLAGS   += -Werror ${INCDIRS} -g
-ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
+ASFLAGS  += ${INCDIRS} -g
 
 $(info compilating Test Application source files)
 

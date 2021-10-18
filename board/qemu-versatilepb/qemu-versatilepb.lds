@@ -9,9 +9,10 @@ SECTIONS
     /* LOAD ADDRESS - The -kernel option (to qemu) loads a binary file inside
     the system memory starting at address 0x00010000 */
     . = 0x00010000;
+    _start = .;
     .startup . : 
     { 
-        startup.o(.text) 
+        board/qemu-versatilepb/startup.o(.text) 
     }
 
     /* OTHER CODE SEGMENT(s) */

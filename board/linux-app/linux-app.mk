@@ -10,7 +10,7 @@ INCDIRS  := -I ${CWD}/include \
 
 LDFLAGS  += -g -lrt
 CFLAGS   += -Werror ${INCDIRS} -g
-ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
+ASFLAGS  += ${INCDIRS} -g
 
 $(info compilating for "Linux PC")
 

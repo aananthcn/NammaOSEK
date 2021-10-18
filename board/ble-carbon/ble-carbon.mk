@@ -14,7 +14,7 @@ INCDIRS  := -I ${CWD}/include \
 
 LDFLAGS  += -nostdlib -g
 CFLAGS   += -Werror ${INCDIRS} -g
-ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
+ASFLAGS  += ${INCDIRS} -g
 
 $(info compilating for "-m armelf")
 #CFLAGS  += -march=armv7-m -mcpu=cortex-m4

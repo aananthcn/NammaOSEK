@@ -6,6 +6,9 @@ OBJCOPY=${COMPILER}objcopy
 ARCH = arm32
 BOARD_NAME=qemu-versatilepb
 
+# The following path is available in ${TOOLCHAIN_PATH} env variable, but I can't get it...
+LIB_GCC_A_PATH=/opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1
+
 INCDIRS  := -I ${CWD}/include \
             -I ${CWD}/include/arch/aarch32/ \
 	    -I ${CWD}/board/${BOARD_NAME} \
@@ -13,9 +16,9 @@ INCDIRS  := -I ${CWD}/include \
 	    -I ${CWD}/include/arch/aarch32/cortex_m/cmsis/ \
 	    -I ${CWD}/lib/include
 
-LDFLAGS  += -nostdlib -g
+LDFLAGS  += -nostdlib -g -L${LIB_GCC_A_PATH} -lgcc
 CFLAGS   += -Werror ${INCDIRS} -g
-ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
+ASFLAGS  += ${INCDIRS} -g
 
 $(info compilating qemu-versatilepb board specific files)
 CFLAGS  += -mcpu=arm926ej-s 
@@ -29,9 +32,12 @@ STDLIBOBJS	:= \
 	lib/libc-minimal/stdlib/atoi.o \
 	lib/libc-minimal/stdlib/bsearch.o \
 	lib/libc-minimal/stdlib/exit.o \
-	lib/libc-minimal/stdlib/malloc.o \
 	lib/libc-minimal/stdlib/strtol.o \
 	lib/libc-minimal/stdlib/strtoul.o \
+	lib/libc-minimal/stdout/fprintf.o \
+
+#	lib/libc-minimal/stdlib/malloc.o \
+
 
 LIBOBJS	:= \
 	lib/libc-minimal/string/string.o
