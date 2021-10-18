@@ -3,7 +3,10 @@
 print_usage()
 {
   printf "usage: ./configure <board-name>\n"
-  printf "Supported boards:\n  1) ble-carbon\n  2) linux-app\n\n"
+  printf "Supported boards:\n  1) ble-carbon\n"
+  printf "  2) linux-app\n"
+  printf "  3) qemu-versatilepb\n"
+  printf "\n"
 }
 
 argc=$#

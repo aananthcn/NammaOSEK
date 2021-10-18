@@ -18,8 +18,8 @@ typedef struct {
     TickType* pcycle;               /* pointer to AppAlarmCycle */ 
     bool* palrm_state;              /* pointer to the state of AppAlarmCounters */ 
     AlarmActionType aat;            /* Refer enum AlarmActionType */ 
-    void* aat_arg1;                 /* arg1: task_name | callback_fun */
-    void* aat_arg2;                 /* arg2: event | NULL */
+    intptr_t aat_arg1;              /* arg1: task_name | callback_fun */
+    intptr_t aat_arg2;              /* arg2: event | NULL */
     bool is_autostart;              /* does this alarm start at startup? */
     u32 alarmtime;                  /* when does it expire? */
     u32 cycletime;                  /* cyclic time - for repetition */
