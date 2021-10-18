@@ -29,8 +29,8 @@ C_Alarm_Type = "\n\ntypedef struct {\n\
     TickType* pcycle;               /* pointer to AppAlarmCycle */ \n\
     bool* palrm_state;              /* pointer to the state of AppAlarmCounters */ \n\
     AlarmActionType aat;            /* Refer enum AlarmActionType */ \n\
-    void* aat_arg1;                 /* arg1: task_name | callback_fun */\n\
-    void* aat_arg2;                 /* arg2: event | NULL */\n\
+    intptr_t aat_arg1;              /* arg1: task_name | callback_fun */\n\
+    intptr_t aat_arg2;              /* arg2: event | NULL */\n\
     bool is_autostart;              /* does this alarm start at startup? */\n\
     u32 alarmtime;                  /* when does it expire? */\n\
     u32 cycletime;                  /* cyclic time - for repetition */\n\
@@ -62,33 +62,33 @@ def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
 
     if aat == "ACTIVATETASK":
         if AlarmParams[AAT1] in alarm:
-            cf.write("\t\t.aat_arg1 = (void*) "+get_task_id(Tasks, aat_arg1)+",\n")
+            cf.write("\t\t.aat_arg1 = (intptr_t) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
             print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
-            cf.write("\t\t.aat_arg1 = NULL,\n")
+            cf.write("\t\t.aat_arg1 = (intptr_t)NULL,\n")
 
         # for ACTIVATETASK type, arg2 is not required
-        cf.write("\t\t.aat_arg2 = NULL,\n")
+        cf.write("\t\t.aat_arg2 = (intptr_t)NULL,\n")
 
     elif aat == "SETEVENT":
         if AlarmParams[AAT1] in alarm:
-            cf.write("\t\t.aat_arg1 = (void*) "+get_task_id(Tasks, aat_arg1)+",\n")
+            cf.write("\t\t.aat_arg1 = (intptr_t) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
             print(Fore.RED+"Error: Task to activate for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
         if AlarmParams[AAT2] in alarm:
-            cf.write("\t\t.aat_arg2 = (void*) OS_EVENT("+aat_arg1+", "+alarm[AlarmParams[AAT2]]+"),\n")
+            cf.write("\t\t.aat_arg2 = (intptr_t) OS_EVENT("+aat_arg1+", "+alarm[AlarmParams[AAT2]]+"),\n")
         else:
             print(Fore.RED+"Error: Event to trigger for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
-            cf.write("\t\t.aat_arg2 = NULL,\n")
+            cf.write("\t\t.aat_arg2 = (intptr_t)NULL,\n")
 
     elif aat == "ALARMCALLBACK":
         if AlarmParams[AAT1] in alarm:
-            cf.write("\t\t.aat_arg1 = "+aat_arg1+",\n")
+            cf.write("\t\t.aat_arg1 = (intptr_t)"+aat_arg1+",\n")
         else:
             print(Fore.RED+"Error: Callback for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
 
         # for ALARMCALLBACK type, arg2 is not required
-        cf.write("\t\t.aat_arg2 = NULL,\n")
+        cf.write("\t\t.aat_arg2 = (intptr_t)NULL,\n")
 
         # declare call back function here. Definition will be part of "app"
         hf.write("extern void "+ aat_arg1 +"(void);\n")

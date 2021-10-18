@@ -1,9 +1,9 @@
-COMPILER=
-CC=${COMPILER}gcc
-LD=${COMPILER}gcc
-AS=${COMPILER}as
-OBJCOPY=${COMPILER}objcopy
-ARCH = x86
+#COMPILER=
+#CC=${COMPILER}gcc
+#LD=${COMPILER}gcc
+#AS=${COMPILER}as
+#OBJCOPY=${COMPILER}objcopy
+#ARCH = x86
 
 INCDIRS  += -I ${CWD}/test
 
@@ -11,7 +11,7 @@ LDFLAGS  += -g
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += -D__ASSEMBLY__ ${INCDIRS} -g
 
-$(info compilating System Generator source files)
+$(info compilating Test Application source files)
 
 
 APP_OBJS	:= \

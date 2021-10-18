@@ -310,10 +310,10 @@ int OsTriggerAlarm(const AppAlarmType* alarm) {
 
 	switch (alarm->aat) {
 	case AAT_ACTIVATETASK:
-		ActivateTask((TaskType)((u64)alarm->aat_arg1));
+		ActivateTask((TaskType)(alarm->aat_arg1));
 		break;
 	case AAT_SETEVENT:
-		SetEvent((TaskType)(u64)alarm->aat_arg1, (EventMaskType)alarm->aat_arg2);
+		SetEvent((TaskType)alarm->aat_arg1, (EventMaskType)alarm->aat_arg2);
 		break;
 	case AAT_ALARMCALLBACK:
 		((void (*)(void))alarm->aat_arg1)();

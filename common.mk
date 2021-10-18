@@ -10,17 +10,18 @@ CMN_OBJS := \
 	${CWD}/kernel/os_alarm.o
 
 
+$(info compilating Common source files)
 
 OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
 
 .PHONY: all
 
-all: ${TARGET}
-
 ${TARGET}: ${OBJS}
-	@echo Compiled for -march=${ARCH}
+	@echo LINKING OBJECTS...
 	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) 
 	$(OBJCOPY) -O binary ${TARGET}.elf ${TARGET}.bin
+
+all: ${TARGET}
 
 info:
 	@echo make can be run with var ARCH=${ARCH}

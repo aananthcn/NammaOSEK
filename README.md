@@ -7,3 +7,7 @@ Some of this work is derived from Zephyr OS, hence most of the files here would 
 
 Start date: 27 June 2021, Sunday
 Motivation to create an OS came from Ashokkumar Narayanan.
+
+References
+==========
+1. https://balau82.wordpress.com/2010/02/28/hello-world-for-bare-metal-arm-using-qemu/
