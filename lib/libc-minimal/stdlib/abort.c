@@ -5,9 +5,9 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 
-void abort(void)
+void _abort(void)
 {
-	printk("abort()\n");
-	k_panic();
+	printf("abort() - implement abort handler!\n");
 }

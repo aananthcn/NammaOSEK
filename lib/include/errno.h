@@ -35,7 +35,10 @@
 extern "C" {
 #endif
 
-#define errno (*z_errno())
+#include <ostypes.h>
+
+u32* free_osek_errno(void);
+#define errno (*free_osek_errno())
 
 #define EPERM 1         /**< Not owner */
 #define ENOENT 2        /**< No such file or directory */

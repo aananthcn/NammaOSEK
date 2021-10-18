@@ -5,11 +5,11 @@
  */
 
 #include <stdlib.h>
-#include <zephyr.h>
+#include <stdio.h>
 
 void _exit(int status)
 {
-	printk("exit\n");
+	printf("exit\n");
 	while (1) {
 	}
 }
