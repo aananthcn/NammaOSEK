@@ -14,8 +14,17 @@ References
 
 
 <br>
-QEMU
+
+Running FreeOSEK on QEMU
 ====
+
+**Follow the steps below to create "osek-os.bin" image**:
+* cd to root directory
+* ./configure qemu-versatilepb
+* source <path-to-arm-toolchain-path.sh>
+* Manually set the path `LIB_GCC_A_PATH` correctly (i.e, the path to libgcc.a file) in file "qemu-versatilepb.mk"
+* make
+
 To run the image on QEMU, use the following command
 * `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -kernel osek-os.bin`
 
