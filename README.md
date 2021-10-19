@@ -11,3 +11,13 @@ Motivation to create an OS came from Ashokkumar Narayanan.
 References
 ==========
 1. https://balau82.wordpress.com/2010/02/28/hello-world-for-bare-metal-arm-using-qemu/
+
+
+<br>
+QEMU
+====
+To run the image on QEMU, use the following command
+* `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -kernel osek-os.bin`
+
+To debug using gdb, use the following command
+* `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -s -S -kernel osek-os.bin`

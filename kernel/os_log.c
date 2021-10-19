@@ -2,6 +2,8 @@
 #include <stdarg.h>
 #include <board.h>
 
+#include <printf.h>
+
 static u32 usec_0;
 
 int pr_log(const char *format, ...)
@@ -17,7 +19,8 @@ int pr_log(const char *format, ...)
 	}
 
 	va_start(arg, format);
-	done = vfprintf(stdout, format, arg);
+	//done = vfprintf(stdout, format, arg);
+	done = vprintf(format, arg);
 	va_end(arg);
 
 	return done;

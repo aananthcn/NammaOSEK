@@ -40,7 +40,9 @@ STDLIBOBJS	:= \
 
 
 LIBOBJS	:= \
-	lib/libc-minimal/string/string.o
+	lib/libc-minimal/string/string.o \
+	lib/libc-minimal/stdout/printf.o
+	
 
 BRD_OBJS	:= \
 	${CWD}/board/qemu-versatilepb/board.o \
