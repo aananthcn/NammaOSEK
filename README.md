@@ -15,8 +15,14 @@ References
 
 <br>
 
-Running FreeOSEK on QEMU
+Running FreeOSEK on QEMU (ARM926EJ-S)
 ====
+
+ARM926EJ-S User Guide:
+* https://developer.arm.com/documentation/dui0224/i/
+* https://developer.arm.com/documentation/ddi0287/b/
+
+<br>
 
 **Follow the steps below to create "osek-os.bin" image**:
 * cd to root directory

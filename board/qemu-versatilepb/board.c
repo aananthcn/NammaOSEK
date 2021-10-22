@@ -2,10 +2,27 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include <osek.h>
+#include <sg_appmodes.h>
 #include <os_api.h>
 
 
+/* UART */
 volatile unsigned int *const UART0DR = (unsigned int *)0x101f1000;
+
+/* Timer */
+volatile unsigned char *const TIMER0_BASE = (unsigned char *)0x101E2000;
+volatile unsigned char *const TIMER1_BASE = (unsigned char *)0x101E2020;
+volatile unsigned char *const TIMER2_BASE = (unsigned char *)0x101E3000;
+volatile unsigned char *const TIMER3_BASE = (unsigned char *)0x101E3020;
+#define TIMERLOAD_OFFSET	(0x00)
+#define TIMERVALUE_OFFSET	(0x04)
+#define TIMERCTRL_OFFSET	(0x08)
+#define TIMERINTCLR_OFFSET	(0x0C)
+#define TIMERINTSTS_OFFSET	(0x10)
+#define TIMERMSKINTSTS_OFFSET	(0x14)
+#define TIMERBGLOAD_OFFSET	(0x18)
+
 
 int console_fputs(const char *s) {
 	int count = 0;
@@ -25,44 +42,30 @@ int console_fputc(const int c) {
 }
 
 
-void c_entry() {
-	static bool hello_print = false;
-
-	if (hello_print == false) {
-		pr_log("Hello FreeOSEK!\n");
-		hello_print = true;
-	}
-}
-
 int brd_setup_sytimer(void) {
+	/* Enable Timer0, free running, 32bit mode */
+	*((u8*)(TIMER1_BASE+TIMERCTRL_OFFSET)) = 0x82;
+
 	return 0;
 }
 
 int brd_get_usec_syscount(u32 *ucount) {
+	/* free running mode counts from 0xFFFFFFFF to 0, hence reversing it */
+	*ucount = (u32)0xFFFFFFFF - *((u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
 	return 0;
 }
 
-#if 0
-int printf(const char* format, ...)
-{
-	va_list vargs;
-	int     r;
 
-	va_start(vargs, format);
-	//r = cbvprintf(fputc, DESC(stdout), format, vargs);
-	r = console_fputs(format);
-	va_end(vargs);
+void c_entry() {
+	static bool hello_print = false;
 
-	return r;
+	if (hello_print == false) {
+		pr_log_init();
+		brd_setup_sytimer();
+
+		StartOS(OSDEFAULTAPPMODE);
+		/* The execution should never reach here */
+		pr_log("Info: StartOS() function returned!! OS Exits!\n");
+		hello_print = true;
+	}
 }
-
-int vfprintf(FILE* stream, const char* format, va_list vargs)
-{
-	int r;
-
-	//r = cbvprintf(fputc, DESC(stream), format, vargs);
-	r = console_fputs(format);
-
-	return r;
-}
-#endif
