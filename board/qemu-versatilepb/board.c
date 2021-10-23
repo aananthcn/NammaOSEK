@@ -32,8 +32,8 @@ int brd_setup_sytimer(void) {
         /* Timer0 counter reload value init */
         *((volatile u32*)(TIMER0_BASE+TIMERLOAD_OFFSET)) = 1000;
 
-        /* Timer0 as system tick counter: Enable | 32bit mode */
-        *((volatile u8*)(TIMER0_BASE+TIMERCTRL_OFFSET)) = 0x82;
+        /* Timer0 as system tick counter: Enable | Int. En | 32bit mode */
+        *((volatile u8*)(TIMER0_BASE+TIMERCTRL_OFFSET)) = 0xE2;
 
         /* Timer1 as free running counter: Enable | 32bit mode */
         *((volatile u8*)(TIMER1_BASE+TIMERCTRL_OFFSET)) = 0x82;
