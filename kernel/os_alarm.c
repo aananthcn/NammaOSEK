@@ -17,7 +17,6 @@ static u32 OsTickCount_us;
 
 
 int OsComputeUpTime(void);
-int OsHandleCounters(void);
 
 
 
@@ -242,13 +241,6 @@ u32 GetOsTickCnt(void) {
 int OsHandleTicks(void) {
 	OsTickCount++;
 	OsClearActivationsCounts();
-
-	// TODO: Set some event for OS to process the OS Ticks
-#ifdef TEMPORARY_WORKAROUND
-	// The following line below is a temporary work-around. This is bad
-	// because we are processing counter within ISR. This should be avoided.
-	OsHandleCounters();
-#endif
 
 #if ENABLE_UPTIME_PRINTS != 0
 	OsComputeUpTime();

@@ -7,7 +7,8 @@
 
 /* Interrupt Controller */
 #define VIC_BASE_ADDR   0x10140000
-#define VIC_INTENABLE (*((volatile u32 *)(VIC_BASE_ADDR + 0x010)))
+#define VIC_IRQSTATUS 	(*((volatile u32 *)(VIC_BASE_ADDR + 0x000)))
+#define VIC_INTENABLE 	(*((volatile u32 *)(VIC_BASE_ADDR + 0x010)))
 
 /* ISR shift numbers */
 #define ISR_SN_TIMER01  (4)

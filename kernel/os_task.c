@@ -95,10 +95,24 @@ void OsSetupScheduler(AppModeType mode) {
 	pr_log("Scheduler setup done!\n");
 }
 
+
+/* The following function is defined in os_alarm.c */
+int OsHandleCounters(void);
+
 int OsScheduleTasks(void) {
 	OsTaskType* task;
+	u32 tick_cnt;
+	static u32 tick_cnt_old;
 	int i;
 
+	/* Timer / Counter handling */
+	tick_cnt = GetOsTickCnt();
+	if (tick_cnt != tick_cnt_old) {
+		OsHandleCounters();
+		tick_cnt_old = tick_cnt;
+	}
+
+	/* Task handling */
 	for (i = SG_FIFO_QUEUE_MAX_LEN-1; i >= 0; i--) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {

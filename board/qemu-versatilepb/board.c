@@ -4,12 +4,15 @@
 
 #include <osek.h>
 #include <sg_appmodes.h>
+#include <sg_counter.h>
+
 #include <os_api.h>
 
 
 #include "versatilepb.h"
 
 
+/* Serial console functions */
 int console_fputs(const char *s) {
         int count = 0;
 
@@ -28,9 +31,15 @@ int console_fputc(const int c) {
 }
 
 
+
+/* The timer on our QEMU system defaults to using a 1MHz reference. */
+#define TIMER_CLK_REF_HZ    (1000000)
+
 int brd_setup_sytimer(void) {
+        u32 tick_count = OS_TICK_DURATION_ns / TIMER_CLK_REF_HZ;
+
         /* Timer0 counter reload value init */
-        *((volatile u32*)(TIMER0_BASE+TIMERLOAD_OFFSET)) = 1000;
+        *((volatile u32*)(TIMER0_BASE+TIMERLOAD_OFFSET)) = tick_count;
 
         /* Timer0 as system tick counter: Enable | Int. En | 32bit mode */
         *((volatile u8*)(TIMER0_BASE+TIMERCTRL_OFFSET)) = 0xE2;
@@ -42,8 +51,15 @@ int brd_setup_sytimer(void) {
 }
 
 int brd_get_usec_syscount(u32 *ucount) {
+        u32 count;
+
         /* free running mode counts from 0xFFFFFFFF to 0, hence reversing it */
-        *ucount = (u32)0xFFFFFFFF - *((volatile u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
+        count = (u32)0xFFFFFFFF - *((volatile u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
+
+        /* convert to ucount so that the count value == 1 usec */
+        *ucount = (u32)((count * 1000000ull) / TIMER_CLK_REF_HZ);
+        //*ucount = count;
+
         return 0;
 }
 

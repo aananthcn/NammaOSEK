@@ -10,10 +10,20 @@
 extern void SystemTickISR(void);
 
 void __attribute__((interrupt)) irq_handler() {
-	SystemTickISR();
+	u32 t0_mis; /* Timer 0 Masked Int. Status Register value */
 
-	/* clear old interrupt */
-	*((volatile u8*)(TIMER0_BASE+TIMERINTCLR_OFFSET)) = 0;
+	/* Timer 0 IRQ Handler */
+	if (VIC_IRQSTATUS & (1 << ISR_SN_TIMER01)) {
+		/* check if Masked Int. Status for Timer 0 is set */
+		t0_mis = *((volatile u32*)(TIMER0_BASE+TIMERMSKINTSTS_OFFSET));
+		if (t0_mis) {
+			/* acknowledge timer 0 interrupt */
+			*((volatile u8*)(TIMER0_BASE+TIMERINTCLR_OFFSET)) = 0;
+
+			/* handle OS Tick */
+			SystemTickISR();
+		}
+	}
 }
 
 void __attribute__((interrupt)) undef_handler(void) {
