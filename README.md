@@ -11,6 +11,7 @@ Motivation to create an OS came from Ashokkumar Narayanan.
 References
 ==========
 1. https://balau82.wordpress.com/2010/02/28/hello-world-for-bare-metal-arm-using-qemu/
+2. https://balau82.wordpress.com/2012/04/15/arm926-interrupts-in-qemu/
 
 
 <br>

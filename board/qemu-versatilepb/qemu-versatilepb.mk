@@ -46,8 +46,7 @@ LIBOBJS	:= \
 
 BRD_OBJS	:= \
 	${CWD}/board/qemu-versatilepb/board.o \
-	${CWD}/board/qemu-versatilepb/startup.o
-
-BRD_OBJS_ASM    := \
+	${CWD}/board/qemu-versatilepb/vector_handlers.o \
+	${CWD}/board/qemu-versatilepb/vectors.o \
 	${CWD}/board/qemu-versatilepb/startup.o
 

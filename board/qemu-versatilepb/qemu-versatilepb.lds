@@ -3,22 +3,19 @@
  * Date: 21 Oct 2021
  */
 
-ENTRY(_start)
+ENTRY(vectors_start)
 SECTIONS
 {
     /* LOAD ADDRESS - The -kernel option (to qemu) loads a binary file inside
     the system memory starting at address 0x00010000 */
     . = 0x00010000;
-    _start = .;
-    .startup . : 
-    { 
-        board/qemu-versatilepb/startup.o(.text) 
-    }
 
-    /* OTHER CODE SEGMENT(s) */
-    .text : 
-    { 
-        *(.text)
+    /* CODE SEGMENTS -- place vectors.o first! */
+    .text : {
+        vectors_start = .;
+        board/qemu-versatilepb/vectors.o
+        vectors_end = .;
+        *(.text .rodata)
     }
 
     /* INITIALIZED DATA SEGMENT(s) */
@@ -37,6 +34,10 @@ SECTIONS
     /* STACK MEMORY */
     . = . + 0x1000; /* 4kB of stack memory */
     stack_top = .;
+
+    /* IRQ STACK MEMORY */
+    . = . + 0x1000; /* 4kB of irq stack memory */
+    irq_stack_top = .;
 }
 
 /*
