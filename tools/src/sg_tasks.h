@@ -36,7 +36,7 @@ typedef struct {
     TaskType id;
     TaskFuncType handler;
     u32 priority;
-    u8 sch_type;
+    SchType sch_type;
     u32 activations;
     bool autostart;
     const AppModeType** appmodes;

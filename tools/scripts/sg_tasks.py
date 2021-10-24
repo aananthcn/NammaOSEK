@@ -16,7 +16,7 @@ typedef struct {\n\
     TaskType id;\n\
     TaskFuncType handler;\n\
     u32 priority;\n\
-    u8 sch_type;\n\
+    SchType sch_type;\n\
     u32 activations;\n\
     bool autostart;\n\
     const AppModeType** appmodes;\n\

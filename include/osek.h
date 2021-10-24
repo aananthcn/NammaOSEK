@@ -43,10 +43,10 @@ typedef TaskType* TaskRefType;
 /*
  * Scheduling types
  */
-enum eSchTypes {
+typedef enum eSchTypes {
 	NON_PREEMPTIVE,
 	FULL_PREEMPTIVE
-};
+} SchType;
 
 /*
  * Task Declarations & Definitions
