@@ -4,7 +4,7 @@ import sys
 import os
 
 from common import import_or_install, print_info
-from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, OS_Params
 
 import sg_counter
 import sg_tasks
@@ -14,6 +14,7 @@ import sg_events
 import sg_messages
 import sg_resources
 import sg_fifo
+import sg_os_param
 
 import colorama
 from colorama import Fore, Back, Style
@@ -167,6 +168,20 @@ def parse_counter(oil_lines, line_num):
 
 
 
+def parse_os_params(oil_lines, line_num):
+    params = {}
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        if OS_Params[0] in line:
+            params[OS_Params[0]] = line.replace('=', ';').split(';')[1].strip()
+        if OS_Params[1] in line:
+            params[OS_Params[1]] = line.replace('=', ';').split(';')[1].strip()
+        line_num += 1
+    return line_num, params
+
+
+
 def main(of):
     path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
     if not os.path.exists(path):
@@ -188,6 +203,8 @@ def main(of):
         if "TASK" in words and "{" in oil_lines[line_num]:
             line_num, task = parse_tasks(oil_lines, line_num)
             Tasks.append(task)
+        if "FreeOSEK_PARAMS" in words and "{" in oil_lines[line_num]:
+            line_num, os_params = parse_os_params(oil_lines, line_num)
         line_num += 1
 
     sg_counter.generate_code(path, Counters)
@@ -198,6 +215,7 @@ def main(of):
     sg_tasks.generate_code(path, Tasks)
     sg_alarms.generate_code(path, Alarms, Counters, Tasks)
     sg_fifo.generate_code(path, Tasks)
+    sg_os_param.generate_code(path, os_params)
 
 
 

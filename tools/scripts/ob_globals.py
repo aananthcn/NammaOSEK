@@ -3,7 +3,7 @@
 # ------------------------------------------
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 TaskParams = ["Task Name", "PRIORITY", "SCHEDULE", "ACTIVATION", "AUTOSTART",
-    "RESOURCE", "EVENT", "MESSAGE"]
+    "RESOURCE", "EVENT", "MESSAGE", "STACK_SIZE"]
 TNMI = 0
 PRII = 1
 SCHI = 2
@@ -12,6 +12,7 @@ ATSI = 4
 RESI = 5
 EVTI = 6
 MSGI = 7
+STSZ = 8
 
 
 # list of column titles in TASK tab of OSEX-Builder.xlsx
@@ -34,6 +35,10 @@ AAPM = 8
 
 # Column titles for ISRs
 ISR_Params = ["ISR Name", "CATEGORY", "RESOURCE", "MESSAGE"]
+
+# FreeOSEK Parameters
+OS_Params = ["IRQ_STACK_SIZE", "TASK_STACK_SIZE"]
+
 
 if __name__ == '__main__':
 	print("OSEK Builder Globals")

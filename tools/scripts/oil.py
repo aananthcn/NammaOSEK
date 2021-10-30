@@ -1,6 +1,7 @@
 import os
 
 from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params
+from ob_globals import STSZ
 
 
 
@@ -135,6 +136,19 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
         # End of ISR body
         indent -= 1
         f.write(indent*"\t" + "};\n")
+
+    # Print FreeOSEK_PARAMS
+    f.write(indent*"\n\t"+ "FreeOSEK_PARAMS {\n")
+    indent += 1
+    # Start of FreeOSEK_PARAMS body
+    f.write(indent*"\t" +"IRQ_STACK_SIZE = " + str(OsData["irq_stack"]) + ";\n")
+    task_stack_size = 0
+    for task in TaskData:
+        task_stack_size += int(task[TaskParams[STSZ]])
+    f.write(indent*"\t" +"TASK_STACK_SIZE = " + str(task_stack_size) + ";\n")
+    # End of FreeOSEK_PARAMS body
+    indent -= 1
+    f.write(indent*"\t" + "};\n")
 
     #end of CPU body (root)
     indent -= 1

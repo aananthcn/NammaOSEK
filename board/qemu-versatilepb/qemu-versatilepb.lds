@@ -3,6 +3,8 @@
  * Date: 21 Oct 2021
  */
 
+INCLUDE tools/src/sg_stack.lds
+
 ENTRY(vectors_start)
 SECTIONS
 {
@@ -32,11 +34,11 @@ SECTIONS
 
     . = ALIGN(8);
     /* STACK MEMORY */
-    . = . + 0x1000; /* 4kB of stack memory */
+    . = . + TASK_STACK_SIZE; /* 4kB of stack memory */
     stack_top = .;
 
     /* IRQ STACK MEMORY */
-    . = . + 0x1000; /* 4kB of irq stack memory */
+    . = . + IRQ_STACK_SIZE; /* 4kB of irq stack memory */
     irq_stack_top = .;
 }
 

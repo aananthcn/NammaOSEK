@@ -18,7 +18,7 @@ OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
 
 ${TARGET}: ${OBJS}
 	@echo LINKING OBJECTS...
-	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) 
+	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) -Map=${TARGET}.map
 	$(OBJCOPY) -O binary ${TARGET}.elf ${TARGET}.bin
 
 all: ${TARGET}

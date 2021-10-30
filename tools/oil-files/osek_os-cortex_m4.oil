@@ -82,4 +82,9 @@ CPU cortex_m4 {
 	ISR isr_func1 {
 		CATEGORY = 2;
 	};
+
+	FreeOSEK_PARAMS {
+		IRQ_STACK_SIZE = 0x1000;
+		TASK_STACK_SIZE = 3072;
+	};
 };
