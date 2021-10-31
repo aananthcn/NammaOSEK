@@ -73,7 +73,8 @@ LOAD /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
 LOAD /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
 LOAD /mnt/e/projects/oss/FreeOSEK/test/test_app.o
 LOAD /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a
-                0x0000000000001000                IRQ_STACK_SIZE = 0x1000
+                0x0000000000000200                OS_STACK_SIZE = 0x200
+                0x0000000000000200                IRQ_STACK_SIZE = 0x200
                 0x0000000000000c00                TASK_STACK_SIZE = 0xc00
                 0x0000000000010000                . = 0x10000
 
@@ -412,9 +413,11 @@ LOAD /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eab
  .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
                 0x0000000000016e78                . = ALIGN (0x8)
                 0x0000000000017a78                . = (. + TASK_STACK_SIZE)
-                0x0000000000017a78                stack_top = .
-                0x0000000000018a78                . = (. + IRQ_STACK_SIZE)
-                0x0000000000018a78                irq_stack_top = .
+                0x0000000000017a78                user_stack_top = .
+                0x0000000000017c78                . = (. + OS_STACK_SIZE)
+                0x0000000000017c78                os_stack_top = .
+                0x0000000000017e78                . = (. + IRQ_STACK_SIZE)
+                0x0000000000017e78                irq_stack_top = .
 OUTPUT(osek-os.elf elf32-littlearm)
 LOAD linker stubs
 LOAD board/qemu-versatilepb/vectors.o

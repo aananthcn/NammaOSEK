@@ -37,7 +37,7 @@ AAPM = 8
 ISR_Params = ["ISR Name", "CATEGORY", "RESOURCE", "MESSAGE"]
 
 # FreeOSEK Parameters
-OS_Params = ["IRQ_STACK_SIZE", "TASK_STACK_SIZE"]
+OS_Params = ["OS_STACK_SIZE", "IRQ_STACK_SIZE", "TASK_STACK_SIZE"]
 
 
 if __name__ == '__main__':

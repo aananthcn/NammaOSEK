@@ -11,7 +11,7 @@ def generate_code(path, OsParams):
     # create stack definitions
     filename = path + "/" + "sg_stack.lds"
     lf = open(filename, "w")
-    lf.write(OS_Params[0] + " = " + OsParams[OS_Params[0]] + ";\n")
-    lf.write(OS_Params[1] + " = " + OsParams[OS_Params[1]] + ";\n")
+    for param in OS_Params:
+        lf.write(param + " = " + OsParams[param] + ";\n")
     
     lf.close()

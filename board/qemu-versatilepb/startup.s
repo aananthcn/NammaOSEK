@@ -5,7 +5,7 @@
 
 reset_handler:
 	/* set Supervisor stack */
-	LDR sp, =stack_top
+	LDR sp, =os_stack_top
 	/* copy vector table to address 0 */
 	BL __copy_vectors
 	/* get Program Status Register */

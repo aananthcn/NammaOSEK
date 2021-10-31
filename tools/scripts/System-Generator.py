@@ -169,16 +169,18 @@ def parse_counter(oil_lines, line_num):
 
 
 def parse_os_params(oil_lines, line_num):
-    params = {}
+    os_params = {}
     line_num += 1
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
         if OS_Params[0] in line:
-            params[OS_Params[0]] = line.replace('=', ';').split(';')[1].strip()
+            os_params[OS_Params[0]] = line.replace('=', ';').split(';')[1].strip()
         if OS_Params[1] in line:
-            params[OS_Params[1]] = line.replace('=', ';').split(';')[1].strip()
+            os_params[OS_Params[1]] = line.replace('=', ';').split(';')[1].strip()
+        if OS_Params[2] in line:
+            os_params[OS_Params[2]] = line.replace('=', ';').split(';')[1].strip()
         line_num += 1
-    return line_num, params
+    return line_num, os_params
 
 
 

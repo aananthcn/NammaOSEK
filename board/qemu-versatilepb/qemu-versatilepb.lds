@@ -33,9 +33,13 @@ SECTIONS
     }
 
     . = ALIGN(8);
-    /* STACK MEMORY */
-    . = . + TASK_STACK_SIZE; /* 4kB of stack memory */
-    stack_top = .;
+    /* USER STACK MEMORY */
+    . = . + TASK_STACK_SIZE; /* user stack memory */
+    user_stack_top = .;
+
+    /* OS STACK MEMORY */
+    . = . + OS_STACK_SIZE; /* user stack memory */
+    os_stack_top = .;
 
     /* IRQ STACK MEMORY */
     . = . + IRQ_STACK_SIZE; /* 4kB of irq stack memory */

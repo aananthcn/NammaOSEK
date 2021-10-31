@@ -84,7 +84,8 @@ CPU cortex_m4 {
 	};
 
 	FreeOSEK_PARAMS {
-		IRQ_STACK_SIZE = 0x1000;
+		OS_STACK_SIZE = 512;
+		IRQ_STACK_SIZE = 512;
 		TASK_STACK_SIZE = 3072;
 	};
 };

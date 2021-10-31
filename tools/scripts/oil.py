@@ -141,6 +141,7 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
     f.write(indent*"\n\t"+ "FreeOSEK_PARAMS {\n")
     indent += 1
     # Start of FreeOSEK_PARAMS body
+    f.write(indent*"\t" +"OS_STACK_SIZE = " + str(OsData["os_stack"]) + ";\n")
     f.write(indent*"\t" +"IRQ_STACK_SIZE = " + str(OsData["irq_stack"]) + ";\n")
     task_stack_size = 0
     for task in TaskData:
