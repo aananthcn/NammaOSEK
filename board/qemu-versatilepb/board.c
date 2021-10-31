@@ -33,10 +33,12 @@ int console_fputc(const int c) {
 
 
 /* The timer on our QEMU system defaults to using a 1MHz reference. */
-#define TIMER_CLK_REF_HZ    (1000000)
+#define TIMER_CLK_TO_MILLISEC   (1000) /* 1 MHz == 1000 cycles / milli-sec */
 
 int brd_setup_sytimer(void) {
-        u32 tick_count = OS_TICK_DURATION_ns / TIMER_CLK_REF_HZ;
+        u32 tick_count = OS_TICK_DURATION_ns / TIMER_CLK_TO_MILLISEC;
+
+        printf("tick_count = %d\n", tick_count);
 
         /* Timer0 counter reload value init */
         *((volatile u32*)(TIMER0_BASE+TIMERLOAD_OFFSET)) = tick_count;
@@ -57,7 +59,7 @@ int brd_get_usec_syscount(u32 *ucount) {
         count = (u32)0xFFFFFFFF - *((volatile u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
 
         /* convert to ucount so that the count value == 1 usec */
-        *ucount = (u32)((count * 1000000ull) / TIMER_CLK_REF_HZ);
+        *ucount = (u32)((count * 1000ull) / TIMER_CLK_TO_MILLISEC);
         //*ucount = count;
 
         return 0;

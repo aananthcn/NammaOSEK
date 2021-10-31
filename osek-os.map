@@ -78,7 +78,7 @@ LOAD /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eab
                 0x0000000000000c00                TASK_STACK_SIZE = 0xc00
                 0x0000000000010000                . = 0x10000
 
-.text           0x0000000000010000     0x6ca4
+.text           0x0000000000010000     0x6cbc
                 0x0000000000010000                vectors_start = .
  board/qemu-versatilepb/vectors.o()
  .text          0x0000000000010000       0x40 board/qemu-versatilepb/vectors.o
@@ -147,303 +147,304 @@ LOAD /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eab
                 0x0000000000011f60                console_fputs
                 0x0000000000011fcc                console_fputc
                 0x0000000000012000                brd_setup_sytimer
-                0x0000000000012058                brd_get_usec_syscount
+                0x0000000000012064                brd_get_usec_syscount
                 0x0000000000012134                brd_sys_enable_interrupts
                 0x0000000000012160                main
- .rodata        0x0000000000012190       0x2f /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
- *fill*         0x00000000000121bf        0x1 
- .text          0x00000000000121c0      0x184 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
-                0x00000000000121c0                irq_handler
-                0x0000000000012224                undef_handler
-                0x0000000000012248                swi_handler
-                0x000000000001226c                prefetch_abort_handler
-                0x0000000000012290                data_abort_handler
-                0x00000000000122b4                fiq_handler
-                0x00000000000122d8                __copy_vectors
- .rodata        0x0000000000012344       0x74 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
- .text          0x00000000000123b8       0x40 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
- .text          0x00000000000123f8       0x34 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
-                0x00000000000123f8                reset_handler
- .text          0x000000000001242c      0xaa0 lib/libc-minimal/string/string.o
-                0x000000000001242c                strcpy
-                0x00000000000124a4                strncpy
-                0x0000000000012560                strchr
-                0x00000000000125e0                strrchr
-                0x0000000000012648                strlen
-                0x00000000000126a0                strnlen
-                0x000000000001270c                strcmp
-                0x000000000001278c                strncmp
-                0x000000000001283c                strtok_r
-                0x000000000001296c                strcat
-                0x00000000000129b0                strncat
-                0x0000000000012a50                memcmp
-                0x0000000000012afc                memmove
-                0x0000000000012bd4                memcpy
-                0x0000000000012d24                memset
-                0x0000000000012e48                memchr
- .text          0x0000000000012ecc     0x29d4 lib/libc-minimal/stdout/printf.o
-                0x000000000001569c                printf
-                0x00000000000156f0                sprintf_
-                0x0000000000015748                snprintf_
-                0x00000000000157a4                vprintf_
-                0x00000000000157e8                vsnprintf_
-                0x0000000000015834                fctprintf
- .rodata        0x00000000000158a0       0x68 lib/libc-minimal/stdout/printf.o
- .text          0x0000000000015908        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
- .rodata        0x0000000000015908       0x18 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
- .text          0x0000000000015920        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
- .rodata        0x0000000000015920       0x10 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
-                0x0000000000015920                Task_A_AppModes
-                0x000000000001592c                Task_C_AppModes
- .text          0x0000000000015930        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
- .rodata        0x0000000000015930       0x18 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
-                0x0000000000015930                Task_B_EventMasks
-                0x0000000000015938                Task_C_EventMasks
- .text          0x0000000000015948        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
- .text          0x0000000000015948        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
- .text          0x0000000000015948        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
- .text          0x0000000000015948        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
- .rodata        0x0000000000015948       0xe4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
-                0x0000000000015948                Alarm_WakeTaskA_AppModes
-                0x0000000000015968                AppAlarms_mSecCounter
-                0x00000000000159dc                AppAlarms_uSecCounter
-                0x0000000000015a10                AppAlarms
-                0x0000000000015a20                AlarmID2CounterID_map
- .text          0x0000000000015a2c        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
- .rodata        0x0000000000015a2c       0xa8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
-                0x0000000000015a2c                OsTaskList
- .text          0x0000000000015ad4      0x134 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
-                0x0000000000015ad4                OSEK_Task_Task_A
-                0x0000000000015b64                OSEK_Task_Task_B
-                0x0000000000015bc0                OSEK_Task_Task_C
-                0x0000000000015be4                Alarm_uSecAlarm_callback
- .rodata        0x0000000000015c08       0x69 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
- *fill*         0x0000000000015c71        0x3 
- .text          0x0000000000015c74      0x290 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
- .text          0x0000000000015f04      0x114 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
-                0x0000000000015f04                __udivsi3
-                0x0000000000015f04                __aeabi_uidiv
-                0x0000000000015ff8                __aeabi_uidivmod
- .text          0x0000000000016018        0x4 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_dvmd_tls.o)
-                0x0000000000016018                __aeabi_ldiv0
-                0x0000000000016018                __aeabi_idiv0
- .text          0x000000000001601c      0x424 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
-                0x000000000001601c                __aeabi_drsub
-                0x0000000000016024                __aeabi_dsub
-                0x0000000000016024                __subdf3
-                0x0000000000016028                __adddf3
-                0x0000000000016028                __aeabi_dadd
-                0x0000000000016338                __aeabi_ui2d
-                0x0000000000016338                __floatunsidf
-                0x000000000001635c                __floatsidf
-                0x000000000001635c                __aeabi_i2d
-                0x0000000000016384                __extendsfdf2
-                0x0000000000016384                __aeabi_f2d
-                0x00000000000163cc                __aeabi_ul2d
-                0x00000000000163cc                __floatundidf
-                0x00000000000163e0                __floatdidf
-                0x00000000000163e0                __aeabi_l2d
- .text          0x0000000000016440      0x49c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
-                0x0000000000016440                __aeabi_dmul
-                0x0000000000016440                __muldf3
-                0x00000000000166d0                __aeabi_ddiv
-                0x00000000000166d0                __divdf3
- .text          0x00000000000168dc      0x144 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
-                0x00000000000168dc                __gtdf2
-                0x00000000000168dc                __gedf2
-                0x00000000000168e4                __ltdf2
-                0x00000000000168e4                __ledf2
-                0x00000000000168ec                __cmpdf2
-                0x00000000000168ec                __eqdf2
-                0x00000000000168ec                __nedf2
-                0x0000000000016974                __aeabi_cdrcmple
-                0x0000000000016990                __aeabi_cdcmple
-                0x0000000000016990                __aeabi_cdcmpeq
-                0x00000000000169a8                __aeabi_dcmpeq
-                0x00000000000169c0                __aeabi_dcmplt
-                0x00000000000169d8                __aeabi_dcmple
-                0x00000000000169f0                __aeabi_dcmpge
-                0x0000000000016a08                __aeabi_dcmpgt
- .text          0x0000000000016a20       0x5c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
-                0x0000000000016a20                __fixdfsi
-                0x0000000000016a20                __aeabi_d2iz
- .text          0x0000000000016a7c       0x54 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
-                0x0000000000016a7c                __fixunsdfsi
-                0x0000000000016a7c                __aeabi_d2uiz
- .text          0x0000000000016ad0       0x3c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
-                0x0000000000016ad0                __aeabi_uldivmod
- .text          0x0000000000016b0c      0x128 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
-                0x0000000000016b0c                __udivmoddi4
- .text          0x0000000000016c34       0x28 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzdi2.o)
-                0x0000000000016c34                __clzdi2
- .text          0x0000000000016c5c       0x48 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
-                0x0000000000016c5c                __clzsi2
+ .rodata        0x0000000000012190       0x43 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
+ *fill*         0x00000000000121d3        0x1 
+ .text          0x00000000000121d4      0x184 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+                0x00000000000121d4                irq_handler
+                0x0000000000012238                undef_handler
+                0x000000000001225c                swi_handler
+                0x0000000000012280                prefetch_abort_handler
+                0x00000000000122a4                data_abort_handler
+                0x00000000000122c8                fiq_handler
+                0x00000000000122ec                __copy_vectors
+ .rodata        0x0000000000012358       0x74 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+ .text          0x00000000000123cc       0x40 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
+ .text          0x000000000001240c       0x34 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
+                0x000000000001240c                reset_handler
+ .text          0x0000000000012440      0xaa0 lib/libc-minimal/string/string.o
+                0x0000000000012440                strcpy
+                0x00000000000124b8                strncpy
+                0x0000000000012574                strchr
+                0x00000000000125f4                strrchr
+                0x000000000001265c                strlen
+                0x00000000000126b4                strnlen
+                0x0000000000012720                strcmp
+                0x00000000000127a0                strncmp
+                0x0000000000012850                strtok_r
+                0x0000000000012980                strcat
+                0x00000000000129c4                strncat
+                0x0000000000012a64                memcmp
+                0x0000000000012b10                memmove
+                0x0000000000012be8                memcpy
+                0x0000000000012d38                memset
+                0x0000000000012e5c                memchr
+ .text          0x0000000000012ee0     0x29d4 lib/libc-minimal/stdout/printf.o
+                0x00000000000156b0                printf
+                0x0000000000015704                sprintf_
+                0x000000000001575c                snprintf_
+                0x00000000000157b8                vprintf_
+                0x00000000000157fc                vsnprintf_
+                0x0000000000015848                fctprintf
+ *fill*         0x00000000000158b4        0x4 
+ .rodata        0x00000000000158b8       0x68 lib/libc-minimal/stdout/printf.o
+ .text          0x0000000000015920        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
+ .rodata        0x0000000000015920       0x18 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
+ .text          0x0000000000015938        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
+ .rodata        0x0000000000015938       0x10 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
+                0x0000000000015938                Task_A_AppModes
+                0x0000000000015944                Task_C_AppModes
+ .text          0x0000000000015948        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
+ .rodata        0x0000000000015948       0x18 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
+                0x0000000000015948                Task_B_EventMasks
+                0x0000000000015950                Task_C_EventMasks
+ .text          0x0000000000015960        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
+ .text          0x0000000000015960        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
+ .text          0x0000000000015960        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
+ .text          0x0000000000015960        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+ .rodata        0x0000000000015960       0xe4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+                0x0000000000015960                Alarm_WakeTaskA_AppModes
+                0x0000000000015980                AppAlarms_mSecCounter
+                0x00000000000159f4                AppAlarms_uSecCounter
+                0x0000000000015a28                AppAlarms
+                0x0000000000015a38                AlarmID2CounterID_map
+ .text          0x0000000000015a44        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
+ .rodata        0x0000000000015a44       0xa8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
+                0x0000000000015a44                OsTaskList
+ .text          0x0000000000015aec      0x134 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+                0x0000000000015aec                OSEK_Task_Task_A
+                0x0000000000015b7c                OSEK_Task_Task_B
+                0x0000000000015bd8                OSEK_Task_Task_C
+                0x0000000000015bfc                Alarm_uSecAlarm_callback
+ .rodata        0x0000000000015c20       0x69 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+ *fill*         0x0000000000015c89        0x3 
+ .text          0x0000000000015c8c      0x290 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
+ .text          0x0000000000015f1c      0x114 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
+                0x0000000000015f1c                __udivsi3
+                0x0000000000015f1c                __aeabi_uidiv
+                0x0000000000016010                __aeabi_uidivmod
+ .text          0x0000000000016030        0x4 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_dvmd_tls.o)
+                0x0000000000016030                __aeabi_ldiv0
+                0x0000000000016030                __aeabi_idiv0
+ .text          0x0000000000016034      0x424 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
+                0x0000000000016034                __aeabi_drsub
+                0x000000000001603c                __aeabi_dsub
+                0x000000000001603c                __subdf3
+                0x0000000000016040                __adddf3
+                0x0000000000016040                __aeabi_dadd
+                0x0000000000016350                __aeabi_ui2d
+                0x0000000000016350                __floatunsidf
+                0x0000000000016374                __floatsidf
+                0x0000000000016374                __aeabi_i2d
+                0x000000000001639c                __extendsfdf2
+                0x000000000001639c                __aeabi_f2d
+                0x00000000000163e4                __aeabi_ul2d
+                0x00000000000163e4                __floatundidf
+                0x00000000000163f8                __floatdidf
+                0x00000000000163f8                __aeabi_l2d
+ .text          0x0000000000016458      0x49c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
+                0x0000000000016458                __aeabi_dmul
+                0x0000000000016458                __muldf3
+                0x00000000000166e8                __aeabi_ddiv
+                0x00000000000166e8                __divdf3
+ .text          0x00000000000168f4      0x144 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
+                0x00000000000168f4                __gtdf2
+                0x00000000000168f4                __gedf2
+                0x00000000000168fc                __ltdf2
+                0x00000000000168fc                __ledf2
+                0x0000000000016904                __cmpdf2
+                0x0000000000016904                __eqdf2
+                0x0000000000016904                __nedf2
+                0x000000000001698c                __aeabi_cdrcmple
+                0x00000000000169a8                __aeabi_cdcmple
+                0x00000000000169a8                __aeabi_cdcmpeq
+                0x00000000000169c0                __aeabi_dcmpeq
+                0x00000000000169d8                __aeabi_dcmplt
+                0x00000000000169f0                __aeabi_dcmple
+                0x0000000000016a08                __aeabi_dcmpge
+                0x0000000000016a20                __aeabi_dcmpgt
+ .text          0x0000000000016a38       0x5c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
+                0x0000000000016a38                __fixdfsi
+                0x0000000000016a38                __aeabi_d2iz
+ .text          0x0000000000016a94       0x54 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
+                0x0000000000016a94                __fixunsdfsi
+                0x0000000000016a94                __aeabi_d2uiz
+ .text          0x0000000000016ae8       0x3c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
+                0x0000000000016ae8                __aeabi_uldivmod
+ .text          0x0000000000016b24      0x128 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
+                0x0000000000016b24                __udivmoddi4
+ .text          0x0000000000016c4c       0x28 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzdi2.o)
+                0x0000000000016c4c                __clzdi2
+ .text          0x0000000000016c74       0x48 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
+                0x0000000000016c74                __clzsi2
 
-.glue_7         0x0000000000016ca4        0x0
- .glue_7        0x0000000000016ca4        0x0 linker stubs
+.glue_7         0x0000000000016cbc        0x0
+ .glue_7        0x0000000000016cbc        0x0 linker stubs
 
-.glue_7t        0x0000000000016ca4        0x0
- .glue_7t       0x0000000000016ca4        0x0 linker stubs
+.glue_7t        0x0000000000016cbc        0x0
+ .glue_7t       0x0000000000016cbc        0x0 linker stubs
 
-.vfp11_veneer   0x0000000000016ca4        0x0
- .vfp11_veneer  0x0000000000016ca4        0x0 linker stubs
+.vfp11_veneer   0x0000000000016cbc        0x0
+ .vfp11_veneer  0x0000000000016cbc        0x0 linker stubs
 
-.v4_bx          0x0000000000016ca4        0x0
- .v4_bx         0x0000000000016ca4        0x0 linker stubs
+.v4_bx          0x0000000000016cbc        0x0
+ .v4_bx         0x0000000000016cbc        0x0 linker stubs
 
-.iplt           0x0000000000016ca4        0x0
- .iplt          0x0000000000016ca4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+.iplt           0x0000000000016cbc        0x0
+ .iplt          0x0000000000016cbc        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
 
-.rel.dyn        0x0000000000016ca4        0x0
- .rel.iplt      0x0000000000016ca4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+.rel.dyn        0x0000000000016cbc        0x0
+ .rel.iplt      0x0000000000016cbc        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
 
-.ARM.extab      0x0000000000016ca4        0x0
- .ARM.extab     0x0000000000016ca4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
+.ARM.extab      0x0000000000016cbc        0x0
+ .ARM.extab     0x0000000000016cbc        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
 
-.ARM.exidx      0x0000000000016ca4        0x8
- .ARM.exidx     0x0000000000016ca4        0x8 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
+.ARM.exidx      0x0000000000016cbc        0x8
+ .ARM.exidx     0x0000000000016cbc        0x8 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
 
-.data           0x0000000000016cac       0xf0
+.data           0x0000000000016cc4       0xf0
  *(.data)
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
- .data          0x0000000000016cac        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
- .data          0x0000000000016cac        0x0 lib/libc-minimal/string/string.o
- .data          0x0000000000016cac        0x0 lib/libc-minimal/stdout/printf.o
- .data          0x0000000000016cac       0x30 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
-                0x0000000000016cac                OsCounters
- .data          0x0000000000016cdc        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
- .data          0x0000000000016cdc        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
- .data          0x0000000000016cdc        0x4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
-                0x0000000000016cdc                Task_B_Resources
- .data          0x0000000000016ce0        0x8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
-                0x0000000000016ce0                Task_A_Messages
-                0x0000000000016ce4                Task_B_Messages
- .data          0x0000000000016ce8       0xb4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
-                0x0000000000016ce8                WaitingFifo_1
-                0x0000000000016cfc                SuspendedFifo_1
-                0x0000000000016d10                ReadyFifo_1
-                0x0000000000016d24                WaitingFifo_4
-                0x0000000000016d38                SuspendedFifo_4
-                0x0000000000016d4c                ReadyFifo_4
-                0x0000000000016d60                WaitingQueue
-                0x0000000000016d74                SuspendedQueue
-                0x0000000000016d88                ReadyQueue
- .data          0x0000000000016d9c        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
- .data          0x0000000000016d9c        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
- .data          0x0000000000016d9c        0x0 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_dvmd_tls.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzdi2.o)
- .data          0x0000000000016d9c        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
+ .data          0x0000000000016cc4        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
+ .data          0x0000000000016cc4        0x0 lib/libc-minimal/string/string.o
+ .data          0x0000000000016cc4        0x0 lib/libc-minimal/stdout/printf.o
+ .data          0x0000000000016cc4       0x30 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
+                0x0000000000016cc4                OsCounters
+ .data          0x0000000000016cf4        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
+ .data          0x0000000000016cf4        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
+ .data          0x0000000000016cf4        0x4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
+                0x0000000000016cf4                Task_B_Resources
+ .data          0x0000000000016cf8        0x8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
+                0x0000000000016cf8                Task_A_Messages
+                0x0000000000016cfc                Task_B_Messages
+ .data          0x0000000000016d00       0xb4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
+                0x0000000000016d00                WaitingFifo_1
+                0x0000000000016d14                SuspendedFifo_1
+                0x0000000000016d28                ReadyFifo_1
+                0x0000000000016d3c                WaitingFifo_4
+                0x0000000000016d50                SuspendedFifo_4
+                0x0000000000016d64                ReadyFifo_4
+                0x0000000000016d78                WaitingQueue
+                0x0000000000016d8c                SuspendedQueue
+                0x0000000000016da0                ReadyQueue
+ .data          0x0000000000016db4        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+ .data          0x0000000000016db4        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
+ .data          0x0000000000016db4        0x0 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_dvmd_tls.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzdi2.o)
+ .data          0x0000000000016db4        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
 
-.igot.plt       0x0000000000016d9c        0x0
- .igot.plt      0x0000000000016d9c        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+.igot.plt       0x0000000000016db4        0x0
+ .igot.plt      0x0000000000016db4        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
 
-.bss            0x0000000000016da0       0xd6
+.bss            0x0000000000016db8       0xd6
  *(.bss COMMON)
- .bss           0x0000000000016da0        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
- COMMON         0x0000000000016da0        0x4 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
-                0x0000000000016da0                OsAppMode
- .bss           0x0000000000016da4        0x4 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
- .bss           0x0000000000016da8        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
- .bss           0x0000000000016da8        0x4 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
- COMMON         0x0000000000016dac       0x44 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
-                0x0000000000016dac                OsTaskCtrlBlk
-                0x0000000000016db8                OsCurrentTask
- .bss           0x0000000000016df0       0x18 /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
- .bss           0x0000000000016e08       0x10 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
- .bss           0x0000000000016e18        0x0 lib/libc-minimal/string/string.o
- .bss           0x0000000000016e18        0x0 lib/libc-minimal/stdout/printf.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
- .bss           0x0000000000016e18        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
- COMMON         0x0000000000016e18        0x4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
-                0x0000000000016e18                mutex1
- .bss           0x0000000000016e1c        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
- COMMON         0x0000000000016e1c        0x8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
-                0x0000000000016e1c                inter_task_message
- .bss           0x0000000000016e24        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
- COMMON         0x0000000000016e24       0x34 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
-                0x0000000000016e24                ReadyTasks_1
-                0x0000000000016e30                SuspendedTasks_1
-                0x0000000000016e3c                WaitingTasks_4
-                0x0000000000016e40                ReadyTasks_4
-                0x0000000000016e44                WaitingTasks_1
-                0x0000000000016e50                SuspendedTasks_4
-                0x0000000000016e54                RunningTasks
- .bss           0x0000000000016e58        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
- COMMON         0x0000000000016e58       0x1c /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
-                0x0000000000016e58                AppAlarmStates
-                0x0000000000016e5c                AppAlarmCounters
-                0x0000000000016e68                AppAlarmCycles
- .bss           0x0000000000016e74        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
- .bss           0x0000000000016e74        0x2 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_dvmd_tls.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzdi2.o)
- .bss           0x0000000000016e76        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
-                0x0000000000016e78                . = ALIGN (0x8)
-                0x0000000000017a78                . = (. + TASK_STACK_SIZE)
-                0x0000000000017a78                user_stack_top = .
-                0x0000000000017c78                . = (. + OS_STACK_SIZE)
-                0x0000000000017c78                os_stack_top = .
-                0x0000000000017e78                . = (. + IRQ_STACK_SIZE)
-                0x0000000000017e78                irq_stack_top = .
+ .bss           0x0000000000016db8        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+ COMMON         0x0000000000016db8        0x4 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+                0x0000000000016db8                OsAppMode
+ .bss           0x0000000000016dbc        0x4 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
+ .bss           0x0000000000016dc0        0x0 /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
+ .bss           0x0000000000016dc0        0x4 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
+ COMMON         0x0000000000016dc4       0x44 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
+                0x0000000000016dc4                OsTaskCtrlBlk
+                0x0000000000016dd0                OsCurrentTask
+ .bss           0x0000000000016e08       0x18 /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
+ .bss           0x0000000000016e20       0x10 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
+ .bss           0x0000000000016e30        0x0 lib/libc-minimal/string/string.o
+ .bss           0x0000000000016e30        0x0 lib/libc-minimal/stdout/printf.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
+ .bss           0x0000000000016e30        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
+ COMMON         0x0000000000016e30        0x4 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
+                0x0000000000016e30                mutex1
+ .bss           0x0000000000016e34        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
+ COMMON         0x0000000000016e34        0x8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
+                0x0000000000016e34                inter_task_message
+ .bss           0x0000000000016e3c        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
+ COMMON         0x0000000000016e3c       0x34 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
+                0x0000000000016e3c                ReadyTasks_1
+                0x0000000000016e48                SuspendedTasks_1
+                0x0000000000016e54                WaitingTasks_4
+                0x0000000000016e58                ReadyTasks_4
+                0x0000000000016e5c                WaitingTasks_1
+                0x0000000000016e68                SuspendedTasks_4
+                0x0000000000016e6c                RunningTasks
+ .bss           0x0000000000016e70        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+ COMMON         0x0000000000016e70       0x1c /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+                0x0000000000016e70                AppAlarmStates
+                0x0000000000016e74                AppAlarmCounters
+                0x0000000000016e80                AppAlarmCycles
+ .bss           0x0000000000016e8c        0x0 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
+ .bss           0x0000000000016e8c        0x2 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_dvmd_tls.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzdi2.o)
+ .bss           0x0000000000016e8e        0x0 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
+                0x0000000000016e90                . = ALIGN (0x8)
+                0x0000000000017a90                . = (. + TASK_STACK_SIZE)
+                0x0000000000017a90                user_stack_top = .
+                0x0000000000017c90                . = (. + OS_STACK_SIZE)
+                0x0000000000017c90                os_stack_top = .
+                0x0000000000017e90                . = (. + IRQ_STACK_SIZE)
+                0x0000000000017e90                irq_stack_top = .
 OUTPUT(osek-os.elf elf32-littlearm)
 LOAD linker stubs
 LOAD board/qemu-versatilepb/vectors.o
 
-.debug_info     0x0000000000000000     0x4e93
- .debug_info    0x0000000000000000      0x459 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
- .debug_info    0x0000000000000459      0x171 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
- .debug_info    0x00000000000005ca      0x541 /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
- .debug_info    0x0000000000000b0b      0x5d5 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
- .debug_info    0x00000000000010e0      0x56c /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
- .debug_info    0x000000000000164c      0xa59 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
- .debug_info    0x00000000000020a5      0x2c8 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
- .debug_info    0x000000000000236d      0x235 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
- .debug_info    0x00000000000025a2       0x26 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
- .debug_info    0x00000000000025c8       0x26 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
- .debug_info    0x00000000000025ee      0x655 lib/libc-minimal/string/string.o
- .debug_info    0x0000000000002c43      0xddb lib/libc-minimal/stdout/printf.o
- .debug_info    0x0000000000003a1e      0x14c /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
- .debug_info    0x0000000000003b6a      0x10a /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
- .debug_info    0x0000000000003c74       0xd8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
- .debug_info    0x0000000000003d4c       0xdb /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
- .debug_info    0x0000000000003e27      0x11a /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
- .debug_info    0x0000000000003f41      0x461 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
- .debug_info    0x00000000000043a2      0x59d /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
- .debug_info    0x000000000000493f      0x32f /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
- .debug_info    0x0000000000004c6e      0x225 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+.debug_info     0x0000000000000000     0x4f3f
+ .debug_info    0x0000000000000000      0x484 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+ .debug_info    0x0000000000000484      0x171 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
+ .debug_info    0x00000000000005f5      0x56c /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
+ .debug_info    0x0000000000000b61      0x5d5 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
+ .debug_info    0x0000000000001136      0x597 /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
+ .debug_info    0x00000000000016cd      0xa84 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
+ .debug_info    0x0000000000002151      0x2c8 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
+ .debug_info    0x0000000000002419      0x235 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+ .debug_info    0x000000000000264e       0x26 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
+ .debug_info    0x0000000000002674       0x26 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
+ .debug_info    0x000000000000269a      0x655 lib/libc-minimal/string/string.o
+ .debug_info    0x0000000000002cef      0xddb lib/libc-minimal/stdout/printf.o
+ .debug_info    0x0000000000003aca      0x14c /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
+ .debug_info    0x0000000000003c16      0x10a /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
+ .debug_info    0x0000000000003d20       0xd8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
+ .debug_info    0x0000000000003df8       0xdb /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
+ .debug_info    0x0000000000003ed3      0x11a /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
+ .debug_info    0x0000000000003fed      0x461 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
+ .debug_info    0x000000000000444e      0x59d /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+ .debug_info    0x00000000000049eb      0x32f /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
+ .debug_info    0x0000000000004d1a      0x225 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
 
 .debug_abbrev   0x0000000000000000     0x1584
  .debug_abbrev  0x0000000000000000      0x17e /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
@@ -512,42 +513,42 @@ LOAD board/qemu-versatilepb/vectors.o
  .debug_aranges
                 0x0000000000000240       0x20 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
 
-.debug_line     0x0000000000000000     0x2953
+.debug_line     0x0000000000000000     0x2954
  .debug_line    0x0000000000000000      0x198 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
  .debug_line    0x0000000000000198      0x13b /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
  .debug_line    0x00000000000002d3      0x22a /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
  .debug_line    0x00000000000004fd      0x232 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
  .debug_line    0x000000000000072f      0x1ac /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
  .debug_line    0x00000000000008db      0x475 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
- .debug_line    0x0000000000000d50      0x1ad /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
- .debug_line    0x0000000000000efd      0x14f /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
- .debug_line    0x000000000000104c       0x77 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
- .debug_line    0x00000000000010c3       0x7b /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
- .debug_line    0x000000000000113e      0x483 lib/libc-minimal/string/string.o
- .debug_line    0x00000000000015c1      0xb2d lib/libc-minimal/stdout/printf.o
- .debug_line    0x00000000000020ee       0xd5 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
- .debug_line    0x00000000000021c3       0xd7 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
- .debug_line    0x000000000000229a       0xd3 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
- .debug_line    0x000000000000236d       0xd9 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
- .debug_line    0x0000000000002446       0xdb /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
- .debug_line    0x0000000000002521       0xf8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
- .debug_line    0x0000000000002619      0x10f /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
- .debug_line    0x0000000000002728      0x122 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
- .debug_line    0x000000000000284a      0x109 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+ .debug_line    0x0000000000000d50      0x1ae /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
+ .debug_line    0x0000000000000efe      0x14f /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+ .debug_line    0x000000000000104d       0x77 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vectors.o
+ .debug_line    0x00000000000010c4       0x7b /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/startup.o
+ .debug_line    0x000000000000113f      0x483 lib/libc-minimal/string/string.o
+ .debug_line    0x00000000000015c2      0xb2d lib/libc-minimal/stdout/printf.o
+ .debug_line    0x00000000000020ef       0xd5 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_counter.o
+ .debug_line    0x00000000000021c4       0xd7 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_appmodes.o
+ .debug_line    0x000000000000229b       0xd3 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_events.o
+ .debug_line    0x000000000000236e       0xd9 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_resources.o
+ .debug_line    0x0000000000002447       0xdb /mnt/e/projects/oss/FreeOSEK/tools/src/sg_messages.o
+ .debug_line    0x0000000000002522       0xf8 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_fifo.o
+ .debug_line    0x000000000000261a      0x10f /mnt/e/projects/oss/FreeOSEK/tools/src/sg_alarms.o
+ .debug_line    0x0000000000002729      0x122 /mnt/e/projects/oss/FreeOSEK/tools/src/sg_tasks.o
+ .debug_line    0x000000000000284b      0x109 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
 
 .debug_str      0x0000000000000000     0x118a
- .debug_str     0x0000000000000000      0x331 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
-                                        0x3b7 (size before relaxing)
- .debug_str     0x0000000000000331       0x6f /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
+ .debug_str     0x0000000000000000      0x362 /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
+                                        0x3e8 (size before relaxing)
+ .debug_str     0x0000000000000362       0x6f /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
                                         0x1c3 (size before relaxing)
- .debug_str     0x00000000000003a0      0x15a /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
-                                        0x3fa (size before relaxing)
- .debug_str     0x00000000000004fa       0xcf /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
+ .debug_str     0x00000000000003d1      0x15a /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
+                                        0x42b (size before relaxing)
+ .debug_str     0x000000000000052b       0x9e /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
                                         0x4f1 (size before relaxing)
  .debug_str     0x00000000000005c9       0x98 /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
-                                        0x45a (size before relaxing)
+                                        0x48b (size before relaxing)
  .debug_str     0x0000000000000661      0x324 /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
-                                        0x6cb (size before relaxing)
+                                        0x6fc (size before relaxing)
  .debug_str     0x0000000000000985       0xb1 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
                                         0x2fd (size before relaxing)
  .debug_str     0x0000000000000a36       0xea /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
@@ -670,24 +671,24 @@ LOAD board/qemu-versatilepb/vectors.o
  .ARM.attributes
                 0x00000000000004fa       0x1c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_clzsi2.o)
 
-.debug_frame    0x0000000000000000      0xea0
+.debug_frame    0x0000000000000000      0xe9c
  .debug_frame   0x0000000000000000       0x8c /mnt/e/projects/oss/FreeOSEK/kernel/os_entry.o
  .debug_frame   0x000000000000008c       0x68 /mnt/e/projects/oss/FreeOSEK/kernel/os_log.o
  .debug_frame   0x00000000000000f4       0x9c /mnt/e/projects/oss/FreeOSEK/kernel/os_fifo.o
  .debug_frame   0x0000000000000190       0xb4 /mnt/e/projects/oss/FreeOSEK/kernel/os_task.o
  .debug_frame   0x0000000000000244       0x9c /mnt/e/projects/oss/FreeOSEK/kernel/os_event.o
  .debug_frame   0x00000000000002e0      0x16c /mnt/e/projects/oss/FreeOSEK/kernel/os_alarm.o
- .debug_frame   0x000000000000044c       0xd4 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
- .debug_frame   0x0000000000000520      0x124 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
- .debug_frame   0x0000000000000644      0x210 lib/libc-minimal/string/string.o
- .debug_frame   0x0000000000000854      0x300 lib/libc-minimal/stdout/printf.o
- .debug_frame   0x0000000000000b54       0x88 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
- .debug_frame   0x0000000000000bdc       0x30 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
- .debug_frame   0x0000000000000c0c       0x20 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
- .debug_frame   0x0000000000000c2c       0xac /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
- .debug_frame   0x0000000000000cd8       0x50 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
- .debug_frame   0x0000000000000d28       0xc4 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
- .debug_frame   0x0000000000000dec       0x24 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
- .debug_frame   0x0000000000000e10       0x24 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
- .debug_frame   0x0000000000000e34       0x2c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x0000000000000e60       0x40 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
+ .debug_frame   0x000000000000044c       0xd0 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/board.o
+ .debug_frame   0x000000000000051c      0x124 /mnt/e/projects/oss/FreeOSEK/board/qemu-versatilepb/vector_handlers.o
+ .debug_frame   0x0000000000000640      0x210 lib/libc-minimal/string/string.o
+ .debug_frame   0x0000000000000850      0x300 lib/libc-minimal/stdout/printf.o
+ .debug_frame   0x0000000000000b50       0x88 /mnt/e/projects/oss/FreeOSEK/test/test_app.o
+ .debug_frame   0x0000000000000bd8       0x30 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldf3.o)
+ .debug_frame   0x0000000000000c08       0x20 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivsi3.o)
+ .debug_frame   0x0000000000000c28       0xac /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_addsubdf3.o)
+ .debug_frame   0x0000000000000cd4       0x50 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_muldivdf3.o)
+ .debug_frame   0x0000000000000d24       0xc4 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_cmpdf2.o)
+ .debug_frame   0x0000000000000de8       0x24 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixdfsi.o)
+ .debug_frame   0x0000000000000e0c       0x24 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_arm_fixunsdfsi.o)
+ .debug_frame   0x0000000000000e30       0x2c /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x0000000000000e5c       0x40 /opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1/libgcc.a(_udivmoddi4.o)
