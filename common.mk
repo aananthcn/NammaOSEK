@@ -12,7 +12,7 @@ CMN_OBJS := \
 
 $(info compilating Common source files)
 
-OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
+OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(ARCH_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
 
 .PHONY: all
 

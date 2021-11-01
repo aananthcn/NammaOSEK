@@ -1,9 +1,9 @@
 .text
  .code 32
  
-.global reset_handler
+.global _reset_handler
 
-reset_handler:
+_reset_handler:
 	/* set Supervisor stack */
 	LDR sp, =_os_stack_top
 	/* copy vector table to address 0 */

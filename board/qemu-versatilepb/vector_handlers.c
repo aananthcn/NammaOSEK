@@ -52,11 +52,11 @@ void __attribute__((interrupt)) fiq_handler(void) {
 }
 
 void __copy_vectors(void) {
-	extern uint32_t vectors_start;
-	extern uint32_t vectors_end;
-	uint32_t *vectors_src = &vectors_start;
+	extern uint32_t _vectors_start;
+	extern uint32_t _vectors_end;
+	uint32_t *vectors_src = &_vectors_start;
 	uint32_t *vectors_dst = (uint32_t *)0;
 
-	while (vectors_src < &vectors_end)
+	while (vectors_src < &_vectors_end)
 		*vectors_dst++ = *vectors_src++;
 }

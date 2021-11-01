@@ -54,7 +54,11 @@ StatusType TerminateTask(void) {
 
 
 void OsClearActivationsCounts(void) {
-	memset(_OsTaskCtrlBlk, 0, sizeof(_OsTaskCtrlBlk));
+	int t;
+
+	for (t = 0; t < TASK_ID_MAX; t++) {
+		_OsTaskCtrlBlk[t].activations = 0;
+	}
 }
 
 /* _user_stack_top is defined in board-specific linker definition file */
@@ -110,12 +114,12 @@ int OsHandleCounters(void);
 
 int OsScheduleTasks(void) {
 	OsTaskType* task;
-	u32 tick_cnt;
+	u32 tick_cnt, sp_curr;
 	static u32 tick_cnt_old;
 	int i;
 
 	/* Timer / Counter handling */
-	tick_cnt = GetOsTickCnt();
+	tick_cnt = _GetOsTickCnt();
 	if (tick_cnt != tick_cnt_old) {
 		OsHandleCounters();
 		tick_cnt_old = tick_cnt;
@@ -126,7 +130,9 @@ int OsScheduleTasks(void) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {
 			_OsCurrentTask = *task;
+			sp_curr = _switch_stack(_OsTaskCtrlBlk[task->id].sp_top, 0);
 			_OsCurrentTask.handler();
+			_switch_stack(sp_curr, 0);
 		}
 	}
 }

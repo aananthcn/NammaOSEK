@@ -53,6 +53,6 @@ void StartOS(AppModeType mode) {
  * This funtion runs in interrupt context, hence keep things as minimal as possible
  */
 void SystemTickISR(void) {
-	if (OsHandleTicks())
-		pr_log("Error: OsHandleTicks return errors!\n");
+	if (_OsHandleTicks())
+		pr_log("Error: _OsHandleTicks return errors!\n");
 }

@@ -5,7 +5,7 @@
 
 INCLUDE tools/src/sg_stack.lds
 
-ENTRY(vectors_start)
+ENTRY(_vectors_start)
 SECTIONS
 {
     /* LOAD ADDRESS - The -kernel option (to qemu) loads a binary file inside
@@ -14,9 +14,9 @@ SECTIONS
 
     /* CODE SEGMENTS -- place vectors.o first! */
     .text : {
-        vectors_start = .;
+        _vectors_start = .;
         board/qemu-versatilepb/vectors.o
-        vectors_end = .;
+        _vectors_end = .;
         *(.text .rodata)
     }
 
