@@ -67,6 +67,9 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
         print_oil_item_type1(f, task, TaskParams[5], 'RESOURCE', indent)
         print_oil_item_type1(f, task, TaskParams[6], 'EVENT', indent)
         print_oil_item_type1(f, task, TaskParams[7], 'MESSAGE', indent)
+
+        # stack size (FreeOSEK specifics)
+        f.write(indent*"\t" +"STACK_SIZE = " + str(task[TaskParams[STSZ]]) + ";\n")
             
         # End of TaskData body
         indent -= 1

@@ -4,7 +4,7 @@ import sys
 import os
 
 from common import import_or_install, print_info
-from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, OS_Params
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, OS_Params, STSZ
 
 import sg_counter
 import sg_tasks
@@ -143,6 +143,8 @@ def parse_tasks(oil_lines, line_num):
         tasks = parse_tasks_item_list(line, tasks, 5)
         tasks = parse_tasks_item_list(line, tasks, 6)
         tasks = parse_tasks_item_list(line, tasks, 7)
+        if TaskParams[STSZ] in line:
+            tasks[TaskParams[STSZ]] = line.replace('=', ';').split(';')[1].strip()
         line_num += 1
 
     return line_num, tasks

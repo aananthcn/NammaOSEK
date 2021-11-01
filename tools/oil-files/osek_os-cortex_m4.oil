@@ -20,6 +20,7 @@ CPU cortex_m4 {
 			APPMODE = HW_TEST_MODE;
 		};
 		MESSAGE = inter_task_message;
+		STACK_SIZE = 1024;
 	};
 	TASK Task_B {
 		PRIORITY = 1;
@@ -29,6 +30,7 @@ CPU cortex_m4 {
 		RESOURCE = mutex1;
 		EVENT = event1;
 		MESSAGE = inter_task_message;
+		STACK_SIZE = 1024;
 	};
 	TASK Task_C {
 		PRIORITY = 4;
@@ -39,6 +41,7 @@ CPU cortex_m4 {
 		};
 		EVENT = event1;
 		EVENT = event2;
+		STACK_SIZE = 1024;
 	};
 	COUNTER mSecCounter {
 		MINCYCLE = 1;

@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams, TNMI, EVTI, MSGI, ATSI, RESI, ACTI, SCHI, PRII
+from ob_globals import TaskParams, TNMI, EVTI, MSGI, ATSI, RESI, ACTI, SCHI, PRII, STSZ
 
 import colorama
 from colorama import Fore, Back, Style
@@ -27,6 +27,7 @@ typedef struct {\n\
     u32 n_reslist;\n\
     const EventMaskType** evtmsks;\n\
     u32 n_evtmsks;\n\
+    u32 stack_size;\n\
 } OsTaskType;\n\
 \n\
 extern const OsTaskType _OsTaskList[];\n\n"
@@ -87,6 +88,7 @@ def generate_code(path, Tasks):
     cf.write("#include \"sg_events.h\"\n")
     cf.write("#include \"sg_messages.h\"\n")
     cf.write("#include \"sg_resources.h\"\n")
+
     cf.write("\n\n/*   T A S K   D E F I N I T I O N S   */\n")
     cf.write("const OsTaskType _OsTaskList[] = {\n")
     for i, task in enumerate(Tasks):
@@ -133,7 +135,8 @@ def generate_code(path, Tasks):
             cf.write("\t\t.reslist = (ResourceType**) &"+task[TaskParams[TNMI]]+"_Resources,\n")
         else:
             cf.write("\t\t.reslist = NULL,\n")
-        cf.write("\t\t.n_reslist = "+task[TaskParams[TNMI]].upper()+"_RESOURCE_MAX\n")
+        cf.write("\t\t.n_reslist = "+task[TaskParams[TNMI]].upper()+"_RESOURCE_MAX,\n")
+        cf.write("\t\t.stack_size = "+task[TaskParams[STSZ]]+"\n")
 
         cf.write("\t}")
         if i+1 < len(Tasks):
@@ -141,6 +144,7 @@ def generate_code(path, Tasks):
         else:
             cf.write("\n")
     cf.write("};\n")
+    
     cf.close()
     hf.write("\n\n#endif\n")
     hf.close()

@@ -72,7 +72,7 @@ void OsSetupScheduler(AppModeType mode) {
 		for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
 			/* do sanity check - for any hand modification of sg code */
 			if (t != _OsTaskList[t].id) {
-				pr_log("Error: %s(), task.id (%d) != id (%d)!",
+				pr_log("Error: %s(), task.id (%d) != id (%d)!\n",
 					__func__, _OsTaskList[t].id, t);
 				continue; // skip this
 			}

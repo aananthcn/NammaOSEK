@@ -47,6 +47,7 @@ typedef struct {
     u32 n_reslist;
     const EventMaskType** evtmsks;
     u32 n_evtmsks;
+    u32 stack_size;
 } OsTaskType;
 
 extern const OsTaskType _OsTaskList[];
