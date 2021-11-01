@@ -6,6 +6,7 @@
 
 typedef struct {
 	u32 activations;
+	intptr_t sp_top;
 } OsTaskCtrlType;
 
 extern OsTaskCtrlType _OsTaskCtrlBlk[];

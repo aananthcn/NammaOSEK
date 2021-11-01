@@ -57,10 +57,13 @@ void OsClearActivationsCounts(void) {
 	memset(_OsTaskCtrlBlk, 0, sizeof(_OsTaskCtrlBlk));
 }
 
+/* _user_stack_top is defined in board-specific linker definition file */
+extern u8 _user_stack_top;
 
 void OsSetupScheduler(AppModeType mode) {
-	int t, m;
+	int t, m, tmp;
 	OsFifoType* pFifo;
+	int sp_acc = 0;
 
 	if (mode >= OS_MODES_MAX) {
 		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!\n", mode);
@@ -72,7 +75,8 @@ void OsSetupScheduler(AppModeType mode) {
 		for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
 			/* do sanity check - for any hand modification of sg code */
 			if (t != _OsTaskList[t].id) {
-				pr_log("Error: %s(), task.id (%d) != id (%d)!\n",
+				pr_log("Error: %s(), task.id (%d) != id (%d)! \
+				Try do \'build clean\' the re-build code.\n",
 					__func__, _OsTaskList[t].id, t);
 				continue; // skip this
 			}
@@ -91,6 +95,11 @@ void OsSetupScheduler(AppModeType mode) {
 			/* all set, we can not add this task to queue */
 			AddTaskToFifoQueue(_OsTaskList[t], ReadyQueue);
 		}
+
+		/* initialize stack pointer for each tasks */
+		tmp = ((int)&_user_stack_top - sp_acc);
+		_OsTaskCtrlBlk[t].sp_top = (intptr_t) (tmp - (tmp % 8)); /* align to 8 */
+		sp_acc += _OsTaskList[t].stack_size;
 	}
 	pr_log("Scheduler setup done!\n");
 }
