@@ -27,13 +27,13 @@ def generate_code(path, Counters):
     hf.write("#define ACN_OSEK_SG_COUNTER_H\n")
     hf.write("#include <osek.h>\n")
     hf.write(C_Counter_Type)
-    hf.write("extern OsCounterType OsCounters[];\n")
+    hf.write("extern OsCounterType _OsCounters[];\n")
 
     # create source file
     filename = path + "/" + "sg_counter.c"
     cf = open(filename, "w")
     cf.write("#include \"sg_counter.h\"\n")
-    cf.write("\n\nOsCounterType OsCounters[] =  {\n")
+    cf.write("\n\nOsCounterType _OsCounters[] =  {\n")
     for i, cntr in enumerate(Counters):
         cf.write("\t{\n")
         cf.write("\t\t.alarm.mincycle = "+ str(cntr[CntrParams[1]]) + ",\n")

@@ -35,15 +35,15 @@ SECTIONS
     . = ALIGN(8);
     /* USER STACK MEMORY */
     . = . + TASK_STACK_SIZE; /* user stack memory */
-    user_stack_top = .;
+    _user_stack_top = .;
 
     /* OS STACK MEMORY */
     . = . + OS_STACK_SIZE; /* user stack memory */
-    os_stack_top = .;
+    _os_stack_top = .;
 
     /* IRQ STACK MEMORY */
     . = . + IRQ_STACK_SIZE; /* 4kB of irq stack memory */
-    irq_stack_top = .;
+    _irq_stack_top = .;
 }
 
 /*

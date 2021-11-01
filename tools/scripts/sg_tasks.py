@@ -29,7 +29,7 @@ typedef struct {\n\
     u32 n_evtmsks;\n\
 } OsTaskType;\n\
 \n\
-extern const OsTaskType OsTaskList[];\n\n"
+extern const OsTaskType _OsTaskList[];\n\n"
 
 
 def print_task_ids(hf, Tasks):
@@ -88,7 +88,7 @@ def generate_code(path, Tasks):
     cf.write("#include \"sg_messages.h\"\n")
     cf.write("#include \"sg_resources.h\"\n")
     cf.write("\n\n/*   T A S K   D E F I N I T I O N S   */\n")
-    cf.write("const OsTaskType OsTaskList[] = {\n")
+    cf.write("const OsTaskType _OsTaskList[] = {\n")
     for i, task in enumerate(Tasks):
         cf.write("\t{\n")
 
@@ -114,7 +114,7 @@ def generate_code(path, Tasks):
              cf.write("\t\t.appmodes = NULL,\n")
         cf.write("\t\t.n_appmodes = "+task[TaskParams[TNMI]].upper()+"_APPMODE_MAX,\n")
 
-        # Init EventMasks
+        # Init _EventMasks
         if TaskParams[EVTI] in task:
             cf.write("\t\t.evtmsks = (const EventMaskType**) &"+task[TaskParams[TNMI]]+"_EventMasks,\n")
         else:

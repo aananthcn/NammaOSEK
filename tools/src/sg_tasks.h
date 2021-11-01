@@ -49,7 +49,7 @@ typedef struct {
     u32 n_evtmsks;
 } OsTaskType;
 
-extern const OsTaskType OsTaskList[];
+extern const OsTaskType _OsTaskList[];
 
 
 #define OS_TASK(task)    (OSEK_Task_##task)

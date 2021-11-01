@@ -18,16 +18,16 @@ const AppModeType Alarm_WakeTaskA_AppModes[] = {
 
 
 /*   A L A R M S   D E F I N I T I O N S   */
-TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
-TickType AppAlarmCycles[MAX_APP_ALARM_COUNTERS];
-bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];
+TickType _AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
+TickType _AppAlarmCycles[MAX_APP_ALARM_COUNTERS];
+bool _AppAlarmStates[MAX_APP_ALARM_COUNTERS];
 const AppAlarmType AppAlarms_mSecCounter[] = {
 	{
 		.name = "WakeTaskA",
 		.cntr_id = 0,
-		.pacntr = &AppAlarmCounters[0],
-		.pcycle = &AppAlarmCycles[0],
-		.palrm_state = &AppAlarmStates[0],
+		.pacntr = &_AppAlarmCounters[0],
+		.pcycle = &_AppAlarmCycles[0],
+		.palrm_state = &_AppAlarmStates[0],
 		.aat = AAT_ACTIVATETASK,
 		.aat_arg1 = (intptr_t) 0,
 		.aat_arg2 = (intptr_t)NULL,
@@ -40,9 +40,9 @@ const AppAlarmType AppAlarms_mSecCounter[] = {
 	{
 		.name = "WakeTaskB",
 		.cntr_id = 0,
-		.pacntr = &AppAlarmCounters[1],
-		.pcycle = &AppAlarmCycles[1],
-		.palrm_state = &AppAlarmStates[1],
+		.pacntr = &_AppAlarmCounters[1],
+		.pcycle = &_AppAlarmCycles[1],
+		.palrm_state = &_AppAlarmStates[1],
 		.aat = AAT_SETEVENT,
 		.aat_arg1 = (intptr_t) 1,
 		.aat_arg2 = (intptr_t) OS_EVENT(Task_B, event1),
@@ -58,9 +58,9 @@ const AppAlarmType AppAlarms_uSecCounter[] = {
 	{
 		.name = "uSecAlarm",
 		.cntr_id = 1,
-		.pacntr = &AppAlarmCounters[2],
-		.pcycle = &AppAlarmCycles[2],
-		.palrm_state = &AppAlarmStates[2],
+		.pacntr = &_AppAlarmCounters[2],
+		.pcycle = &_AppAlarmCycles[2],
+		.palrm_state = &_AppAlarmStates[2],
 		.aat = AAT_ALARMCALLBACK,
 		.aat_arg1 = (intptr_t)Alarm_uSecAlarm_callback,
 		.aat_arg2 = (intptr_t)NULL,
@@ -73,7 +73,7 @@ const AppAlarmType AppAlarms_uSecCounter[] = {
 };
 
 
-const AppAlarmCtrlBlockType AppAlarms[] = {
+const AppAlarmCtrlBlockType _AppAlarms[] = {
 	{
 		.alarm = (const AppAlarmType *) &AppAlarms_mSecCounter,
 		.len = 2
@@ -85,6 +85,6 @@ const AppAlarmCtrlBlockType AppAlarms[] = {
 };
 
 
-const AlarmType AlarmID2CounterID_map[] = {
+const AlarmType _AlarmID2CounterID_map[] = {
 	0, 0, 1, 
 };

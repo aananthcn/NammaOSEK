@@ -11,8 +11,8 @@
 
 
 
-OsTaskCtrlType OsTaskCtrlBlk[TASK_ID_MAX];
-OsTaskType OsCurrentTask;
+OsTaskCtrlType _OsTaskCtrlBlk[TASK_ID_MAX];
+OsTaskType _OsCurrentTask;
 
 
 
@@ -33,7 +33,7 @@ StatusType ActivateTask(TaskType TaskID) {
 		return E_OS_ID;
 	}
 
-	stat = AddTaskToFifoQueue(OsTaskList[TaskID], ReadyQueue);
+	stat = AddTaskToFifoQueue(_OsTaskList[TaskID], ReadyQueue);
 
 	return stat;
 }
@@ -54,7 +54,7 @@ StatusType TerminateTask(void) {
 
 
 void OsClearActivationsCounts(void) {
-	memset(OsTaskCtrlBlk, 0, sizeof(OsTaskCtrlBlk));
+	memset(_OsTaskCtrlBlk, 0, sizeof(_OsTaskCtrlBlk));
 }
 
 
@@ -69,27 +69,27 @@ void OsSetupScheduler(AppModeType mode) {
 
 	/* check all tasks marked as autostart */
 	for (t=0; t < TASK_ID_MAX; t++) {
-		for (m=0; m < OsTaskList[t].n_appmodes; m++) {
+		for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
 			/* do sanity check - for any hand modification of sg code */
-			if (t != OsTaskList[t].id) {
+			if (t != _OsTaskList[t].id) {
 				pr_log("Error: %s(), task.id (%d) != id (%d)!",
-					__func__, OsTaskList[t].id, t);
+					__func__, _OsTaskList[t].id, t);
 				continue; // skip this
 			}
 
 			/* check if task 't' is configured to run in this mode */
-			if (mode != *(((AppModeType*) OsTaskList[t].appmodes)+m)) {
+			if (mode != *(((AppModeType*) _OsTaskList[t].appmodes)+m)) {
 				continue; // skip this
 			}
 
 			/* check if it has already reached activations limit */
-			if (OsTaskCtrlBlk[t].activations >= OsTaskList[t].activations) {
+			if (_OsTaskCtrlBlk[t].activations >= _OsTaskList[t].activations) {
 				continue; // skip this
 			}
-			OsTaskCtrlBlk[t].activations++;
+			_OsTaskCtrlBlk[t].activations++;
 
 			/* all set, we can not add this task to queue */
-			AddTaskToFifoQueue(OsTaskList[t], ReadyQueue);
+			AddTaskToFifoQueue(_OsTaskList[t], ReadyQueue);
 		}
 	}
 	pr_log("Scheduler setup done!\n");
@@ -116,8 +116,8 @@ int OsScheduleTasks(void) {
 	for (i = SG_FIFO_QUEUE_MAX_LEN-1; i >= 0; i--) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {
-			OsCurrentTask = *task;
-			OsCurrentTask.handler();
+			_OsCurrentTask = *task;
+			_OsCurrentTask.handler();
 		}
 	}
 }

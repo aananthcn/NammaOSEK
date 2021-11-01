@@ -38,8 +38,6 @@ int console_fputc(const int c) {
 int brd_setup_sytimer(void) {
         u32 tick_count = OS_TICK_DURATION_ns / TIMER_CLK_TO_MILLISEC;
 
-        printf("tick_count = %d\n", tick_count);
-
         /* Timer0 counter reload value init */
         *((volatile u32*)(TIMER0_BASE+TIMERLOAD_OFFSET)) = tick_count;
 

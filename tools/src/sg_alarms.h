@@ -13,10 +13,10 @@ typedef enum {
 
 typedef struct {
     char* name;                     /* short name of alarm */ 
-    AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ 
-    TickType* pacntr;               /* pointer to AppAlarmCounters */ 
+    AlarmType cntr_id;              /* OS Counter ID (= index of _OsCounters + 1) */ 
+    TickType* pacntr;               /* pointer to _AppAlarmCounters */ 
     TickType* pcycle;               /* pointer to AppAlarmCycle */ 
-    bool* palrm_state;              /* pointer to the state of AppAlarmCounters */ 
+    bool* palrm_state;              /* pointer to the state of _AppAlarmCounters */ 
     AlarmActionType aat;            /* Refer enum AlarmActionType */ 
     intptr_t aat_arg1;              /* arg1: task_name | callback_fun */
     intptr_t aat_arg2;              /* arg2: event | NULL */
@@ -37,15 +37,15 @@ typedef struct {
 
 
 #define MAX_APP_ALARMS  (2)
-extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];
+extern const AppAlarmCtrlBlockType _AppAlarms[MAX_APP_ALARMS];
 #define MAX_APP_ALARM_COUNTERS    (3)
-extern TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
-extern TickType AppAlarmCycles[MAX_APP_ALARM_COUNTERS];
-extern bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];
+extern TickType _AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
+extern TickType _AppAlarmCycles[MAX_APP_ALARM_COUNTERS];
+extern bool _AppAlarmStates[MAX_APP_ALARM_COUNTERS];
 
 
 extern void Alarm_uSecAlarm_callback(void);
 
-extern const AlarmType AlarmID2CounterID_map[];
+extern const AlarmType _AlarmID2CounterID_map[];
 
 #endif

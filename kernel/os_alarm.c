@@ -8,7 +8,7 @@
 #include <sg_alarms.h>
 #include <sg_appmodes.h>
 
-static u32 OsTickCount;
+static u32 _OsTickCount;
 static u32 OsTickCount_us;
 
 #define ENABLE_UPTIME_PRINTS	0 // set this to 1 if you want up-time to be printed.
@@ -44,13 +44,13 @@ StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 		return E_OS_ARG_FAIL;
 	}
 
-	counter_id = AlarmID2CounterID_map[AlarmID];
+	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
 		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
 		return E_OS_STATE;
 	}
 
-	*Info = OsCounters[counter_id].alarm;
+	*Info = _OsCounters[counter_id].alarm;
 	return E_OK;
 }
 
@@ -78,14 +78,14 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 		return E_OS_ARG_FAIL;
 	}
 
-	counter_id = AlarmID2CounterID_map[AlarmID];
+	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
 		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
 		return E_OS_STATE;
 	}
 
-	ticks_futr = AppAlarmCounters[AlarmID];
-	if (OsCounters[counter_id].tickduration < ONE_MSEC_IN_NANO_SEC) {
+	ticks_futr = _AppAlarmCounters[AlarmID];
+	if (_OsCounters[counter_id].tickduration < ONE_MSEC_IN_NANO_SEC) {
 		if (brd_get_usec_syscount(&ticks_curr)) {
 			pr_log("Error: brd_get_usec_syscount returns error\n");
 			return -1;
@@ -129,28 +129,28 @@ StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 		return E_OS_ID;
 	}
 
-	counter_id = AlarmID2CounterID_map[AlarmID];
+	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
 		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
 		return E_OS_STATE;
 	}
 
-	if (increment > OsCounters[counter_id].alarm.maxallowedvalue) {
+	if (increment > _OsCounters[counter_id].alarm.maxallowedvalue) {
 		pr_log("Error: %s(), increment arg (=%d) > maxallowedvalue!\n",
 			__func__, increment);
 		return E_OS_LIMIT;
 	}
 
-	if (cycle < OsCounters[counter_id].alarm.mincycle) {
+	if (cycle < _OsCounters[counter_id].alarm.mincycle) {
 		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
 			cycle);
 		return E_OS_LIMIT;
 	}
 
 	/* All inputs are validated, just configure alarms */
-	AppAlarmCounters[AlarmID] = (TickType)(OsTickCount + increment);
-	AppAlarmCycles[AlarmID] = cycle;
-	AppAlarmStates[AlarmID] = true;
+	_AppAlarmCounters[AlarmID] = (TickType)(_OsTickCount + increment);
+	_AppAlarmCycles[AlarmID] = cycle;
+	_AppAlarmStates[AlarmID] = true;
 	return E_OK;
 }
 
@@ -176,28 +176,28 @@ StatusType SetAbsAlarm(AlarmType AlarmID, TickType start, TickType cycle) {
 		return E_OS_ID;
 	}
 
-	counter_id = AlarmID2CounterID_map[AlarmID];
+	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
 		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
 		return E_OS_STATE;
 	}
 
-	if (start > OsCounters[counter_id].alarm.maxallowedvalue) {
+	if (start > _OsCounters[counter_id].alarm.maxallowedvalue) {
 		pr_log("Error: %s(), start arg (=%d) > maxallowedvalue!\n",
 			__func__, start);
 		return E_OS_LIMIT;
 	}
 
-	if (cycle < OsCounters[counter_id].alarm.mincycle) {
+	if (cycle < _OsCounters[counter_id].alarm.mincycle) {
 		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
 			cycle);
 		return E_OS_LIMIT;
 	}
 
 	/* All inputs are validated, just configure alarms */
-	AppAlarmCounters[AlarmID] = start;
-	AppAlarmCycles[AlarmID] = cycle;
-	AppAlarmStates[AlarmID] = true;
+	_AppAlarmCounters[AlarmID] = start;
+	_AppAlarmCycles[AlarmID] = cycle;
+	_AppAlarmStates[AlarmID] = true;
 	return E_OK;
 }
 
@@ -218,9 +218,9 @@ StatusType CancelAlarm(AlarmType AlarmID) {
 	}
 
 	/* All inputs are validated, just configure alarms */
-	AppAlarmStates[AlarmID] = false;
-	AppAlarmCounters[AlarmID] = 0;
-	AppAlarmCycles[AlarmID] = 0;
+	_AppAlarmStates[AlarmID] = false;
+	_AppAlarmCounters[AlarmID] = 0;
+	_AppAlarmCycles[AlarmID] = 0;
 	return E_OK;
 }
 
@@ -228,7 +228,7 @@ StatusType CancelAlarm(AlarmType AlarmID) {
 ///////////////////////////////////////////////////////////////////////////////
 // Core OS Alarm / Counter Functions
 u32 GetOsTickCnt(void) {
-	return OsTickCount;
+	return _OsTickCount;
 }
 
 
@@ -239,7 +239,7 @@ u32 GetOsTickCnt(void) {
  builder & System Generator tools. 
 /*/
 int OsHandleTicks(void) {
-	OsTickCount++;
+	_OsTickCount++;
 	OsClearActivationsCounts();
 
 #if ENABLE_UPTIME_PRINTS != 0
@@ -260,8 +260,8 @@ int OsInitializeAlarms(AppModeType mode) {
 	}
 
 	for (ctr = 0; ctr < MAX_APP_ALARMS; ctr++) {
-		for (alm = 0; alm < AppAlarms[ctr].len; alm++) {
-			alarm = &AppAlarms[ctr].alarm[alm];
+		for (alm = 0; alm < _AppAlarms[ctr].len; alm++) {
+			alarm = &_AppAlarms[ctr].alarm[alm];
 			if (alarm->is_autostart != true) {
 				continue;
 			}
@@ -336,8 +336,8 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 		return -1;
 	}
 
-	for (i = 0; i < AppAlarms[cntr_id].len; i++) {
-		alarm = &AppAlarms[cntr_id].alarm[i];
+	for (i = 0; i < _AppAlarms[cntr_id].len; i++) {
+		alarm = &_AppAlarms[cntr_id].alarm[i];
 		if ((cnt >= *alarm->pacntr) && (*alarm->palrm_state)) {
 			OsTriggerAlarm(alarm);
 			/* if cycletime is set, go for next round */
@@ -373,20 +373,20 @@ int OsHandleCounters(void) {
 
 	/* Increment user configured OSEK Counters */
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-		if (OsCounters[i].tickduration < ONE_MSEC_IN_NANO_SEC ) {
+		if (_OsCounters[i].tickduration < ONE_MSEC_IN_NANO_SEC ) {
 			delta = (TickType)(nsec_cnt - nsec_cnt_old);
 		}
 		else {
 			delta = (TickType)(os_ticks - os_ticks_old);
 		}
 
-		if (delta >= OsCounters[i].alarm.ticksperbase) {
-			OsCounters[i].countval += delta;
-			if (OsCounters[i].countval > OsCounters[i].alarm.maxallowedvalue) {
-				OsCounters[i].countval = 0;
+		if (delta >= _OsCounters[i].alarm.ticksperbase) {
+			_OsCounters[i].countval += delta;
+			if (_OsCounters[i].countval > _OsCounters[i].alarm.maxallowedvalue) {
+				_OsCounters[i].countval = 0;
 			}
 		}
-		OsHandleAlarms(i, OsCounters[i].countval);
+		OsHandleAlarms(i, _OsCounters[i].countval);
 	}
 
 	os_ticks_old = os_ticks;
@@ -404,7 +404,7 @@ int OsComputeUpTime(void) {
 	/* Print all counters */
 	printf("[");
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-		printf("%08X", OsCounters[i].countval);
+		printf("%08X", _OsCounters[i].countval);
 		if (i+1 != OS_MAX_COUNTERS)
 			printf(", ");
 	}

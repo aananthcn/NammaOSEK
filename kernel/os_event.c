@@ -9,7 +9,7 @@
 #include <stddef.h>
 
 
-static EventMaskType EventMasks[TASK_ID_MAX];
+static EventMaskType _EventMasks[TASK_ID_MAX];
 
 /*/
 Function: SetEvent
@@ -32,7 +32,7 @@ StatusType SetEvent(TaskType TaskID, EventMaskType Mask) {
 		return E_OS_ID;
 	}
 
-	EventMasks[TaskID] |= Mask;
+	_EventMasks[TaskID] |= Mask;
 	ActivateTask(TaskID);
 
 	return E_OK; 
@@ -53,14 +53,14 @@ which own the event.
 StatusType ClearEvent(EventMaskType Mask) {
 	TaskType task_id;
 
-	task_id = OsCurrentTask.id;
+	task_id = _OsCurrentTask.id;
 	if (task_id >= TASK_ID_MAX) {
 		pr_log("Error: %s() called with invalid TaskID %d\n", __func__,
 			task_id);
 		return E_OS_ID;
 	}
 
-	EventMasks[task_id] &= ~Mask;
+	_EventMasks[task_id] &= ~Mask;
 	return E_OK;
 }
 
@@ -91,7 +91,7 @@ StatusType GetEvent(TaskType TaskID, EventMaskRefType Event) {
 		return E_OS_ARG_FAIL;
 	}
 
-	*Event = EventMasks[TaskID];
+	*Event = _EventMasks[TaskID];
 	return E_OK;
 }
 

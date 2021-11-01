@@ -23,7 +23,7 @@ int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID) {
 	/* Push to FIFO head as long as the head does't eat the tail */
 	if (!pFifoQ->full) {
 		head = pFifoQ->head;
-		pFifoQ->task[head] = (OsTaskType*)&OsTaskList[TaskID];
+		pFifoQ->task[head] = (OsTaskType*)&_OsTaskList[TaskID];
 		pFifoQ->head = (pFifoQ->head + 1) %
 				(pFifoQ->size);
 		if (pFifoQ->head == pFifoQ->tail) {

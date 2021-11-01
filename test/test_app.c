@@ -54,7 +54,7 @@ TASK(Task_A) {
 		toggle_bit = false;
 		SetEvent(1, 0x101);
 		GetEvent(1, &Event);
-		printf("Task A: Event = %lX\n", Event);
+		pr_log("Task A: Event = %lX\n", Event);
 	}
 	else {
 		toggle_bit = true;
@@ -76,7 +76,7 @@ TASK(Task_B) {
 	EventMaskType Event;
 	ClearEvent(0x101);
 	GetEvent(1, &Event);
-	printf("Task B: Event = %lX\n", Event);
+	pr_log("Task B: Event = %lX\n", Event);
 #endif
 }
 

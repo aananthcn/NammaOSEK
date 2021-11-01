@@ -24,10 +24,10 @@ AAT_PyList = {
 
 C_Alarm_Type = "\n\ntypedef struct {\n\
     char* name;                     /* short name of alarm */ \n\
-    AlarmType cntr_id;              /* OS Counter ID (= index of OsCounters + 1) */ \n\
-    TickType* pacntr;               /* pointer to AppAlarmCounters */ \n\
+    AlarmType cntr_id;              /* OS Counter ID (= index of _OsCounters + 1) */ \n\
+    TickType* pacntr;               /* pointer to _AppAlarmCounters */ \n\
     TickType* pcycle;               /* pointer to AppAlarmCycle */ \n\
-    bool* palrm_state;              /* pointer to the state of AppAlarmCounters */ \n\
+    bool* palrm_state;              /* pointer to the state of _AppAlarmCounters */ \n\
     AlarmActionType aat;            /* Refer enum AlarmActionType */ \n\
     intptr_t aat_arg1;              /* arg1: task_name | callback_fun */\n\
     intptr_t aat_arg2;              /* arg2: event | NULL */\n\
@@ -159,19 +159,19 @@ def generate_code(path, Alarms, Counters, Tasks):
             CounterSizeList[alarm[AlarmParams[ACNT]]] += 1
     hf.write(C_AlarmCtrlBlock_Type);
     hf.write("\n#define MAX_APP_ALARMS  ("+str(len(CounterSizeList))+")\n")
-    hf.write("extern const AppAlarmCtrlBlockType AppAlarms[MAX_APP_ALARMS];\n")
+    hf.write("extern const AppAlarmCtrlBlockType _AppAlarms[MAX_APP_ALARMS];\n")
     hf.write("#define MAX_APP_ALARM_COUNTERS    ("+str(len(Alarms))+")\n")
-    hf.write("extern TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
-    hf.write("extern TickType AppAlarmCycles[MAX_APP_ALARM_COUNTERS];\n")
-    hf.write("extern bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];\n")
+    hf.write("extern TickType _AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
+    hf.write("extern TickType _AppAlarmCycles[MAX_APP_ALARM_COUNTERS];\n")
+    hf.write("extern bool _AppAlarmStates[MAX_APP_ALARM_COUNTERS];\n")
     if new_line_for_app_alarm:
         hf.write("\n\n") # beautify sg_alarms.h
 
     # define the alarms configured in OSEK builder or oil file
     cf.write("\n/*   A L A R M S   D E F I N I T I O N S   */\n")
-    cf.write("TickType AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
-    cf.write("TickType AppAlarmCycles[MAX_APP_ALARM_COUNTERS];\n")
-    cf.write("bool AppAlarmStates[MAX_APP_ALARM_COUNTERS];\n")
+    cf.write("TickType _AppAlarmCounters[MAX_APP_ALARM_COUNTERS];\n")
+    cf.write("TickType _AppAlarmCycles[MAX_APP_ALARM_COUNTERS];\n")
+    cf.write("bool _AppAlarmStates[MAX_APP_ALARM_COUNTERS];\n")
     for i, cntr in enumerate(Counters):
         cf.write("const AppAlarmType AppAlarms_"+cntr[CntrParams[CNME]]+"[] = {\n")
         print_count = 0
@@ -181,9 +181,9 @@ def generate_code(path, Alarms, Counters, Tasks):
             cf.write("\t{\n")
             cf.write("\t\t.name = \""+alarm[AlarmParams[ANME]]+"\",\n")
             cf.write("\t\t.cntr_id = "+str(i)+",\n")
-            cf.write("\t\t.pacntr = &AppAlarmCounters["+str(j)+"],\n")
-            cf.write("\t\t.pcycle = &AppAlarmCycles["+str(j)+"],\n")
-            cf.write("\t\t.palrm_state = &AppAlarmStates["+str(j)+"],\n")
+            cf.write("\t\t.pacntr = &_AppAlarmCounters["+str(j)+"],\n")
+            cf.write("\t\t.pcycle = &_AppAlarmCycles["+str(j)+"],\n")
+            cf.write("\t\t.palrm_state = &_AppAlarmStates["+str(j)+"],\n")
             alarmActionType = alarm[AlarmParams[AAAT]]
             cf.write("\t\t.aat = "+AAT_PyList[alarmActionType]+",\n")
 
@@ -218,8 +218,8 @@ def generate_code(path, Alarms, Counters, Tasks):
         cf.write("};\n\n")
 
 
-    # define AppAlarms[];
-    cf.write("\nconst AppAlarmCtrlBlockType AppAlarms[] = {\n")
+    # define _AppAlarms[];
+    cf.write("\nconst AppAlarmCtrlBlockType _AppAlarms[] = {\n")
     for cntr in Counters:
         cf.write("\t{\n")
         cf.write("\t\t.alarm = (const AppAlarmType *) &AppAlarms_"+cntr[CntrParams[CNME]]+",\n")
@@ -228,8 +228,8 @@ def generate_code(path, Alarms, Counters, Tasks):
     cf.write("};\n\n")
 
     # define AlarmID to CounterID mapping
-    hf.write("\nextern const AlarmType AlarmID2CounterID_map[];")
-    cf.write("\nconst AlarmType AlarmID2CounterID_map[] = {\n\t")
+    hf.write("\nextern const AlarmType _AlarmID2CounterID_map[];")
+    cf.write("\nconst AlarmType _AlarmID2CounterID_map[] = {\n\t")
     for alarm in Alarms:
         cf.write(get_counter_id(Counters, alarm[AlarmParams[ACNT]])+", ")
     cf.write("\n};\n")

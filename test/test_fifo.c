@@ -35,8 +35,6 @@ typedef enum {
 
 extern OsFifoType* TaskQueues[];
 
-const OsTaskType OsTaskList[10];
-
 
 DefineFifoQueue(OS_QUEUE_WAITING, OS_FIFO_SIZE);
 DefineFifoQueue(OS_QUEUE_SUSPENDED, OS_FIFO_SIZE);

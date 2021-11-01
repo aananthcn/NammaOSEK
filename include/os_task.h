@@ -8,8 +8,8 @@ typedef struct {
 	u32 activations;
 } OsTaskCtrlType;
 
-extern OsTaskCtrlType OsTaskCtrlBlk[];
-extern OsTaskType OsCurrentTask;
+extern OsTaskCtrlType _OsTaskCtrlBlk[];
+extern OsTaskType _OsCurrentTask;
 
 void OsSetupScheduler(AppModeType mode);
 int OsScheduleTasks(void);

@@ -1,7 +1,7 @@
 #include "sg_counter.h"
 
 
-OsCounterType OsCounters[] =  {
+OsCounterType _OsCounters[] =  {
 	{
 		.alarm.mincycle = 1,
 		.alarm.maxallowedvalue = 0xFFFFFFFF,

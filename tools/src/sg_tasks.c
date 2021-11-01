@@ -8,7 +8,7 @@
 
 
 /*   T A S K   D E F I N I T I O N S   */
-const OsTaskType OsTaskList[] = {
+const OsTaskType _OsTaskList[] = {
 	{
 		.handler = OS_TASK(Task_A),
 		.id = 0,

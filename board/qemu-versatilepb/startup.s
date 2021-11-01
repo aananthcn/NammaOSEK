@@ -5,7 +5,7 @@
 
 reset_handler:
 	/* set Supervisor stack */
-	LDR sp, =os_stack_top
+	LDR sp, =_os_stack_top
 	/* copy vector table to address 0 */
 	BL __copy_vectors
 	/* get Program Status Register */
@@ -15,7 +15,7 @@ reset_handler:
 	ORR r1, r1, #0x12
 	MSR cpsr, r1
 	/* set IRQ stack */
-	LDR sp, =irq_stack_top
+	LDR sp, =_irq_stack_top
 	/* Enable IRQs */
 	BIC r0, r0, #0x80
 	/* go back in Supervisor mode */

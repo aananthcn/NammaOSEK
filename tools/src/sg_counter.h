@@ -10,7 +10,7 @@ typedef struct {
     char* name;
 } OsCounterType;
 
-extern OsCounterType OsCounters[];
+extern OsCounterType _OsCounters[];
 
 
 #define MSECCOUNTER_INDEX   	(0)
