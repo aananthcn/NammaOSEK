@@ -33,6 +33,10 @@ SECTIONS
     }
 
     . = ALIGN(8);
+    /* OS SCRATCH PAD AREA */
+    . = . + 64;
+    _os_scratch_pad = .;
+    
     /* USER STACK MEMORY */
     . = . + TASK_STACK_SIZE; /* user stack memory */
     _user_stack_top = .;

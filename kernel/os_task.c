@@ -130,9 +130,9 @@ int OsScheduleTasks(void) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {
 			_OsCurrentTask = *task;
-			sp_curr = _switch_stack(_OsTaskCtrlBlk[task->id].sp_top, 0);
+			sp_curr = _set_stack_ptr(_OsTaskCtrlBlk[task->id].sp_top);
 			_OsCurrentTask.handler();
-			_switch_stack(sp_curr, 0);
+			_set_stack_ptr(sp_curr);
 		}
 	}
 }

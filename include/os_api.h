@@ -5,7 +5,12 @@
 
 u32 _GetOsTickCnt(void);
 int _OsHandleTicks(void);
-u32 _switch_stack(u32 new_stack, u32 old_stack);
+
+/* low level APIs */
+u32 _set_stack_ptr(u32 new_stack);
+u32 _get_stack_ptr(void);
+u32 _get_next_pc(void);
+void _set_sp_and_pc(u32 sp, u32 pc);
 
 int pr_log(const char *format, ...);
 int pr_log_init(void);

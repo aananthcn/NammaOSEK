@@ -9,6 +9,6 @@ $(info compilating arch/arm source files)
 
 
 ARCH_OBJS	:= \
-	${CWD}/arch/arm/stack.o \
+	${CWD}/arch/arm/lowlevel.o \
 	${CWD}/arch/arm/interrupt.o
 
