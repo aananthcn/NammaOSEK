@@ -25,11 +25,12 @@ typedef enum eStatusType {
  * Task States
  */
 typedef enum eTaskStateType {
+	INVALID_UNINITIALIZED,
 	SUSPENDED,
 	READY,
 	RUNNING,
 	WAITING,
-	INVALID_TASK
+	MAX_TASK_STATE
 } TaskStateType;
 typedef TaskStateType* TaskStateRefType;
 

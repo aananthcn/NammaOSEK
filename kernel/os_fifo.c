@@ -15,8 +15,13 @@ int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID) {
 		pr_log("Error: %s() invalid TaskID: %d\n", __func__, TaskID);
 		return -1;
 	}
-	if ((pFifoQ == NULL) || (pFifoQ->size > TASK_ID_MAX)) {
+	if (pFifoQ == NULL) {
 		pr_log("Error: %s() invalid pFifoQ\n", __func__);
+		return -1;
+	}
+	if (pFifoQ->size > TASK_ID_MAX) {
+		pr_log("Error: %s() FIFO Queue size > MAX for TaskID: %d\n",
+			__func__, TaskID);
 		return -1;
 	}
 
@@ -52,12 +57,10 @@ OsTaskType* OsFifoRead(OsFifoType* pFifoQ) {
 	}
 
 	/* Read from FIFO tail, always, but don't go beyond head */
-	if ((pFifoQ->tail != pFifoQ->head) ||
-		(pFifoQ->full)) {
+	if ((pFifoQ->tail != pFifoQ->head) || (pFifoQ->full)) {
 		task = pFifoQ->task[pFifoQ->tail];
 		pFifoQ->full = false;
-		pFifoQ->tail = (pFifoQ->tail + 1) %
-				(pFifoQ->size);
+		pFifoQ->tail = (pFifoQ->tail + 1) % (pFifoQ->size);
 	}
 #ifdef DEBUG
 	else {

@@ -6,10 +6,7 @@
 
 #define SG_FIFO_QUEUE_MAX_LEN   (5)
 
-extern const OsFifoType* WaitingQueue[];
-extern const OsFifoType* SuspendedQueue[];
 extern const OsFifoType* ReadyQueue[];
-extern const OsFifoType* RunningQueue[];
 
 
 #endif

@@ -41,10 +41,10 @@ def generate_code(path, Tasks):
     hf.write("\n\n#define SG_FIFO_QUEUE_MAX_LEN   ("+str(maxPrio+1)+")\n\n")
 
     # print queue declarations
-    hf.write("extern const OsFifoType* WaitingQueue[];\n")
-    hf.write("extern const OsFifoType* SuspendedQueue[];\n")
+    #hf.write("extern const OsFifoType* WaitingQueue[];\n")
+    #hf.write("extern const OsFifoType* SuspendedQueue[];\n")
     hf.write("extern const OsFifoType* ReadyQueue[];\n")
-    hf.write("extern const OsFifoType* RunningQueue[];\n")
+    #hf.write("extern const OsFifoType* RunningQueue[];\n")
 
 
     # create source file
@@ -62,8 +62,8 @@ def generate_code(path, Tasks):
         
         # print queue definitions
         if qsize > 0:
-            cf.write("OsTaskType* WaitingTasks_"+str(prio)+"["+str(qsize)+"];\n")
-            cf.write("OsTaskType* SuspendedTasks_"+str(prio)+"["+str(qsize)+"];\n")
+            #cf.write("OsTaskType* WaitingTasks_"+str(prio)+"["+str(qsize)+"];\n")
+            #cf.write("OsTaskType* SuspendedTasks_"+str(prio)+"["+str(qsize)+"];\n")
             cf.write("OsTaskType* ReadyTasks_"+str(prio)+"["+str(qsize)+"];\n")
     cf.write("OsTaskType* RunningTasks[1];\n")
 
@@ -76,26 +76,26 @@ def generate_code(path, Tasks):
             qsize = fifoInfo[str(prio)]
         if qsize == 0:
             continue
-        cf.write("\nOsFifoType WaitingFifo_"+str(prio)+" = {\n")
-        cf.write("\t.task = WaitingTasks_"+str(prio)+",\n")
-        cf.write("\t.size = "+str(qsize)+",\n")
-        cf.write("\t.head = 0,\n")
-        cf.write("\t.tail = 0,\n")
-        cf.write("#ifdef DEBUG\n")
-        cf.write("\t.name = \"WaitingFifo_"+str(prio)+"\",\n")
-        cf.write("#endif\n")
-        cf.write("\t.full = false\n")
-        cf.write("};\n")
-        cf.write("\nOsFifoType SuspendedFifo_"+str(prio)+" = {\n")
-        cf.write("\t.task = SuspendedTasks_"+str(prio)+",\n")
-        cf.write("\t.size = "+str(qsize)+",\n")
-        cf.write("\t.head = 0,\n")
-        cf.write("\t.tail = 0,\n")
-        cf.write("#ifdef DEBUG\n")
-        cf.write("\t.name = \"SuspendedFifo_"+str(prio)+"\",\n")
-        cf.write("#endif\n")
-        cf.write("\t.full = false\n")
-        cf.write("};\n")
+        #cf.write("\nOsFifoType WaitingFifo_"+str(prio)+" = {\n")
+        #cf.write("\t.task = WaitingTasks_"+str(prio)+",\n")
+        #cf.write("\t.size = "+str(qsize)+",\n")
+        #cf.write("\t.head = 0,\n")
+        #cf.write("\t.tail = 0,\n")
+        #cf.write("#ifdef DEBUG\n")
+        #cf.write("\t.name = \"WaitingFifo_"+str(prio)+"\",\n")
+        #cf.write("#endif\n")
+        #cf.write("\t.full = false\n")
+        #cf.write("};\n")
+        #cf.write("\nOsFifoType SuspendedFifo_"+str(prio)+" = {\n")
+        #cf.write("\t.task = SuspendedTasks_"+str(prio)+",\n")
+        #cf.write("\t.size = "+str(qsize)+",\n")
+        #cf.write("\t.head = 0,\n")
+        #cf.write("\t.tail = 0,\n")
+        #cf.write("#ifdef DEBUG\n")
+        #cf.write("\t.name = \"SuspendedFifo_"+str(prio)+"\",\n")
+        #cf.write("#endif\n")
+        #cf.write("\t.full = false\n")
+        #cf.write("};\n")
         cf.write("\nOsFifoType ReadyFifo_"+str(prio)+" = {\n")
         cf.write("\t.task = ReadyTasks_"+str(prio)+",\n")
         cf.write("\t.size = "+str(qsize)+",\n")
@@ -113,11 +113,11 @@ def generate_code(path, Tasks):
 
     # populate waiting queue
     cf.write("\n\n/* Prioritized OSEK FIFO queues in Flash */\n")
-    populate_queue(cf, "Waiting", maxPrio, fifoInfo)
-    populate_queue(cf, "Suspended", maxPrio, fifoInfo)
+    #populate_queue(cf, "Waiting", maxPrio, fifoInfo)
+    #populate_queue(cf, "Suspended", maxPrio, fifoInfo)
     populate_queue(cf, "Ready", maxPrio, fifoInfo)
 
 
-    hf.write("\n\n#endif")
+    hf.write("\n\n#endif\n")
     hf.close()
     cf.close()

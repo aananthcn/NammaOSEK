@@ -3,12 +3,13 @@
 #include <os_api.h>
 
 #define GETEVENT_TEST
+#define TERMINATE_TASK_TEST
 
 TASK(Task_A) {
 	AlarmBaseType info;
 	TickType tick_left;
 	static bool cycle_started = false;
-	pr_log("%s\n", __func__);
+	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
 
 #ifdef ALARM_BASE_TEST
 	if (E_OK == GetAlarmBase(0, &info))
@@ -47,6 +48,10 @@ TASK(Task_A) {
 	}
 #endif
 
+#ifdef TERMINATE_TASK_TEST
+	TerminateTask();
+#endif
+
 #ifdef GETEVENT_TEST
 	static bool toggle_bit;
 	EventMaskType Event;
@@ -63,7 +68,7 @@ TASK(Task_A) {
 }
 
 TASK(Task_B) {
-	pr_log("%s\n", __func__);
+	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
 #ifdef CANCEL_ALARM
 	static int i = 10;
 	if (i-- <= 0) 
@@ -81,9 +86,9 @@ TASK(Task_B) {
 }
 
 TASK(Task_C) {
-	pr_log("%s\n", __func__);
+	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
 }
 
 void Alarm_uSecAlarm_callback(void) {
-	pr_log("%s\n", __func__);
+	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
 }

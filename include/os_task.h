@@ -7,6 +7,7 @@
 typedef struct {
 	u32 activations;
 	intptr_t sp_top;
+        TaskStateType state;
 } OsTaskCtrlType;
 
 extern OsTaskCtrlType _OsTaskCtrlBlk[];

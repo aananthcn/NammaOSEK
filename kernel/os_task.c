@@ -33,6 +33,7 @@ StatusType ActivateTask(TaskType TaskID) {
 		return E_OS_ID;
 	}
 
+	_OsTaskCtrlBlk[TaskID].state = READY;
 	stat = AddTaskToFifoQueue(_OsTaskList[TaskID], ReadyQueue);
 
 	return stat;
@@ -45,10 +46,12 @@ Parameters: None
 Description: This service causes the termination of the calling task. The 
 calling task is transferred from the running state into the suspended state.
 /*/
+extern u32 _OsKernelPc;
+extern u32 _OsKernelSp;
 StatusType TerminateTask(void) {
-	// TODO: this functions to be redesigned to work on a microcontroller
-	// environment by stack manipulation (i.e, saving and restoring uC 
-	// registers). In Linux world this is not possible.
+	_OsTaskCtrlBlk[_OsCurrentTask.id].state = SUSPENDED;
+	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
+	/* this call won't reach here, hence no return */
 	return E_OK;
 }
 
@@ -103,6 +106,7 @@ void OsSetupScheduler(AppModeType mode) {
 		/* initialize stack pointer for each tasks */
 		tmp = ((int)&_user_stack_top - sp_acc);
 		_OsTaskCtrlBlk[t].sp_top = (intptr_t) (tmp - (tmp % 8)); /* align to 8 */
+		_OsTaskCtrlBlk[t].state = SUSPENDED;
 		sp_acc += _OsTaskList[t].stack_size;
 	}
 	pr_log("Scheduler setup done!\n");
@@ -130,9 +134,11 @@ int OsScheduleTasks(void) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {
 			_OsCurrentTask = *task;
+			_OsTaskCtrlBlk[task->id].state = RUNNING;
 			sp_curr = _set_stack_ptr(_OsTaskCtrlBlk[task->id].sp_top);
 			_OsCurrentTask.handler();
 			_set_stack_ptr(sp_curr);
+			_OsTaskCtrlBlk[task->id].state = SUSPENDED;
 		}
 	}
 }
