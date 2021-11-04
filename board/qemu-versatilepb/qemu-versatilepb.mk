@@ -6,8 +6,8 @@ OBJCOPY=${COMPILER}objcopy
 ARCH = arm32
 BOARD_NAME=qemu-versatilepb
 
-# The following path is available in ${TOOLCHAIN_PATH} env variable, but I can't get it...
-LIB_GCC_A_PATH=/opt/tools/cortex-m/gcc-arm-none-eabi-10-2020-q4-major/lib/gcc/arm-none-eabi/10.2.1
+CC_VERS := $(shell ${CC} -dumpfullversion)
+LIB_GCC_A_PATH=/usr/lib/gcc/arm-none-eabi/${CC_VERS}
 
 INCDIRS  := -I ${CWD}/include \
             -I ${CWD}/include/arch/aarch32/ \
