@@ -108,9 +108,26 @@ Particularities: This call enforces rescheduling, if the wait condition occurs.
 If rescheduling takes place, the internal resource of the task is released 
 while the task is in the waiting state.
 /*/
+extern u32 _OsKernelPc;
+extern u32 _OsKernelSp;
 StatusType WaitEvent(EventMaskType Mask) {
-	// TODO: this functions to be redesigned to work on a microcontroller
-	// environment by stack manipulation (i.e, saving and restoring uC 
-	// registers). In Linux world this is not possible.
+	/* check if the calling task is an Extended task */
+	if (_OsCurrentTask.n_evtmsks == 0) {
+		pr_log("Error: %s()! Task (id: %d) is not an Extended Task\n",
+			 __func__, _OsCurrentTask.id);
+		return E_OS_NOFUNC;
+	}
+
+	/* check if the event mask is set before we take action */
+	if (_EventMasks[_OsCurrentTask.id] & Mask) {
+		/* the event has occurred so don't put the task to wait */
+		return E_OK;
+	}
+
+	/* check failed, terminate the current (extended) task */
+	_OsTaskCtrlBlk[_OsCurrentTask.id].state = WAITING;
+	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
+
+	/* this call won't reach here, hence no return */
 	return E_OK;
 }

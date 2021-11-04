@@ -3,7 +3,7 @@
 #include <os_api.h>
 
 #define GETEVENT_TEST
-#define TERMINATE_TASK_TEST
+#define WAITEVENT_TEST
 
 TASK(Task_A) {
 	AlarmBaseType info;
@@ -48,11 +48,17 @@ TASK(Task_A) {
 	}
 #endif
 
+
+#ifdef GETEVENT_TEST
+
 #ifdef TERMINATE_TASK_TEST
 	TerminateTask();
 #endif
 
-#ifdef GETEVENT_TEST
+#ifdef WAITEVENT_TEST
+	WaitEvent(1);
+#endif
+
 	static bool toggle_bit;
 	EventMaskType Event;
 	if (toggle_bit) {
@@ -78,6 +84,10 @@ TASK(Task_B) {
 	ClearEvent(1);
 #endif
 #ifdef GETEVENT_TEST
+
+#ifdef WAITEVENT_TEST
+	WaitEvent(2);
+#endif
 	EventMaskType Event;
 	ClearEvent(0x101);
 	GetEvent(1, &Event);
