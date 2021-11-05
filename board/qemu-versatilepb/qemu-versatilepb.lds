@@ -5,12 +5,20 @@
 
 INCLUDE tools/src/sg_stack.lds
 
+
+/* Memory Map: 128 MB RAM allocated (0x0000_0000 to 0x07FF_FFFF) */
+ROM_START = 0x00010000;
+ROM_SIZE  = 0x01000000;
+RAM_START = 0x01000000;
+RAM_SIZE  = 0x07000000;
+
+
 ENTRY(_vectors_start)
 SECTIONS
 {
     /* LOAD ADDRESS - The -kernel option (to qemu) loads a binary file inside
     the system memory starting at address 0x00010000 */
-    . = 0x00010000;
+    . = ROM_START;
 
     /* CODE SEGMENTS -- place vectors.o first! */
     .text : {
@@ -20,17 +28,37 @@ SECTIONS
         *(.text .rodata)
     }
 
-    /* INITIALIZED DATA SEGMENT(s) */
-    .data : 
-    { 
-        *(.data) 
+    /*
+     * Arm stack unwinding.
+     * If removed may cause random crashes.
+     */
+    .ARM.exidx :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
     }
+
+    _init_data_rom = .;
+
+    . = RAM_START;
+    /* INITIALIZED DATA SEGMENT(s) */
+    .data : AT (_init_data_rom)
+    { 
+        _data_start = .;
+        *(.data) 
+        _data_end = .;
+    }
+    _data_size = _data_end - _data_start;
 
     /* UNINITIALIZED DATA SEGMENT(s) */
     .bss : 
     { 
+        _bss_start = .;
         *(.bss COMMON)
+        _bss_end = .;
     }
+    _bss_size = _bss_end - _bss_start;
 
     . = ALIGN(8);
     /* OS SCRATCH PAD AREA */

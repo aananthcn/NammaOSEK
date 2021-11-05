@@ -65,7 +65,7 @@ TASK(Task_A) {
 		toggle_bit = false;
 		SetEvent(1, 0x101);
 		GetEvent(1, &Event);
-		pr_log("Task A: Event = %lX\n", Event);
+		pr_log("Task A: Event = 0x%016lX\n", Event);
 	}
 	else {
 		toggle_bit = true;
@@ -89,9 +89,9 @@ TASK(Task_B) {
 	WaitEvent(2);
 #endif
 	EventMaskType Event;
-	ClearEvent(0x101);
+	ClearEvent(1);
 	GetEvent(1, &Event);
-	pr_log("Task B: Event = %lX\n", Event);
+	pr_log("Task B: Event = 0x%016lX\n", *((u32*)((u32)Event)));
 #endif
 }
 

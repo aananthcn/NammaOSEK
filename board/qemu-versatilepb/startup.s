@@ -5,23 +5,43 @@
 
 _reset_handler:
 	/* set Supervisor stack */
-	LDR sp, =_os_stack_top
+	ldr sp, =_os_stack_top
 	/* copy vector table to address 0 */
-	BL __copy_vectors
+	bl __copy_vectors
 	/* get Program Status Register */
-	MRS r0, cpsr
+	mrs r0, cpsr
 	/* go in IRQ mode */
-	BIC r1, r0, #0x1F
-	ORR r1, r1, #0x12
-	MSR cpsr, r1
+	bic r1, r0, #0x1F
+	orr r1, r1, #0x12
+	msr cpsr, r1
 	/* set IRQ stack */
-	LDR sp, =_irq_stack_top
+	ldr sp, =_irq_stack_top
 	/* Enable IRQs */
-	BIC r0, r0, #0x80
+	bic r0, r0, #0x80
 	/* go back in Supervisor mode */
-	MSR cpsr, r0
+	msr cpsr, r0
+
+	/* do .data initialization */
+	ldr r0, =_init_data_rom
+	ldr r1, =_data_start
+	ldr r2, =_data_size
+copy_data:
+	ldrb r4, [r0], #1
+	strb r4, [r1], #1
+	subs r2, r2, #1
+	bne copy_data
+
+	/* do .bss initialization */
+	mov r0, #0
+	ldr r1, =_bss_start
+	ldr r2, =_bss_size
+copy_bss:
+	strb r0, [r1], #1
+	subs r2, r2, #1
+	bne copy_bss
+
 	/* jump to main */
-	BL main
-	B .
+	bl main
+	b .
  
 .end
