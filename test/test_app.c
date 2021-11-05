@@ -60,7 +60,7 @@ TASK(Task_A) {
 #endif
 
 	static bool toggle_bit;
-	EventMaskType Event;
+	EventMaskType Event = 0;
 	if (toggle_bit) {
 		toggle_bit = false;
 		SetEvent(1, 0x101);
@@ -88,10 +88,10 @@ TASK(Task_B) {
 #ifdef WAITEVENT_TEST
 	WaitEvent(2);
 #endif
-	EventMaskType Event;
+	EventMaskType Event = 0;
 	ClearEvent(1);
 	GetEvent(1, &Event);
-	pr_log("Task B: Event = 0x%016lX\n", *((u32*)((u32)Event)));
+	pr_log("Task B: Event = 0x%016lX\n", Event);
 #endif
 }
 
