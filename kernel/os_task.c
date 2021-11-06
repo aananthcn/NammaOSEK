@@ -17,46 +17,9 @@ OsTaskType _OsCurrentTask;
 
 
 
-/*/
-Function: ActivateTask
-Parameters:
-  TaskID  Task reference.
-
-Description: The task <TaskID> is transferred from the suspended state into the
-ready state. The operating system ensures that the task code is being executed
-from the first statement.
-/*/
-StatusType ActivateTask(TaskType TaskID) {
-	StatusType stat = E_OK;
-
-	if (TaskID >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n", __func__, TaskID);
-		return E_OS_ID;
-	}
-
-	_OsTaskCtrlBlk[TaskID].state = READY;
-	stat = AddTaskToFifoQueue(_OsTaskList[TaskID], ReadyQueue);
-
-	return stat;
-}
-
-
-/*/
-Function: TerminateTask
-Parameters: None
-Description: This service causes the termination of the calling task. The 
-calling task is transferred from the running state into the suspended state.
-/*/
-extern u32 _OsKernelPc;
-extern u32 _OsKernelSp;
-StatusType TerminateTask(void) {
-	_OsTaskCtrlBlk[_OsCurrentTask.id].state = SUSPENDED;
-	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
-	/* this call won't reach here, hence no return */
-	return E_OK;
-}
-
-
+///////////////////////////////////////////////////////////////////////////////
+//                       OS Internal Functions                               //
+///////////////////////////////////////////////////////////////////////////////
 void OsClearActivationsCounts(void) {
 	int t;
 
@@ -118,25 +81,24 @@ void OsSetupScheduler(AppModeType mode) {
 
 
 static inline int OsScheduleCall(OsTaskType* task) {
-	static u32 sp_curr;
+	u32 sp_curr;
 
 	/* task is checked by the calling function, hence no check here */
 	_OsCurrentTask = *task;
 	_OsTaskCtrlBlk[task->id].state = RUNNING;
 
 	if (_OsTaskCtrlBlk[task->id].context_saved) {
-		sp_curr = _get_stack_ptr();
 		/* continue task from where it was switched before */
 		_restore_context(_OsTaskCtrlBlk[task->id].sp_top);
-		/* the call shouldn't return here after the above call */
-
+		/* The call shouldn't return here after the above call */
+		/* instead it should return from the else block below  */
 	}
 	else {
 		/* context not saved, set sp below context space and call */
 		sp_curr = _set_stack_ptr(_OsTaskCtrlBlk[task->id].sp_tsk);
 		_OsCurrentTask.handler();
+		_set_stack_ptr(sp_curr);
 	}
-	_set_stack_ptr(sp_curr);
 	_OsTaskCtrlBlk[task->id].state = SUSPENDED;
 
 	return 0;
@@ -167,4 +129,88 @@ int OsScheduleTasks(void) {
 			OsScheduleCall(task);
 		}
 	}
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+//                          Public Functions                                 //
+///////////////////////////////////////////////////////////////////////////////
+/*/
+Function: ActivateTask
+Parameters:
+  TaskID  Task reference.
+
+Description: The task <TaskID> is transferred from the suspended state into the
+             ready state. The operating system ensures that the task code is
+	     being executed from the first statement.
+/*/
+StatusType ActivateTask(TaskType TaskID) {
+	StatusType stat = E_OK;
+
+	if (TaskID >= TASK_ID_MAX) {
+		pr_log("Error: %s() called with invalid TaskID %d\n", __func__, TaskID);
+		return E_OS_ID;
+	}
+
+	_OsTaskCtrlBlk[TaskID].state = READY;
+	stat = AddTaskToFifoQueue(_OsTaskList[TaskID], ReadyQueue);
+
+	return stat;
+}
+
+
+
+/* Following global variables are used by TerminateTask and ChainTask APIs */
+extern u32 _OsKernelPc;
+extern u32 _OsKernelSp;
+
+/*/
+Function: TerminateTask
+Parameters: None
+Description: This service causes the termination of the calling task. The 
+             calling task is transferred from the running state into the
+	     suspended state.
+/*/
+StatusType TerminateTask(void) {
+	/* mark the current task as not running */
+	_OsTaskCtrlBlk[_OsCurrentTask.id].state = SUSPENDED;
+	
+	/* jump to main loop */
+	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
+	
+	/* this call won't reach here, but just to satisfy the compiler */
+	return E_OK;
+}
+
+
+
+/*/
+Function: ChainTask
+Parameters: TaskID
+Description: This service causes the termination of the calling task. After
+   	     termination of the calling task a succeeding task <TaskID> is
+	     activated. Using this service, it ensures that the succeeding task
+	     starts to run at the earliest after the calling task has been
+	     terminated.
+/*/
+StatusType ChainTask(TaskType TaskID) {
+	if (TaskID >= TASK_ID_MAX) {
+		pr_log("Error: %s() called with invalid TaskID %d\n",
+			__func__, TaskID);
+		return E_OS_ID;
+	}
+
+	/* mark the current task as not running */
+	_OsTaskCtrlBlk[_OsCurrentTask.id].state = SUSPENDED;
+
+	/* calling the new tasks and not returning (i.e., jump to main loop)
+	is equivalent to terminating the calling task */
+	OsScheduleCall((OsTaskType*)&_OsTaskList[TaskID]);
+	
+	/* jump to main loop */
+	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
+	
+	/* this call won't reach here, but just to satisfy the compiler */
+	return E_OK;
 }

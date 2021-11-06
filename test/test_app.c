@@ -3,7 +3,7 @@
 #include <os_api.h>
 
 #define GETEVENT_TEST
-#define WAITEVENT_TEST
+#define CHAINTASK_TEST
 
 TASK(Task_A) {
 	AlarmBaseType info;
@@ -57,6 +57,10 @@ TASK(Task_A) {
 
 #ifdef WAITEVENT_TEST
 	WaitEvent(1);
+#endif
+
+#ifdef CHAINTASK_TEST
+	ChainTask(2);
 #endif
 
 	static bool toggle_bit;
