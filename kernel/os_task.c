@@ -3,11 +3,12 @@
 
 #include <os_task.h>
 #include <os_fifo.h>
+#include <os_api.h>
 
 #include <sg_tasks.h>
 #include <sg_fifo.h>
-#include <os_api.h>
 #include <sg_appmodes.h>
+#include <sg_os_param.h>
 
 
 
@@ -104,13 +105,43 @@ void OsSetupScheduler(AppModeType mode) {
 		}
 
 		/* initialize stack pointer for each tasks */
-		tmp = ((int)&_user_stack_top - sp_acc);
-		_OsTaskCtrlBlk[t].sp_top = (intptr_t) (tmp - (tmp % 8)); /* align to 8 */
+		tmp = ((int)&_user_stack_top - sp_acc);                   /* top location for stack */
+		_OsTaskCtrlBlk[t].sp_top = (intptr_t) (tmp - (tmp % 8));  /* align to 8 */
+                tmp = tmp - _OS_CTX_SAVE_SZ;                              /* allow space for context save space */
+		_OsTaskCtrlBlk[t].sp_tsk = (intptr_t) (tmp - (tmp % 8));  /* align to 8 */
 		_OsTaskCtrlBlk[t].state = SUSPENDED;
-		sp_acc += _OsTaskList[t].stack_size;
+		sp_acc += _OsTaskList[t].stack_size + _OS_CTX_SAVE_SZ;    /* find the start of stack for next task */
 	}
 	pr_log("Scheduler setup done!\n");
 }
+
+
+
+static inline int OsScheduleCall(OsTaskType* task) {
+	static u32 sp_curr;
+
+	/* task is checked by the calling function, hence no check here */
+	_OsCurrentTask = *task;
+	_OsTaskCtrlBlk[task->id].state = RUNNING;
+
+	if (_OsTaskCtrlBlk[task->id].context_saved) {
+		sp_curr = _get_stack_ptr();
+		/* continue task from where it was switched before */
+		_restore_context(_OsTaskCtrlBlk[task->id].sp_top);
+		/* the call shouldn't return here after the above call */
+
+	}
+	else {
+		/* context not saved, set sp below context space and call */
+		sp_curr = _set_stack_ptr(_OsTaskCtrlBlk[task->id].sp_tsk);
+		_OsCurrentTask.handler();
+	}
+	_set_stack_ptr(sp_curr);
+	_OsTaskCtrlBlk[task->id].state = SUSPENDED;
+
+	return 0;
+}
+
 
 
 /* The following function is defined in os_alarm.c */
@@ -118,7 +149,7 @@ int OsHandleCounters(void);
 
 int OsScheduleTasks(void) {
 	OsTaskType* task;
-	u32 tick_cnt, sp_curr;
+	u32 tick_cnt;
 	static u32 tick_cnt_old;
 	int i;
 
@@ -133,12 +164,7 @@ int OsScheduleTasks(void) {
 	for (i = SG_FIFO_QUEUE_MAX_LEN-1; i >= 0; i--) {
 		task = GetTaskFromFifoQueue(ReadyQueue, i);
 		if (task != NULL) {
-			_OsCurrentTask = *task;
-			_OsTaskCtrlBlk[task->id].state = RUNNING;
-			sp_curr = _set_stack_ptr(_OsTaskCtrlBlk[task->id].sp_top);
-			_OsCurrentTask.handler();
-			_set_stack_ptr(sp_curr);
-			_OsTaskCtrlBlk[task->id].state = SUSPENDED;
+			OsScheduleCall(task);
 		}
 	}
 }

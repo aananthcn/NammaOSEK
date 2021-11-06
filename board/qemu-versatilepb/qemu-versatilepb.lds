@@ -66,15 +66,15 @@ SECTIONS
     _os_scratch_pad = .;
     
     /* USER STACK MEMORY */
-    . = . + TASK_STACK_SIZE; /* user stack memory */
+    . = . + _TASK_STACK_SIZE; /* user stack memory */
     _user_stack_top = .;
 
     /* OS STACK MEMORY */
-    . = . + OS_STACK_SIZE; /* user stack memory */
+    . = . + _OS_STACK_SIZE; /* user stack memory */
     _os_stack_top = .;
 
     /* IRQ STACK MEMORY */
-    . = . + IRQ_STACK_SIZE; /* 4kB of irq stack memory */
+    . = . + _IRQ_STACK_SIZE; /* 4kB of irq stack memory */
     _irq_stack_top = .;
 }
 

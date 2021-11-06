@@ -110,6 +110,7 @@ def parse_os_data(wb, sheetname):
     OsData["uparacc"]  = read_os_attribute(sheet, sheetname, attr_col, "USEPARAMETERACCESS")
     OsData["uressch"]  = read_os_attribute(sheet, sheetname, attr_col, "USERESSCHEDULER")
     OsData["os_stack"]  = read_os_attribute(sheet, sheetname, attr_col, "OS_STACK_SIZE")
+    OsData["ctx_s_sz"]  = read_os_attribute(sheet, sheetname, attr_col, "OS_CTX_SAVE_SZ")
     OsData["irq_stack"]  = read_os_attribute(sheet, sheetname, attr_col, "IRQ_STACK_SIZE")
 
     return OsData

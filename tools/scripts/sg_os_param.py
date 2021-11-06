@@ -9,9 +9,19 @@ def generate_code(path, OsParams):
     print_info("Generating code for FreeOSEK Parameters")
 
     # create stack definitions
-    filename = path + "/" + "sg_stack.lds"
-    lf = open(filename, "w")
+    lfilename = path + "/" + "sg_stack.lds"
+    hfilename = path + "/" + "sg_os_param.h"
+    lf = open(lfilename, "w")
+    hf = open(hfilename, "w")
+
+    hf.write("#ifndef ACN_OSEK_OS_PARAM_H\n")
+    hf.write("#define ACN_OSEK_OS_PARAM_H\n")
+    hf.write("\n\n")
+
     for param in OS_Params:
-        lf.write(param + " = " + OsParams[param] + ";\n")
+        lf.write("_"+param + " = " + OsParams[param] + ";\n")
+        hf.write("#define _"+param + "  \t(" + OsParams[param] + ")\n")
     
     lf.close()
+    hf.write("\n\n#endif\n")
+    hf.close()

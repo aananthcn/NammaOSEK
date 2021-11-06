@@ -145,10 +145,11 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
     indent += 1
     # Start of FreeOSEK_PARAMS body
     f.write(indent*"\t" +"OS_STACK_SIZE = " + str(OsData["os_stack"]) + ";\n")
+    f.write(indent*"\t" +"OS_CTX_SAVE_SZ = " + str(OsData["ctx_s_sz"]) + ";\n")
     f.write(indent*"\t" +"IRQ_STACK_SIZE = " + str(OsData["irq_stack"]) + ";\n")
     task_stack_size = 0
     for task in TaskData:
-        task_stack_size += int(task[TaskParams[STSZ]])
+        task_stack_size += (int(task[TaskParams[STSZ]]) + int(OsData["ctx_s_sz"]))
     f.write(indent*"\t" +"TASK_STACK_SIZE = " + str(task_stack_size) + ";\n")
     # End of FreeOSEK_PARAMS body
     indent -= 1

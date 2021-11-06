@@ -20,7 +20,7 @@ def clear_old_excel_rows(book):
 def open_excel_file(file):
     if os.path.isfile(file):
         try:
-            book = openpyxl.load_workbook(file, read_only=False)
+            book = openpyxl.load_workbook(file, read_only=False, data_only=True)
         except:
             print(Fore.YELLOW +"Error: Please close " + file + " and retry!")
             print(Style.RESET_ALL)
