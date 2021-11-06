@@ -228,7 +228,6 @@ Description: If a higher-priority task is ready, the internal resource of the
 StatusType Schedule(void) {
 	/* save the context of this task, for resuming later */
 	_save_context(_OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
-
 	/* return if this call is resuming from previous context save */
 	if (_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved) {
 		_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = false;
@@ -243,5 +242,47 @@ StatusType Schedule(void) {
 	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
 	
 	/* control never reaches this line */
+	return E_OK;
+}
+
+
+
+/*/
+Function: GetTaskID
+Parameters: pointer to TaskID
+Description: GetTaskID returns the information about the TaskID of the task
+	     which is currently running.
+/*/
+StatusType GetTaskID(TaskRefType pTaskID) {
+	if (pTaskID == NULL) {
+		pr_log("Error: %s() taskID reference is NULL\n", __func__);
+		return E_OS_ARG_FAIL;
+	}
+	*pTaskID = _OsCurrentTask.id;
+
+	return E_OK;
+}
+
+
+
+/*/
+Function: GetTaskState
+Parameters: arg1: TaskID, arg2: pointer to State
+Description: Returns the state of a task (running, ready, waiting, suspended)
+	     at the time of calling GetTaskState.
+/*/
+StatusType GetTaskState(TaskType TaskID, TaskStateRefType pState) {
+	if (TaskID >= TASK_ID_MAX) {
+		pr_log("Error: %s() called with invalid TaskID %d\n",
+			__func__, TaskID);
+		return E_OS_ID;
+	}
+
+	if (pState == NULL) {
+		pr_log("Error: %s() taskID reference is NULL\n", __func__);
+		return E_OS_ARG_FAIL;
+	}
+	*pState = _OsTaskCtrlBlk[TaskID].state;
+
 	return E_OK;
 }

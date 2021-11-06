@@ -3,7 +3,7 @@
 #include <os_api.h>
 
 #define GETEVENT_TEST
-#define SCHEDULE_TEST
+#define GETTASKID_GETTASKSTATE_TEST
 
 TASK(Task_A) {
 	AlarmBaseType info;
@@ -65,6 +65,20 @@ TASK(Task_A) {
 
 #ifdef SCHEDULE_TEST
 	Schedule();
+#endif
+
+#ifdef GETTASKID_GETTASKSTATE_TEST
+	TaskType task;
+	TaskStateType state;
+	GetTaskID(&task);
+	GetTaskState(task, &state);
+	pr_log("Current task: %d, state = %d\n", task, state);
+	task = 1;
+	GetTaskState(task, &state);
+	pr_log("Task: %d, state = %d\n", task, state);
+	task = 2;
+	GetTaskState(task, &state);
+	pr_log("Task: %d, state = %d\n", task, state);
 #endif
 
 	static bool toggle_bit;
