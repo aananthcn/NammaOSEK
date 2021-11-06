@@ -214,3 +214,34 @@ StatusType ChainTask(TaskType TaskID) {
 	/* this call won't reach here, but just to satisfy the compiler */
 	return E_OK;
 }
+
+
+
+/*/
+Function: Schedule 
+Parameters: None
+Description: If a higher-priority task is ready, the internal resource of the
+             task is released, the current task is put into the ready state,
+	     its context is saved and the higher-priority task is executed.
+	     Otherwise the calling task is continued.
+/*/
+StatusType Schedule(void) {
+	/* save the context of this task, for resuming later */
+	_save_context(_OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
+
+	/* return if this call is resuming from previous context save */
+	if (_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved) {
+		_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = false;
+		return E_OK;
+	}
+	_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = true;
+
+	/* add this task to ready queue, as the scheduler would have removed it */
+	ActivateTask(_OsCurrentTask.id);
+
+	/* time to stop the current execution */
+	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
+	
+	/* control never reaches this line */
+	return E_OK;
+}

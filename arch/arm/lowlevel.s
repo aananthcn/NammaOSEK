@@ -85,7 +85,7 @@ _save_context:
  *              the argument passed.
 /*/
 _restore_context:
-	ldmia   r4, {r4 - sl, fp, sp, pc}      @ Load all regs saved previously
+	ldmia   r0, {r4 - sl, fp, sp, pc}      @ Load all regs saved previously
 	mov pc, lr
 
 
