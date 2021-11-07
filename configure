@@ -41,5 +41,6 @@ echo "CWD := $(pwd)" > ./Makefile
 echo "include ${board_path}/${target}.mk" >> ./Makefile
 echo "include ./tools/src/sg-objs.mk" >> ./Makefile
 echo "include ./test/app.mk" >> ./Makefile
+echo "include ./arch/arm/arm.mk" >> ./Makefile
 echo "include ./common.mk" >> ./Makefile
 echo "Configuration Success!"
