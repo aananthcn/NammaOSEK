@@ -37,7 +37,7 @@ _get_stack_ptr:
 
 
 
-/*/ 
+/*/
  * Function Name: _get_next_pc
  * Arguments: arg1 = none
  * Returns: link register

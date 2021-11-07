@@ -4,7 +4,7 @@
 #include <os_api.h>
 
 
-u32 _OsIsrBits;
+u32 _OsIsrBitsSaved;
 
 #define DISABLE_INTERRUPT	(0xC0)
 #define ENABLE_INTERRUPT	(0)
@@ -19,7 +19,7 @@ Description: This service disables all interrupts for which the hardware
 	     EnableAllInterrupts call.
 /*/
 void DisableAllInterrupts(void) {
-	_OsIsrBits = _set_interrupt_bits(DISABLE_INTERRUPT);
+	_OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
 }
 
 
@@ -31,5 +31,21 @@ Parameters: none
 Description: This service restores the state saved by DisableAllInterrupts.
 /*/
 void EnableAllInterrupts(void) {
-	_OsIsrBits = _clear_interrupt_bits(_OsIsrBits);
+	_OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
+}
+
+
+/* Following OSEK APIs are not 100% correct, but this should work! */
+void SuspendAllInterrupts(void) {
+	_OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
+}
+void SuspendOSInterrupts(void) {
+	_OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
+}
+
+void ResumeAllInterrupts(void) {
+	_OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
+}
+void ResumeOSInterrupts(void) {
+	_OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
 }
