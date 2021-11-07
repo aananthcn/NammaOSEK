@@ -9,7 +9,7 @@
 .global _restore_context
 
 
-/*/ 
+/*/
  * Function Name: _set_stack_ptr
  * Arguments: arg1 (r0) = new_stack_ptr
  * Returns: old stack pointer
@@ -25,7 +25,7 @@ _set_stack_ptr:
 
 
 
-/*/ 
+/*/
  * Function Name: _get_stack_ptr
  * Arguments: arg1 = none
  * Returns: current stack pointer

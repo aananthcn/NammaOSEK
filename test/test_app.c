@@ -83,6 +83,11 @@ TASK(Task_A) {
 
 	static bool toggle_bit;
 	EventMaskType Event = 0;
+
+	DisableAllInterrupts();
+	pr_log("Enable / Disable ISR test\n");
+	EnableAllInterrupts();
+
 	if (toggle_bit) {
 		toggle_bit = false;
 		SetEvent(1, 0x101);
