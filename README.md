@@ -24,6 +24,10 @@ Some small percentage of this work is derived from Zephyr OS, mpaland/printf etc
 **Start date**: 27 June 2021, Sunday<br>
 Motivation to create an OS came from **Ashokkumar Narayanan** (one of my best buddies in Visteon Chennai).
 
+### Supported Boards
+ * qemu-versatilepb
+ * *...more boards will be added later*
+
 <br>
 
 FreeOSEK High Level Architecture
