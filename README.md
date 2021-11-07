@@ -61,30 +61,46 @@ Getting Started
 
 Prerequisites
 ----
-
-Building FreeOSEK
-
-
-
-Running FreeOSEK on QEMU (ARM926EJ-S)
-----
-
-
+ * Please use either one of the following as your development system
+   * Ubuntu 20.04 OS
+   * Windows 10 + WSL2 + Ubuntu 20.04 inside WLS2
+ * Install following packages inside Ubuntu
+   * `apt install gcc-arm-none-eabi qemu-system-arm gdb-multiarch`
 
 <br>
 
-**Follow the steps below to create "osek-os.bin" image**:
-* cd to root directory
-* ./configure qemu-versatilepb
-* source <path-to-arm-toolchain-path.sh>
-* Manually set the path `LIB_GCC_A_PATH` correctly (i.e, the path to libgcc.a file) in file "qemu-versatilepb.mk"
-* make
+Cloning & Building FreeOSEK
+---
+* `git clone git@github.com:aananthcn/FreeOSEK.git`
+* `cd FreeOSEK`
+* `./configure qemu-versatilepb`
+* `make`
+* Here you should see following output files created in the current directory
+  * osek-os.bin
+  * osek-os.elf
+  * osek-os.map
 
+<br>
+
+Running FreeOSEK on QEMU (ARM926EJ-S)
+----
 To run the image on QEMU, use the following command
 * `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -kernel osek-os.bin`
 
-To debug using gdb, use the following command
-* `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -s -S -kernel osek-os.bin`
+<br>
+
+Debugging FreeOSEK on QEMU (ARM926EJ-S)
+----
+To debug using gdb, use the following command in 
+* `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic `**`-s -S`**` -kernel osek-os.bin`
+* Open another terminal and type the following commands
+  * `gdb-multiarch`
+  * Then inside the gdb console type the following:
+    * target remote localhost:1234
+    * file osek-os.elf
+    * b main
+    * c
+    * <other commands>
 
 <br><br>
 
