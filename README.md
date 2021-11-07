@@ -69,7 +69,7 @@ Prerequisites
    * Ubuntu 20.04 OS
    * Windows 10 + WSL2 + Ubuntu 20.04 inside WLS2
  * Install following packages inside Ubuntu
-   * `apt install gcc-arm-none-eabi qemu-system-arm gdb-multiarch`
+   * `apt install gcc-arm-none-eabi qemu-system-arm gdb-multiarch python3`
 
 <br>
 
@@ -83,6 +83,19 @@ Cloning & Building FreeOSEK
   * osek-os.bin
   * osek-os.elf
   * osek-os.map
+
+<br>
+
+
+Configuring & (Re-)Generating OIL files and Source files
+---
+* Open OSEK-Builder.xlsx from ./tools folderpath.
+  * Open different tabs on the excel document, edit according to your application needs and then save it.
+* Run `python tools/scripts/OSEK-Builder.py ./tools/OSEK-Builder.xlsx`
+  * You should see the `osek_os-cortex_m4.oil` file in folder ./tools/oil-files
+  * Note: The name osek_os-cortex_m4.oil comes from the `OSEK-Builder.xlsx` -> `OS` tab -> `CPU` & `OS NAME` fields. If you change them, then the oil file name will change accordingly.
+* Then run `python tools/scripts/System-Generator.py tools/oil-files/osek_os-cortex_m4.oil`
+* After the last step above, you should see new source files generated in path ./tools/src
 
 <br>
 
