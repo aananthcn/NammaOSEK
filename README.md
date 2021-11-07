@@ -50,7 +50,7 @@ Performance Metrics
 ---
 **Board**: qemu-versatilepb
  * **ROM Usage**: 30396 bytes (29.7kB)
- * **RAM Usage**: 4904 bytes (*353 bytes (OS variables) + 4551 bytes (stack + context save areas; this can be reduced based on application.*)
+ * **RAM Usage**: 4904 bytes (*353 bytes {kernel RAM usage} + 4551 bytes {stack + context save areas; this can be reduced based on application.}*)
  * **OS Initialization time**: 1.64 ms
  * **Inter-task switching Latency**: 144 µs (*measurment scenario: Task A --> B; last-line of Task-A to first-line of Task-B*)
 
@@ -100,7 +100,7 @@ To debug using gdb, use the following command in
     * file osek-os.elf
     * b main
     * c
-    * <other commands>
+    * *...other commands*
 
 <br><br>
 

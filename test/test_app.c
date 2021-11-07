@@ -91,6 +91,7 @@ TASK(Task_A) {
 	if (toggle_bit) {
 		toggle_bit = false;
 		SetEvent(1, 0x101);
+		pr_log("Task A: Triggered event for Task B\n");
 		GetEvent(1, &Event);
 		pr_log("Task A: Event = 0x%016X\n", Event);
 	}
