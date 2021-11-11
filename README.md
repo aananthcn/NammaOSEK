@@ -47,6 +47,8 @@ OSEK Features & Status
  * **Premption of tasks** - `NOT SUPPORTED` (will be supported soon)
  * **TerminateTask, ChainTask, Schedule** - SUPPORTED
  * **Application Modes** - SUPPORTED (not yet tested)
+ * **ISR** - WORK-IN-PROGRESS
+ * **RESOURCES** - WORK-IN-PROGRESS
 
 <br>
 
