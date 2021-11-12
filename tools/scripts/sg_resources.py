@@ -5,6 +5,16 @@ import colorama
 from colorama import Fore, Back, Style
 
 
+OsResMapType_str = "\n\n\n\
+typedef struct {\n\
+    ResourceType* res;\n\
+    u32 n_tasks;\n\
+    const TaskType* task_ids;\n\
+} OsResMapType;\n\
+\n\
+extern const OsResMapType _OsResList[];\n"
+
+
 def generate_code(path, Tasks):
     # create header file
     filename = path + "/" + "sg_resources.h"
@@ -18,38 +28,60 @@ def generate_code(path, Tasks):
     cf = open(filename, "w")
     cf.write("#include <stddef.h>\n")
     cf.write("#include \"sg_resources.h\"\n")
+    cf.write("#include \"sg_tasks.h\"\n")
 
     # collect & create all individual resources
-    comment = "\n\n/*  Resources described in OIL file */\n"
-    cf.write(comment)
-    hf.write(comment)
-    messages = []
+    Resources = []
+    hf.write("\n\n\n#define RES(x)  RES_##x\n")
+    hf.write("\ntypedef enum {\n")
     for task in Tasks:
         if TaskParams[RESI] in task:
             for r in task[TaskParams[RESI]]:
-                if r not in messages:
-                    messages.append(r)
-                    cf.write("ResourceType "+r+";\n")
-                    hf.write("extern ResourceType "+r+";\n")
+                if r not in Resources:
+                    Resources.append(r)
+                    hf.write("\tRES_"+r+",\n")
+    hf.write("\tMAX_RESOURCE_ID\n} OsResourcesType;")
+    hf.write(OsResMapType_str)
 
-    # print tasks resources list
+    # Resources in RAM
+    cf.write("\n\n\n/* Resources Definitions in RAM */\n")
+    for res in Resources:
+        cf.write("ResourceType " + str(res) + ";\n")
+
+    # Const Resource Structure for OS kernel
     comment = "\n\n/*  Resources lists for Tasks */\n"
     cf.write(comment)
-    hf.write(comment)
-    for task in Tasks:
-        if TaskParams[RESI] in task:
-            hf.write("extern ResourceType* "+task[TaskParams[TNMI]]+"_Resources[];\n")
-            cf.write("ResourceType* "+task[TaskParams[TNMI]]+"_Resources[] = {\n")
-            max_i = len(task[TaskParams[RESI]])
-            i = 0
-            for m in task[TaskParams[RESI]]:
-                i += 1
-                cf.write("\t&"+m)
-                if i != max_i:
-                    cf.write(",\n")
-                else:
-                    cf.write("\n")
-            cf.write("};\n\n")
+    ResTaskList = []
+    for res in Resources:
+        # Parse and collect tasks associated with "res"
+        TaskData = {}
+        task_cnt = 0
+        task_lst = []
+        for task in Tasks:
+            if TaskParams[RESI] in task:
+                for r in task[TaskParams[RESI]]:
+                    if str(r) == str(res):
+                        task_cnt += 1
+                        task_lst.append(task[TaskParams[TNMI]])
+        TaskData["res"] = str(res)
+        TaskData["n_tasks"] = task_cnt
+        TaskData["tasks"] = task_lst
+        ResTaskList.append(TaskData)
+
+    # Create C structures with the parsed tasks
+    for rt in ResTaskList:
+        cf.write("const TaskType "+ rt["res"]+"_tasks[] = {\n")
+        for t in rt["tasks"]:
+            cf.write("\tTASK_"+t.upper()+"_ID,\n")
+        cf.write("};\n\n")
+
+    cf.write("const OsResMapType _OsResList[MAX_RESOURCE_ID] = {\n")
+    for rt in ResTaskList:
+        cf.write("\t{\n\t\t.res = &"+rt["res"]+",\n")
+        cf.write("\t\t.n_tasks = "+ str(rt["n_tasks"])+",\n")
+        cf.write("\t\t.task_ids = " + rt["res"]+"_tasks\n")
+        cf.write("\t},\n")
+    cf.write("};\n")
 
     hf.write("\n\n#endif\n")
     hf.close()

@@ -14,7 +14,7 @@ enum eTaskType {
 
 
 #define TASK_A_APPMODE_MAX	(3)
-#define TASK_A_RESOURCE_MAX	(0)
+#define TASK_A_RESOURCE_MAX	(1)
 #define TASK_A_EVENT_MAX	(0)
 #define TASK_A_MESSAGE_MAX	(1)
 
@@ -43,8 +43,6 @@ typedef struct {
     u32 n_appmodes;
     MessageType** msglist;
     u32 n_msglist;
-    ResourceType** reslist;
-    u32 n_reslist;
     const EventMaskType** evtmsks;
     u32 n_evtmsks;
     u32 stack_size;

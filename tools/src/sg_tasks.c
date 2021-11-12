@@ -22,8 +22,6 @@ const OsTaskType _OsTaskList[] = {
 		.n_evtmsks = TASK_A_EVENT_MAX,
 		.msglist = (MessageType**) &Task_A_Messages,
 		.n_msglist = TASK_A_MESSAGE_MAX,
-		.reslist = NULL,
-		.n_reslist = TASK_A_RESOURCE_MAX,
 		.stack_size = 1024
 	},
 	{
@@ -39,8 +37,6 @@ const OsTaskType _OsTaskList[] = {
 		.n_evtmsks = TASK_B_EVENT_MAX,
 		.msglist = (MessageType**) &Task_B_Messages,
 		.n_msglist = TASK_B_MESSAGE_MAX,
-		.reslist = (ResourceType**) &Task_B_Resources,
-		.n_reslist = TASK_B_RESOURCE_MAX,
 		.stack_size = 1024
 	},
 	{
@@ -56,8 +52,6 @@ const OsTaskType _OsTaskList[] = {
 		.n_evtmsks = TASK_C_EVENT_MAX,
 		.msglist = NULL,
 		.n_msglist = TASK_C_MESSAGE_MAX,
-		.reslist = NULL,
-		.n_reslist = TASK_C_RESOURCE_MAX,
 		.stack_size = 1024
 	}
 };

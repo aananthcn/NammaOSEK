@@ -23,8 +23,6 @@ typedef struct {\n\
     u32 n_appmodes;\n\
     MessageType** msglist;\n\
     u32 n_msglist;\n\
-    ResourceType** reslist;\n\
-    u32 n_reslist;\n\
     const EventMaskType** evtmsks;\n\
     u32 n_evtmsks;\n\
     u32 stack_size;\n\
@@ -130,12 +128,6 @@ def generate_code(path, Tasks):
             cf.write("\t\t.msglist = NULL,\n")
         cf.write("\t\t.n_msglist = "+task[TaskParams[TNMI]].upper()+"_MESSAGE_MAX,\n")
 
-        # Init Resources
-        if TaskParams[RESI] in task:
-            cf.write("\t\t.reslist = (ResourceType**) &"+task[TaskParams[TNMI]]+"_Resources,\n")
-        else:
-            cf.write("\t\t.reslist = NULL,\n")
-        cf.write("\t\t.n_reslist = "+task[TaskParams[TNMI]].upper()+"_RESOURCE_MAX,\n")
         cf.write("\t\t.stack_size = "+task[TaskParams[STSZ]]+"\n")
 
         cf.write("\t}")

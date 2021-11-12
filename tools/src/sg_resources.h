@@ -3,12 +3,22 @@
 
 #include <osek.h>
 
-/*  Resources described in OIL file */
-extern ResourceType mutex1;
+
+#define RES(x)  RES_##x
+
+typedef enum {
+	RES_mutex1,
+	MAX_RESOURCE_ID
+} OsResourcesType;
 
 
-/*  Resources lists for Tasks */
-extern ResourceType* Task_B_Resources[];
+typedef struct {
+    ResourceType* res;
+    u32 n_tasks;
+    const TaskType* task_ids;
+} OsResMapType;
+
+extern const OsResMapType _OsResList[];
 
 
 #endif

@@ -1,13 +1,23 @@
 #include <stddef.h>
 #include "sg_resources.h"
+#include "sg_tasks.h"
 
 
-/*  Resources described in OIL file */
+
+/* Resources Definitions in RAM */
 ResourceType mutex1;
 
 
 /*  Resources lists for Tasks */
-ResourceType* Task_B_Resources[] = {
-	&mutex1
+const TaskType mutex1_tasks[] = {
+	TASK_TASK_A_ID,
+	TASK_TASK_B_ID,
 };
 
+const OsResMapType _OsResList[MAX_RESOURCE_ID] = {
+	{
+		.res = &mutex1,
+		.n_tasks = 2,
+		.task_ids = mutex1_tasks
+	},
+};
