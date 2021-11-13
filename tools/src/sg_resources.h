@@ -14,7 +14,8 @@ typedef enum {
 
 typedef struct {
     ResourceType* res;
-    u32 n_tasks;
+    u16 ceil_prio;
+    u16 n_tasks;
     const TaskType* task_ids;
 } OsResMapType;
 

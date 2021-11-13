@@ -21,20 +21,19 @@ CPU arm926ejs {
 		};
 		RESOURCE = mutex1;
 		MESSAGE = inter_task_message;
-		STACK_SIZE = 1024;
+		STACK_SIZE = 512;
 	};
 	TASK Task_B {
-		PRIORITY = 1;
+		PRIORITY = 2;
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = FALSE;
-		RESOURCE = mutex1;
 		EVENT = event1;
 		MESSAGE = inter_task_message;
-		STACK_SIZE = 1024;
+		STACK_SIZE = 512;
 	};
 	TASK Task_C {
-		PRIORITY = 4;
+		PRIORITY = 3;
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = TRUE {
@@ -42,7 +41,15 @@ CPU arm926ejs {
 		};
 		EVENT = event1;
 		EVENT = event2;
-		STACK_SIZE = 1024;
+		STACK_SIZE = 512;
+	};
+	TASK Task_D {
+		PRIORITY = 4;
+		SCHEDULE = NON;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+		RESOURCE = mutex1;
+		STACK_SIZE = 512;
 	};
 	COUNTER mSecCounter {
 		MINCYCLE = 1;
@@ -83,6 +90,17 @@ CPU arm926ejs {
 		};
 		AUTOSTART = FALSE;
 	};
+	ALARM WakeTaskD {
+		COUNTER = mSecCounter;
+		ACTION = ACTIVATETASK {
+			TASK = Task_D;
+		};
+		AUTOSTART = TRUE {
+			ALARMTIME = 40;
+			CYCLETIME = 1000;
+			APPMODE = OSDEFAULTAPPMODE;
+		};
+	};
 	ISR isr_func1 {
 		CATEGORY = 2;
 	};
@@ -91,6 +109,6 @@ CPU arm926ejs {
 		OS_STACK_SIZE = 512;
 		OS_CTX_SAVE_SZ = 128;
 		IRQ_STACK_SIZE = 512;
-		TASK_STACK_SIZE = 3456;
+		TASK_STACK_SIZE = 2560;
 	};
 };

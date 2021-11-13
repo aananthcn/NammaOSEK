@@ -28,6 +28,7 @@ typedef struct {
 } AppAlarmType;
 
 extern const AppModeType Alarm_WakeTaskA_AppModes[];
+extern const AppModeType Alarm_WakeTaskD_AppModes[];
 
 
 typedef struct {
@@ -38,7 +39,7 @@ typedef struct {
 
 #define MAX_APP_ALARMS  (2)
 extern const AppAlarmCtrlBlockType _AppAlarms[MAX_APP_ALARMS];
-#define MAX_APP_ALARM_COUNTERS    (3)
+#define MAX_APP_ALARM_COUNTERS    (4)
 extern TickType _AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
 extern TickType _AppAlarmCycles[MAX_APP_ALARM_COUNTERS];
 extern bool _AppAlarmStates[MAX_APP_ALARM_COUNTERS];

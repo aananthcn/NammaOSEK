@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams, TNMI, RESI
+from ob_globals import TaskParams, TNMI, RESI, PRII
 
 import colorama
 from colorama import Fore, Back, Style
@@ -8,7 +8,8 @@ from colorama import Fore, Back, Style
 OsResMapType_str = "\n\n\n\
 typedef struct {\n\
     ResourceType* res;\n\
-    u32 n_tasks;\n\
+    u16 ceil_prio;\n\
+    u16 n_tasks;\n\
     const TaskType* task_ids;\n\
 } OsResMapType;\n\
 \n\
@@ -56,15 +57,19 @@ def generate_code(path, Tasks):
         # Parse and collect tasks associated with "res"
         TaskData = {}
         task_cnt = 0
+        ceil_prio = 0
         task_lst = []
         for task in Tasks:
             if TaskParams[RESI] in task:
                 for r in task[TaskParams[RESI]]:
                     if str(r) == str(res):
                         task_cnt += 1
+                        if int(task[TaskParams[PRII]]) > ceil_prio:
+                            ceil_prio = int(task[TaskParams[PRII]])
                         task_lst.append(task[TaskParams[TNMI]])
         TaskData["res"] = str(res)
         TaskData["n_tasks"] = task_cnt
+        TaskData["ceil_prio"] = ceil_prio
         TaskData["tasks"] = task_lst
         ResTaskList.append(TaskData)
 
@@ -78,6 +83,7 @@ def generate_code(path, Tasks):
     cf.write("const OsResMapType _OsResList[MAX_RESOURCE_ID] = {\n")
     for rt in ResTaskList:
         cf.write("\t{\n\t\t.res = &"+rt["res"]+",\n")
+        cf.write("\t\t.ceil_prio = "+ str(rt["ceil_prio"])+",\n")
         cf.write("\t\t.n_tasks = "+ str(rt["n_tasks"])+",\n")
         cf.write("\t\t.task_ids = " + rt["res"]+"_tasks\n")
         cf.write("\t},\n")

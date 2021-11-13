@@ -22,13 +22,13 @@ const OsTaskType _OsTaskList[] = {
 		.n_evtmsks = TASK_A_EVENT_MAX,
 		.msglist = (MessageType**) &Task_A_Messages,
 		.n_msglist = TASK_A_MESSAGE_MAX,
-		.stack_size = 1024
+		.stack_size = 512
 	},
 	{
 		.handler = OS_TASK(Task_B),
 		.id = 1,
 		.sch_type = NON_PREEMPTIVE,
-		.priority = 1,
+		.priority = 2,
 		.activations = 1,
 		.autostart = false,
 		.appmodes = NULL,
@@ -37,13 +37,13 @@ const OsTaskType _OsTaskList[] = {
 		.n_evtmsks = TASK_B_EVENT_MAX,
 		.msglist = (MessageType**) &Task_B_Messages,
 		.n_msglist = TASK_B_MESSAGE_MAX,
-		.stack_size = 1024
+		.stack_size = 512
 	},
 	{
 		.handler = OS_TASK(Task_C),
 		.id = 2,
 		.sch_type = NON_PREEMPTIVE,
-		.priority = 4,
+		.priority = 3,
 		.activations = 1,
 		.autostart = true,
 		.appmodes = (const AppModeType **) &Task_C_AppModes,
@@ -52,6 +52,21 @@ const OsTaskType _OsTaskList[] = {
 		.n_evtmsks = TASK_C_EVENT_MAX,
 		.msglist = NULL,
 		.n_msglist = TASK_C_MESSAGE_MAX,
-		.stack_size = 1024
+		.stack_size = 512
+	},
+	{
+		.handler = OS_TASK(Task_D),
+		.id = 3,
+		.sch_type = NON_PREEMPTIVE,
+		.priority = 4,
+		.activations = 1,
+		.autostart = false,
+		.appmodes = NULL,
+		.n_appmodes = TASK_D_APPMODE_MAX,
+		.evtmsks = NULL,
+		.n_evtmsks = TASK_D_EVENT_MAX,
+		.msglist = NULL,
+		.n_msglist = TASK_D_MESSAGE_MAX,
+		.stack_size = 512
 	}
 };

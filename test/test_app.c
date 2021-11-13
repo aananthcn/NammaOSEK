@@ -130,3 +130,8 @@ TASK(Task_C) {
 void Alarm_uSecAlarm_callback(void) {
 	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
 }
+
+
+TASK(Task_D) {
+	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
+}

@@ -16,6 +16,11 @@ const AppModeType Alarm_WakeTaskA_AppModes[] = {
 	MANUFACT_MODE
 };
 
+#define ALARM_WAKETASKD_APPMODES_MAX (1)
+const AppModeType Alarm_WakeTaskD_AppModes[] = {
+	OSDEFAULTAPPMODE
+};
+
 
 /*   A L A R M S   D E F I N I T I O N S   */
 TickType _AppAlarmCounters[MAX_APP_ALARM_COUNTERS];
@@ -51,6 +56,21 @@ const AppAlarmType AppAlarms_mSecCounter[] = {
 		.cycletime = 0,
 		.n_appmodes = 0,
 		.appmodes = NULL
+	},
+	{
+		.name = "WakeTaskD",
+		.cntr_id = 0,
+		.pacntr = &_AppAlarmCounters[3],
+		.pcycle = &_AppAlarmCycles[3],
+		.palrm_state = &_AppAlarmStates[3],
+		.aat = AAT_ACTIVATETASK,
+		.aat_arg1 = (intptr_t) 3,
+		.aat_arg2 = (intptr_t)NULL,
+		.is_autostart = TRUE,
+		.alarmtime = 40,
+		.cycletime = 1000,
+		.n_appmodes = ALARM_WAKETASKD_APPMODES_MAX,
+		.appmodes = (const AppModeType *) &Alarm_WakeTaskD_AppModes
 	}
 };
 
@@ -76,7 +96,7 @@ const AppAlarmType AppAlarms_uSecCounter[] = {
 const AppAlarmCtrlBlockType _AppAlarms[] = {
 	{
 		.alarm = (const AppAlarmType *) &AppAlarms_mSecCounter,
-		.len = 2
+		.len = 3
 	},
 	{
 		.alarm = (const AppAlarmType *) &AppAlarms_uSecCounter,
@@ -86,5 +106,5 @@ const AppAlarmCtrlBlockType _AppAlarms[] = {
 
 
 const AlarmType _AlarmID2CounterID_map[] = {
-	0, 0, 1, 
+	0, 0, 1, 0, 
 };
