@@ -59,16 +59,8 @@ typedef enum eSchTypes {
 /* 
  * This defintion is made as per SWS Item "ECUC_Os_00022' defined in AUTOSAR OS
  * SWS, which says "An OsAppMode called OSDEFAULTAPPMODE must always be there for
- *ISO 17356 compatibility." 
+ * ISO 17356 compatibility". This is taken care in sg_appmodes.c/.h files!
  */
-#if 0
-typedef enum eAppModeType {
-	OSDEFAULTAPPMODE, /* Default application mode, always a valid parameter to StartOS */
-	OS_SLEEP_MODE,
-	OS_ERROR_MODE,
-	OS_MODES_MAX
-} AppModeType;
-#endif
 typedef u32 AppModeType;
 
 // function prototypes
@@ -101,24 +93,10 @@ void ResumeOSInterrupts(void);
 void SuspendOSInterrupts(void);
 #define ISR(FuncName)) void OSEK_ISR_##FuncName)(void)
 
-/*
- * Resource Management - At the moment (26-Jun-2021) I am assuming two types of resources
- * 1) Memory
- * 2) Device (memory mapped)
- * 3) Scheduler
- */
-typedef enum eResType {
-	RES_MEMORY,
-	RES_DEVICE,
-	RES_SCHEDULER,
-	RES_MAX
-} ResType;
 
-typedef struct sResObjType {
-	ResType type;
-	bool in_use;
-	void* address;
-} ResObjType;
+/*
+  Resource Management
+*/
 
 /* The values of ResourceType starts from 0 to 4 million */
 typedef u32 ResourceType;
@@ -128,7 +106,7 @@ typedef u32 ResourceType;
  * the number of resources to give IDs, even if the definitions are distributed
  * across files.
  */
-#define DeclareResource(R)	extern ResObjType* R __attribute__((section("osek_resource")));
+#define DeclareResource(R)	extern ResourceType R
 
 StatusType GetResource(ResourceType ResID);
 StatusType ReleaseResource(ResourceType ResID);
@@ -147,7 +125,7 @@ typedef EventMaskType* EventMaskRefType;
  * the number of events to give IDs, even if the definitions are distributed
  * across files.
  */
-#define DeclareEvent(E)	extern EventMaskType* E __attribute__((section("osek_event")));
+#define DeclareEvent(E)	extern EventMaskType E
 StatusType SetEvent(TaskType TaskID, EventMaskType Mask);
 StatusType ClearEvent(EventMaskType Mask);
 StatusType GetEvent(TaskType TaskID, EventMaskRefType Event);
@@ -184,7 +162,7 @@ typedef u32 AlarmType;
  * the number of alarms to give IDs, even if the definitions are distributed
  * across files.
  */
-#define DeclareAlarm(A)	extern AlarmType* A __attribute__((section("osek_event")));
+#define DeclareAlarm(A)	extern AlarmType A
 
 StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info);
 StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick);

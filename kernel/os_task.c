@@ -67,6 +67,9 @@ void OsSetupScheduler(AppModeType mode) {
 			AddTaskToFifoQueue(_OsTaskList[t], ReadyQueue);
 		}
 
+		/* initialize ceiling priority same as configured priority */
+		_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
+
 		/* initialize stack pointer for each tasks */
 		tmp = ((int)&_user_stack_top - sp_acc);                   /* top location for stack */
 		_OsTaskCtrlBlk[t].sp_top = (intptr_t) (tmp - (tmp % 8));  /* align to 8 */
@@ -131,6 +134,27 @@ int OsScheduleTasks(void) {
 	}
 }
 
+int OsSetCeilingPrio(u32 prio) {
+	if (prio > OS_MAX_TASK_PRIORITY) {
+		pr_log("Error: %s() called with invalid priority %d\n", __func__, prio);
+		return E_OS_ID;
+	}
+
+	DisableAllInterrupts();
+	_OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio = prio;
+	EnableAllInterrupts();
+	return 0;
+}
+
+int OsClrCeilingPrio(void) {
+	u32 prio;
+
+	DisableAllInterrupts();
+	prio = _OsTaskList[_OsCurrentTask.id].priority;
+	_OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio = prio;
+	EnableAllInterrupts();
+	return 0;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

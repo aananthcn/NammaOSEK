@@ -87,6 +87,8 @@ def generate_code(path, Tasks):
     cf.write("#include \"sg_messages.h\"\n")
     cf.write("#include \"sg_resources.h\"\n")
 
+    max_task_priority = 0
+
     cf.write("\n\n/*   T A S K   D E F I N I T I O N S   */\n")
     cf.write("const OsTaskType _OsTaskList[] = {\n")
     for i, task in enumerate(Tasks):
@@ -100,6 +102,8 @@ def generate_code(path, Tasks):
         # Init Schedule Type, priority
         cf.write("\t\t.sch_type = "+task[TaskParams[SCHI]]+"_PREEMPTIVE,\n")
         cf.write("\t\t.priority = "+task[TaskParams[PRII]]+",\n")
+        if int(task[TaskParams[PRII]]) > max_task_priority:
+            max_task_priority = int(task[TaskParams[PRII]])
 
         # Init Activations
         cf.write("\t\t.activations = "+task[TaskParams[ACTI]]+",\n")
@@ -138,5 +142,6 @@ def generate_code(path, Tasks):
     cf.write("};\n")
     
     cf.close()
+    hf.write("\n\n#define OS_MAX_TASK_PRIORITY  ("+str(max_task_priority)+")\n")
     hf.write("\n\n#endif\n")
     hf.close()

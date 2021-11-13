@@ -2,8 +2,17 @@
 #include <osek.h>
 #include <os_api.h>
 
+#include <osek_sg.h>
+
+
 #define GETEVENT_TEST
-#define GETTASKID_GETTASKSTATE_TEST
+#define GET_RELEASE_RESOURCE_TEST
+
+/*#############*/
+// this block of code is writte only for testing purpose, doesn't mean that
+// these can be used public or application code.
+#include <os_task.h>
+/*#############*/
 
 TASK(Task_A) {
 	AlarmBaseType info;
@@ -94,9 +103,19 @@ TASK(Task_A) {
 		pr_log("Task A: Triggered event for Task B\n");
 		GetEvent(1, &Event);
 		pr_log("Task A: Event = 0x%016X\n", Event);
+		#ifdef GET_RELEASE_RESOURCE_TEST
+		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
+		GetResource(RES(mutex1));
+		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
+		#endif
 	}
 	else {
 		toggle_bit = true;
+		#ifdef GET_RELEASE_RESOURCE_TEST
+		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
+		ReleaseResource(RES(mutex1));
+		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
+		#endif
 	}
 #endif
 }

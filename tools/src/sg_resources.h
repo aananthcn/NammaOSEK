@@ -22,4 +22,7 @@ typedef struct {
 extern const OsResMapType _OsResList[];
 
 
+DeclareResource(mutex1);
+
+
 #endif

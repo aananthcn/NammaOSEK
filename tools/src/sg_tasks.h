@@ -64,4 +64,7 @@ DeclareTask(Task_B);
 DeclareTask(Task_C);
 DeclareTask(Task_D);
 
+#define OS_MAX_TASK_PRIORITY  (4)
+
+
 #endif

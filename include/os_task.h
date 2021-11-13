@@ -10,6 +10,7 @@ typedef struct {
 	u32 sp_tsk;
         TaskStateType state;
 	bool context_saved; /* this will be true for schedule() and premption cases */
+	u32 ceil_prio;
 } OsTaskCtrlType;
 
 extern OsTaskCtrlType _OsTaskCtrlBlk[];
@@ -19,6 +20,8 @@ void OsSetupScheduler(AppModeType mode);
 int OsScheduleTasks(void);
 void OsClearActivationsCounts(void);
 int OsInitializeAlarms(AppModeType mode);
+int OsSetCeilingPrio(u32 prio);
+int OsClrCeilingPrio(void);
 
 
 #endif

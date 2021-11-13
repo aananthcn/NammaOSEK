@@ -13,7 +13,7 @@ typedef struct {\n\
     const TaskType* task_ids;\n\
 } OsResMapType;\n\
 \n\
-extern const OsResMapType _OsResList[];\n"
+extern const OsResMapType _OsResList[];\n\n\n"
 
 
 def generate_code(path, Tasks):
@@ -28,6 +28,7 @@ def generate_code(path, Tasks):
     filename = path + "/" + "sg_resources.c"
     cf = open(filename, "w")
     cf.write("#include <stddef.h>\n")
+    cf.write("\n")
     cf.write("#include \"sg_resources.h\"\n")
     cf.write("#include \"sg_tasks.h\"\n")
 
@@ -83,6 +84,7 @@ def generate_code(path, Tasks):
     cf.write("const OsResMapType _OsResList[MAX_RESOURCE_ID] = {\n")
     for rt in ResTaskList:
         cf.write("\t{\n\t\t.res = &"+rt["res"]+",\n")
+        hf.write("DeclareResource("+rt["res"]+");\n")
         cf.write("\t\t.ceil_prio = "+ str(rt["ceil_prio"])+",\n")
         cf.write("\t\t.n_tasks = "+ str(rt["n_tasks"])+",\n")
         cf.write("\t\t.task_ids = " + rt["res"]+"_tasks\n")
