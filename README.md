@@ -37,18 +37,20 @@ The FreeOSEK project uses Excel document as system configuration UI tool and Pyt
 
 OSEK Features & Status
 ---
- * **Basic and Extended tasks** - SUPPORTED
- * **Multiple request of task activation** - SUPPORTED
- * **Number of tasks** - more than 16 (ECC2, limited by CPU power and RAM)
- * **More than 1 task per priority** - SUPPORTED
- * **Number of priorities** - more than 16
- * **Number of events per task** - 64
- * **Separate stack for every task** - SUPPORTED
- * **Premption of tasks** - `NOT SUPPORTED` (will be supported soon)
- * **TerminateTask, ChainTask, Schedule** - SUPPORTED
- * **Application Modes** - SUPPORTED (not yet tested)
- * **ISR** - WORK-IN-PROGRESS
- * **RESOURCES** - WORK-IN-PROGRESS
+| Features | Status | Notes |
+| ---      | ---    | ---   |
+| **Basic and Extended tasks** | SUPPORTED | |
+| **Multiple request of task activation** | SUPPORTED | |
+| **Number of tasks** | More than 16 | ECC2, limited by CPU power and RAM |
+| **More than 1 task per priority** | SUPPORTED | |
+| **Number of priorities** | more than 16 | ECC2 |
+| **Number of events per task** | 64 | Bit mask for unsigned64_t |
+| **Separate stack for every task** | SUPPORTED | |
+| **Premption of tasks** | `NOT SUPPORTED` | Will be supported soon |
+| **TerminateTask, ChainTask, Schedule** | SUPPORTED | |
+| **Application Modes** | SUPPORTED | Not yet tested |
+| **ISR** | `WORK-IN-PROGRESS` | |
+| **RESOURCES** | SUPPORTED | Supports Priority Ceiling Protocol, but higher priority task cannot get a resource if busy! |
 
 <br>
 

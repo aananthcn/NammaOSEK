@@ -6,6 +6,16 @@
 #include <sg_resources.h>
 
 
+
+typedef struct {
+	ResourceType id;
+	bool in_use;
+} ResCtrlType;
+
+
+static ResCtrlType _OsResCtrlBlk[MAX_RESOURCE_ID];
+
+
 /*/
 Function: GetResource
 Argument: Resource ID
@@ -30,6 +40,15 @@ StatusType GetResource(ResourceType ResID) {
 		pr_log("Error: %s() called with invalid ResID %d\n", __func__, ResID);
 		return E_OS_ID;
 	}
+
+	DisableAllInterrupts();
+	if (_OsResCtrlBlk[ResID].in_use) {
+		EnableAllInterrupts();
+		pr_log("Error: %s() ResID %d is busy!\n", __func__, ResID);
+		return E_OS_RESOURCE;
+	}
+	_OsResCtrlBlk[ResID].in_use = true;
+	EnableAllInterrupts();
 
 	/* Let us raise the priority of the calling task to ceiling priority */
 	OsSetCeilingPrio(_OsResList[ResID].ceil_prio);
@@ -60,6 +79,11 @@ StatusType ReleaseResource(ResourceType ResID) {
 		pr_log("Error: %s() called with invalid ResID %d\n", __func__, ResID);
 		return E_OS_ID;
 	}
+
+	if (!_OsResCtrlBlk[ResID].in_use) {
+		pr_log("Warning: %s() is called for inactive ResID %d\n", __func__, ResID);
+	}
+	_OsResCtrlBlk[ResID].in_use = false;
 
 	/* Let us raise the priority of the calling task to ceiling priority */
 	OsClrCeilingPrio();
