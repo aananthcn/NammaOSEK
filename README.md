@@ -80,6 +80,7 @@ Prerequisites
 Cloning & Building FreeOSEK
 ---
 * `git clone git@github.com:aananthcn/FreeOSEK.git`
+* `git submodule update --init --recursive`
 * `cd FreeOSEK`
 * `./configure qemu-versatilepb`
 * `make`
@@ -117,10 +118,10 @@ To debug using gdb, use the following command in
 * Open another terminal and type the following commands
   * `gdb-multiarch`
   * Then inside the gdb console type the following:
-    * target remote localhost:1234
-    * file osek-os.elf
-    * b main
-    * c
+    * `target remote localhost:1234`
+    * `file osek-os.elf`
+    * `b main`
+    * `c`
     * *...other commands*
 
 <br><br>
