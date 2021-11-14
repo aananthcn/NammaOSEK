@@ -37,20 +37,20 @@ The FreeOSEK project uses Excel document as system configuration UI tool and Pyt
 
 OSEK Features & Status
 ---
-| Features | Status | Notes |
-| ---      | ---    | ---   |
-| **Basic and Extended tasks** | SUPPORTED | |
-| **Multiple request of task activation** | SUPPORTED | |
-| **Number of tasks** | More than 16 | ECC2, limited by CPU power and RAM |
-| **More than 1 task per priority** | SUPPORTED | |
-| **Number of priorities** | more than 16 | ECC2 |
-| **Number of events per task** | 64 | Bit mask for unsigned64_t |
-| **Separate stack for every task** | SUPPORTED | |
-| **Premption of tasks** | `NOT SUPPORTED` | Will be supported soon |
-| **TerminateTask, ChainTask, Schedule** | SUPPORTED | |
-| **Application Modes** | SUPPORTED | Not yet tested |
-| **ISR** | `WORK-IN-PROGRESS` | |
-| **RESOURCES** | SUPPORTED | Supports Priority Ceiling Protocol, but higher priority task cannot get a resource if busy! |
+S.No | Feature | Status | Notes |
+---  | ---     | ---    | ---   |
+1 | Basic and Extended tasks | SUPPORTED | |
+2 | Multiple request of task activation | SUPPORTED | |
+3 | Number of tasks | More than 16 | *ECC2, limited by CPU power and RAM* |
+4 | More than 1 task per priority | SUPPORTED | |
+5 | Number of priorities | more than 16 | *ECC2* |
+6 | Number of events per task | 64 | *Bit mask for unsigned64_t* |
+7 | Separate stack for every task | SUPPORTED | |
+8 | Premption of tasks | NOT SUPPORTED | *Will be supported soon* |
+9 | TerminateTask, ChainTask, Schedule | SUPPORTED | |
+10 | Application Modes | SUPPORTED | *Not yet tested* |
+11 | ISR | WORK IN PROGRESS | *Used in kernel, but user level access to ISRs is pending* |
+12 | RESOURCES | SUPPORTED | *Supports Priority Ceiling Protocol, but higher priority task cannot get a resource if busy!* |
 
 <br>
 
