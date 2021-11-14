@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import TaskParams, TNMI, RESI, PRII
+from ob_globals import TaskParams, TNMI, RESI, PRII, ACTI
 
 import colorama
 from colorama import Fore, Back, Style
@@ -17,6 +17,8 @@ extern const OsResMapType _OsResList[];\n\n\n"
 
 
 def generate_code(path, Tasks):
+    print_info("Generating code for Resources")
+
     # create header file
     filename = path + "/" + "sg_resources.h"
     hf = open(filename, "w")
@@ -64,7 +66,7 @@ def generate_code(path, Tasks):
             if TaskParams[RESI] in task:
                 for r in task[TaskParams[RESI]]:
                     if str(r) == str(res):
-                        task_cnt += 1
+                        task_cnt += int(task[TaskParams[ACTI]])
                         if int(task[TaskParams[PRII]]) > ceil_prio:
                             ceil_prio = int(task[TaskParams[PRII]])
                         task_lst.append(task[TaskParams[TNMI]])
@@ -94,5 +96,7 @@ def generate_code(path, Tasks):
     hf.write("\n\n#endif\n")
     hf.close()
     cf.close()
+
+    return ResTaskList
 
 

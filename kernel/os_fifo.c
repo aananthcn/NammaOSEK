@@ -4,6 +4,7 @@
 #include <os_api.h>
 
 #include "os_fifo.h"
+#include "os_task.h"
 
 
 
@@ -17,11 +18,6 @@ int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID) {
 	}
 	if (pFifoQ == NULL) {
 		pr_log("Error: %s() invalid pFifoQ\n", __func__);
-		return -1;
-	}
-	if (pFifoQ->size > TASK_ID_MAX) {
-		pr_log("Error: %s() FIFO Queue size > MAX for TaskID: %d\n",
-			__func__, TaskID);
 		return -1;
 	}
 
@@ -38,6 +34,8 @@ int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID) {
 	else {
 		pr_log("Error: %s() FIFO Full! Missing task = %d\n",
 			__func__, TaskID);
+		pr_log("\tHEAD: %d,\tTAIL:%d, SIZE:%d\n", pFifoQ->head,
+			pFifoQ->tail, pFifoQ->size);
 		return -1;
 	}
 #ifdef DEBUG
@@ -90,7 +88,7 @@ int AddTaskToFifoQueue(const OsTaskType task, const OsFifoType* fq[]) {
 		return E_OS_ID;
 	}
 
-	pFifo = (OsFifoType*) fq[task.priority];
+	pFifo = (OsFifoType*) fq[_OsTaskCtrlBlk[task.id].ceil_prio];
 	OsFifoWrite(pFifo, task.id);
 
 	return 0;

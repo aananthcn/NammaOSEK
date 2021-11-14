@@ -212,10 +212,10 @@ def main(of):
     sg_appmodes.generate_code(path, AppModes, Tasks)
     sg_events.generate_code(path, Tasks)
     sg_messages.generate_code(path, Tasks)
-    sg_resources.generate_code(path, Tasks)
+    ResTaskList = sg_resources.generate_code(path, Tasks)
     sg_tasks.generate_code(path, Tasks)
     sg_alarms.generate_code(path, Alarms, Counters, Tasks)
-    sg_fifo.generate_code(path, Tasks)
+    sg_fifo.generate_code(path, Tasks, ResTaskList)
     sg_os_param.generate_code(path, os_params)
 
 

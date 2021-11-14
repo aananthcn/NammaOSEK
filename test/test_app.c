@@ -93,9 +93,11 @@ TASK(Task_A) {
 	static bool toggle_bit;
 	EventMaskType Event = 0;
 
+#ifdef ENABLE_DISABLE_ISR_TEST
 	DisableAllInterrupts();
 	pr_log("Enable / Disable ISR test\n");
 	EnableAllInterrupts();
+#endif
 
 	if (toggle_bit) {
 		toggle_bit = false;
@@ -105,7 +107,7 @@ TASK(Task_A) {
 		pr_log("Task A: Event = 0x%016X\n", Event);
 		#ifdef GET_RELEASE_RESOURCE_TEST
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
-		GetResource(RES(mutex1));
+		ReleaseResource(RES(mutex1));
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
 		#endif
 	}
@@ -113,7 +115,7 @@ TASK(Task_A) {
 		toggle_bit = true;
 		#ifdef GET_RELEASE_RESOURCE_TEST
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
-		ReleaseResource(RES(mutex1));
+		GetResource(RES(mutex1));
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
 		#endif
 	}

@@ -82,6 +82,7 @@ StatusType ReleaseResource(ResourceType ResID) {
 
 	if (!_OsResCtrlBlk[ResID].in_use) {
 		pr_log("Warning: %s() is called for inactive ResID %d\n", __func__, ResID);
+		return E_OS_RESOURCE;
 	}
 	_OsResCtrlBlk[ResID].in_use = false;
 
