@@ -57,8 +57,8 @@ S.No | Feature | Status | Notes |
 Performance Metrics
 ---
 **Board**: qemu-versatilepb
- * **ROM Usage**: 30396 bytes (29.7kB)
- * **RAM Usage**: 4904 bytes (*353 bytes {kernel RAM usage} + 4551 bytes {stack + context save areas; this can be reduced based on application.}*)
+ * **ROM Usage**: 32016 bytes
+ * **RAM Usage**: 4104 bytes (*454 bytes {kernel RAM usage} + 3650 bytes {stack + context save areas; this can be reduced based on application.}*)
  * **OS Initialization time**: 1.64 ms
  * **Inter-task switching Latency**: 144 µs (*measurment scenario: Task A --> B; last-line of Task-A to first-line of Task-B*)
 
