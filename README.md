@@ -80,7 +80,6 @@ Prerequisites
 Cloning & Building FreeOSEK
 ---
 * `git clone git@github.com:aananthcn/FreeOSEK.git`
-* `git submodule update --init --recursive`
 * `cd FreeOSEK`
 * `./configure qemu-versatilepb`
 * `make`

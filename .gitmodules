@@ -1,3 +1,0 @@
-[submodule "tools/map-parser"]
-	path = tools/map-parser
-	url = https://github.com/aananthcn/gnu_map_file_parser
