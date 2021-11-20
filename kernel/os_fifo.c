@@ -17,7 +17,8 @@ int OsFifoWrite(OsFifoType* pFifoQ, TaskType TaskID) {
 		return -1;
 	}
 	if (pFifoQ == NULL) {
-		pr_log("Error: %s() invalid pFifoQ\n", __func__);
+		pr_log("Error: %s() invalid pFifoQ, with TaskID: %d\n",
+		__func__, TaskID);
 		return -1;
 	}
 

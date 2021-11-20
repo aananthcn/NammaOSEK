@@ -129,13 +129,14 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
     # Start of ISRs
     for isr in ISRs:
         # Start of ISR body 
-        f.write(indent*"\t"+ "ISR " + isr[ISR_Params[0]] + " {\n")
+        f.write(indent*"\n\t"+ "ISR " + isr[ISR_Params[0]] + " {\n")
         indent += 1
-        f.write(indent*"\t" +"CATEGORY = " + str(isr[ISR_Params[1]]) + ";\n")
-        if isr[ISR_Params[2]] != None:
-	        f.write(indent*"\t" +"RESOURCE = " + str(isr[ISR_Params[2]]) + ";\n")
+        f.write(indent*"\t" +"IRQn = " + str(isr[ISR_Params[1]]) + ";\n")
+        f.write(indent*"\t" +"CATEGORY = " + str(isr[ISR_Params[2]]) + ";\n")
         if isr[ISR_Params[3]] != None:
-	        f.write(indent*"\t" +"MESSAGE = " + str(isr[ISR_Params[3]]) + ";\n")
+	        f.write(indent*"\t" +"RESOURCE = " + str(isr[ISR_Params[3]]) + ";\n")
+        if isr[ISR_Params[4]] != None:
+	        f.write(indent*"\t" +"MESSAGE = " + str(isr[ISR_Params[4]]) + ";\n")
         # End of ISR body
         indent -= 1
         f.write(indent*"\t" + "};\n")

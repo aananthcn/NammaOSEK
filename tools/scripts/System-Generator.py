@@ -15,17 +15,22 @@ import sg_messages
 import sg_resources
 import sg_fifo
 import sg_os_param
+import sg_isrs
 
 import colorama
 from colorama import Fore, Back, Style
 
+
+# Global Variables
 Counters = []
 Alarms = []
 Tasks = []
 AppModes = []
+ISRs = []
 
 
 
+# Functions
 def print_usage(prog):
     print("Usage:\n\t python " + prog + " tools/oil-files/*.oil")
 
@@ -183,6 +188,22 @@ def parse_os_params(oil_lines, line_num):
 
 
 
+def parse_isr(oil_lines, line_num):
+    isrs = {}
+    isrs[ISR_Params[0]] = oil_lines[line_num].split()[1]
+    line_num += 1
+    while "};" not in oil_lines[line_num]:
+        line = oil_lines[line_num]
+        for isr in ISR_Params:
+            if isr in line:
+                isrs[isr] = line.replace('=', ';').split(';')[1].strip()
+ 
+        line_num += 1
+
+    return line_num, isrs
+
+
+
 def main(of):
     path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
     if not os.path.exists(path):
@@ -204,6 +225,9 @@ def main(of):
         if "TASK" in words and "{" in oil_lines[line_num]:
             line_num, task = parse_tasks(oil_lines, line_num)
             Tasks.append(task)
+        if "ISR" in words and "{" in oil_lines[line_num]:
+            line_num, isr = parse_isr(oil_lines, line_num)
+            ISRs.append(isr)
         if "FreeOSEK_PARAMS" in words and "{" in oil_lines[line_num]:
             line_num, os_params = parse_os_params(oil_lines, line_num)
         line_num += 1
@@ -217,6 +241,7 @@ def main(of):
     sg_alarms.generate_code(path, Alarms, Counters, Tasks)
     sg_fifo.generate_code(path, Tasks, ResTaskList)
     sg_os_param.generate_code(path, os_params)
+    sg_isrs.generate_code(path, ISRs)
 
 
 

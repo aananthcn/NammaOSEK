@@ -36,6 +36,7 @@ AppModeType GetActiveApplicationMode(void) {
 
 void StartOS(AppModeType mode) {
 	pr_log("Entering %s.\n", __func__);
+	DisableAllInterrupts();
 	SetActiveApplicationMode(mode);
 	if (mode != OSDEFAULTAPPMODE) {
 		pr_log("%s::%s(): Error: Invalid OS START mode!\n", __FILE__, __func__);
@@ -52,6 +53,7 @@ void StartOS(AppModeType mode) {
 	_OsKernelSp = _get_stack_ptr();
 	_OsKernelPc = _get_next_pc();
 
+	EnableAllInterrupts();
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		OsScheduleTasks();
 	}

@@ -22,5 +22,7 @@ SG_OBJS	:= \
 	${CWD}/tools/src/sg_messages.o \
 	${CWD}/tools/src/sg_fifo.o \
 	${CWD}/tools/src/sg_alarms.o \
-	${CWD}/tools/src/sg_tasks.o
+	${CWD}/tools/src/sg_tasks.o \
+	${CWD}/tools/src/sg_ivector.o
+
 

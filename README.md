@@ -49,7 +49,7 @@ S.No | Feature | Status | Notes |
 8 | Premption of tasks | NOT SUPPORTED | *Will be supported soon* |
 9 | TerminateTask, ChainTask, Schedule | SUPPORTED | |
 10 | Application Modes | SUPPORTED | *Not yet tested* |
-11 | ISR | WORK IN PROGRESS | *Used in kernel, but user level access to ISRs is pending* |
+11 | ISR | SUPPORTED | *Board specific code calls ISR configured (handler with IRQn) in ISR tab of OSEK-Builder.xlsx. Only timer ISR works for now!* |
 12 | RESOURCES | SUPPORTED | *Supports Priority Ceiling Protocol, but higher priority task cannot get a resource if busy!* |
 
 <br>

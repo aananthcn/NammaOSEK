@@ -34,7 +34,7 @@ ACYT = 7
 AAPM = 8
 
 # Column titles for ISRs
-ISR_Params = ["ISR Name", "CATEGORY", "RESOURCE", "MESSAGE"]
+ISR_Params = ["ISR Name", "IRQn", "CATEGORY", "RESOURCE", "MESSAGE"]
 
 # FreeOSEK Parameters
 OS_Params = ["OS_STACK_SIZE", "OS_CTX_SAVE_SZ", "IRQ_STACK_SIZE", "TASK_STACK_SIZE"]

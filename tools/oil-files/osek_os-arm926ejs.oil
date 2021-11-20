@@ -101,7 +101,9 @@ CPU arm926ejs {
 			APPMODE = OSDEFAULTAPPMODE;
 		};
 	};
-	ISR isr_func1 {
+
+	ISR SystemTickISR {
+		IRQn = 4;
 		CATEGORY = 2;
 	};
 

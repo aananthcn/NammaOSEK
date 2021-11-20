@@ -43,6 +43,10 @@ void OsSetupScheduler(AppModeType mode) {
 
 	/* check all tasks marked as autostart */
 	for (t=0; t < TASK_ID_MAX; t++) {
+		/* initialize ceiling priority same as configured priority */
+		_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
+
+		/* AppModes initialization */
 		for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
 			/* do sanity check - for any hand modification of sg code */
 			if (t != _OsTaskList[t].id) {
@@ -66,9 +70,6 @@ void OsSetupScheduler(AppModeType mode) {
 			/* all set, we can not add this task to queue */
 			AddTaskToFifoQueue(_OsTaskList[t], ReadyQueue);
 		}
-
-		/* initialize ceiling priority same as configured priority */
-		_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
 
 		/* initialize stack pointer for each tasks */
 		tmp = ((int)&_user_stack_top - sp_acc);                   /* top location for stack */
