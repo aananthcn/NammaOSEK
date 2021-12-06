@@ -9,7 +9,7 @@
 #include <os_api.h>
 
 
-#include "qemu-versatilepb.h"
+#include "stm32f407vet6.h"
 
 
 /* Serial console functions */
@@ -17,7 +17,9 @@ int console_fputs(const char *s) {
         int count = 0;
 
         while (*s != '\0') {
+                #if 0
                 UART0DR = (unsigned int)(*s);
+                #endif
                 count++;
                 s++;
         }
@@ -26,7 +28,9 @@ int console_fputs(const char *s) {
 }
 
 int console_fputc(const int c) {
+#if 0
         UART0DR = (unsigned int) (c);
+#endif
         return c;
 }
 
@@ -38,6 +42,7 @@ int console_fputc(const int c) {
 int brd_setup_sytimer(void) {
         u32 tick_count = OS_TICK_DURATION_ns / TIMER_CLK_TO_MILLISEC;
 
+#if 0
         /* Timer0 counter reload value init */
         *((volatile u32*)(TIMER0_BASE+TIMERLOAD_OFFSET)) = tick_count;
 
@@ -46,6 +51,7 @@ int brd_setup_sytimer(void) {
 
         /* Timer1 as free running counter: Enable | 32bit mode */
         *((volatile u8*)(TIMER1_BASE+TIMERCTRL_OFFSET)) = 0x82;
+#endif
 
         return 0;
 }
@@ -53,20 +59,24 @@ int brd_setup_sytimer(void) {
 int brd_get_usec_syscount(u32 *ucount) {
         u32 count;
 
+#if 0
         /* free running mode counts from 0xFFFFFFFF to 0, hence reversing it */
         count = (u32)0xFFFFFFFF - *((volatile u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
 
         /* convert to ucount so that the count value == 1 usec */
         *ucount = (u32)((count * 1000ull) / TIMER_CLK_TO_MILLISEC);
         //*ucount = count;
+#endif
 
         return 0;
 }
 
 
 int brd_sys_enable_interrupts() {
+#if 0
         /* Enable interrupts */
         VIC_INTENABLE = 1 << ISR_SN_TIMER01;
+#endif
 
         return 0;
 }

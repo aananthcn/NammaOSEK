@@ -38,7 +38,7 @@ const AppAlarmType AppAlarms_mSecCounter[] = {
 		.aat_arg2 = (intptr_t)NULL,
 		.is_autostart = TRUE,
 		.alarmtime = 40,
-		.cycletime = 1000,
+		.cycletime = 500,
 		.n_appmodes = ALARM_WAKETASKA_APPMODES_MAX,
 		.appmodes = (const AppModeType *) &Alarm_WakeTaskA_AppModes
 	},

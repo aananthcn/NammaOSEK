@@ -1,5 +1,7 @@
 .text
- .code 32
+.cpu cortex-m4
+.syntax unified
+.thumb
  
 .global _set_stack_ptr
 .global _get_stack_ptr
@@ -72,7 +74,7 @@ _set_sp_and_pc:
  *              argument passed.
 /*/
 _save_context:
-	stmia   r0!, {r4 - sl, fp, sp, lr}   @ sl = r10, stack limit
+	stmdb   r0!, {r4 - sl, fp, lr}   @ sl = r10, stack limit
 	mov pc, lr
 
 
@@ -85,7 +87,7 @@ _save_context:
  *              the argument passed.
 /*/
 _restore_context:
-	ldmia   r0!, {r4 - sl, fp, sp, pc}      @ Load all regs saved previously
+	ldmia   r0!, {r4 - sl, fp, pc}      @ Load all regs saved previously
 	mov pc, lr
 
 

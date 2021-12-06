@@ -7,6 +7,7 @@
 
 #define GETEVENT_TEST
 #define GET_RELEASE_RESOURCE_TEST
+//#define SCHEDULE_TEST
 
 /*#############*/
 // this block of code is writte only for testing purpose, doesn't mean that

@@ -5,7 +5,7 @@
 #include <os_api.h>
 #include <sg_ivector.h>
 
-#include "versatilepb.h"
+#include "qemu-versatilepb.h"
 
 
 static inline u32 get_isr_mask_bits(int irqn) {
