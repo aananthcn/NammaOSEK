@@ -22,11 +22,12 @@
 /* Clock & Oscillator Registers */
 //================================
 /* RCC clock control register */
-#define RCC_CR                  (*((volatile u32 *)(0x40023800))) 
-#define RCC_PLLCFGR             (*((volatile u32 *)(0x40023804))) 
-#define RCC_CFGR                (*((volatile u32 *)(0x40023808))) 
-#define RCC_APB1RSTR            (*((volatile u32 *)(0x40023820))) 
-#define RCC_APB1ENR             (*((volatile u32 *)(0x40023840))) 
+#define RCC_CR                  (*((volatile u32 *)(0x40023800)))
+#define RCC_PLLCFGR             (*((volatile u32 *)(0x40023804)))
+#define RCC_CFGR                (*((volatile u32 *)(0x40023808)))
+#define RCC_APB1RSTR            (*((volatile u32 *)(0x40023820)))
+#define RCC_APB1ENR             (*((volatile u32 *)(0x40023840)))
+#define RCC_APB2ENR             (*((volatile u32 *)(0x40023844)))
 
 
 /* Timer Registers */

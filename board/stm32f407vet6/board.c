@@ -45,8 +45,8 @@ int brd_setup_sytimer(void) {
 
         /* Setup Clocks and Oscillator */
         RCC_PLLCFGR = 0x24003010; /* HSE Clk, PLL clock = 3 * 16 MHz / 2 = 24 MHz */
-        RCC_CFGR = 0x02; /* SW (System Clock) = PLL clock; AHB & APB uses the PLL Clock */
-        RCC_CR = 0x10000; /* HSE = ON, Ext. Osc. 16 MHz */
+        RCC_CFGR |= 0x02; /* SW (System Clock) = PLL clock; AHB & APB uses the PLL Clock */
+        RCC_CR |= 0x10000; /* HSE = ON, Ext. Osc. 16 MHz */
 
         /* Using SysTick Timer to generate system ticks */
         CM4_SYSTICK_STRVR = tick_count & 0x00FFFFFF;
@@ -54,8 +54,8 @@ int brd_setup_sytimer(void) {
         CM4_SYSTICK_STCSR = 0x7; /* Core Clock | TICKINT | Down Counter */
 
         /* Prepare Timer 2 for free-running up-counter */
-        RCC_APB1RSTR = 0x01; /* Reset TIM2 */
-        RCC_APB1ENR = 0x01; /* Enable TIM2 Clock */
+        RCC_APB1ENR |= 0x01; /* Enable TIM2 Clock */
+        RCC_APB2ENR |= 0x4000; /* SYSCFGEN = 1 to access APB1 bus */
 
         /* Using TIM2 for free-running 32-bit counter */
         TIM2_PSC = 23; /* f = fCK_PSC / (PSC[15:0] + 1) = 24 MHz / (23 + 1) = 1 MHz */
@@ -69,14 +69,6 @@ int brd_setup_sytimer(void) {
 int brd_get_usec_syscount(u32 *ucount) {
         u32 count;
 
-#if 0
-        /* free running mode counts from 0xFFFFFFFF to 0, hence reversing it */
-        count = (u32)0xFFFFFFFF - *((volatile u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
-
-        /* convert to ucount so that the count value == 1 usec */
-        *ucount = (u32)((count * 1000ull) / TIMER_CLK_TO_MILLISEC);
-        //*ucount = count;
-#endif
         *ucount = TIM2_CNT; /* Runs at 1 MHz, hence 1 count == 1 µs */
 
         return 0;
