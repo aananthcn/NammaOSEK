@@ -118,50 +118,17 @@ void __attribute__((interrupt)) _PendSV_handler(void) {
         for (;;);
 }
 
+extern void SystemTickISR(void);
 /* Exception no: 15 */
 void __attribute__((interrupt)) _SysTick_handler(void) {
-        pr_log("\nEntered a trap function: %s()\n", __func__);
-        for (;;);
+        SystemTickISR();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Exception no: 16
-static inline u32 get_isr_mask_bits(int irqn) {
-        u32 msk_bits = 0;
-        if (irqn == ISR_SN_TIMER01) {
-                /* get Masked Int. Status for Timer 0 */
-                msk_bits = *((volatile u32*)(TIMER0_BASE+TIMERMSKINTSTS_OFFSET));
-        }
-
-        return msk_bits;
-}
-
-static inline void acknowledge_isr(int irqn) {
-        if ((irqn > MAX_IVECTOR_NUMBER) || (irqn < MIN_IVECTOR_NUMBER)) {
-                return;
-        }
-
-        if (irqn == ISR_SN_TIMER01) {
-                /* acknowledge timer 0 interrupt */
-                *((volatile u8 *)(TIMER0_BASE + TIMERINTCLR_OFFSET)) = 0;
-        }
-}
-
-
-/* Exception no: 16 */
 void __attribute__((interrupt)) _irq_handler() {
-        int iv = MIN_IVECTOR_NUMBER;
-        do {
-                /* continue if iv ISR has not occured */
-                if (!(VIC_IRQSTATUS & (1 << iv)))
-                        continue;
-
-                if (get_isr_mask_bits(iv)) {
-                        acknowledge_isr(iv);
-                        (*_IsrHandler[iv])();
-                }
-                iv++;
-        }while (iv <= MAX_IVECTOR_NUMBER);
+        pr_log("\nEntered a trap function: %s()\n", __func__);
+        for (;;);
 }
 
 
