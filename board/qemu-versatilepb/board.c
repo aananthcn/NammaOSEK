@@ -36,7 +36,7 @@ int console_fputc(const int c) {
 /* System Clock = 1 MHz. The timer on our QEMU system defaults to using a 1MHz reference. */
 #define SYSTEM_CLOCK_MHz        (1)
 
-int brd_setup_sytimer(void) {
+int brd_setup_systimer(void) {
         u32 tick_count = OS_TICK_DURATION_ns * SYSTEM_CLOCK_MHz / CLOCK_SEC2MSEC;
 
         /* Timer0 counter reload value init */
@@ -73,9 +73,16 @@ int brd_sys_enable_interrupts() {
 }
 
 
-void main(void) {
+int brd_console_init(void) {
         pr_log_init();
-        brd_setup_sytimer();
+
+        return 0;
+}
+
+
+void main(void) {
+        brd_setup_systimer();
+        brd_console_init();
         brd_sys_enable_interrupts();
 
         StartOS(OSDEFAULTAPPMODE);

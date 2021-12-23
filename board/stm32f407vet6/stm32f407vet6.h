@@ -5,6 +5,7 @@
 
 #include <ostypes.h>
 
+
 /* Interrupt Controller */
 #define VIC_BASE_ADDR   0x10140000
 #define VIC_IRQSTATUS   (*((volatile u32 *)(VIC_BASE_ADDR + 0x000)))
@@ -15,8 +16,17 @@
 #define ISR_SN_TIMER23  (5)
 #define ISR_SN_UART0    (12)
 
-/* UART */
-#define UART0DR         (*((volatile u32 *)0x101f1000))
+
+
+/* UART / USART Registers */
+//================================
+#define UART1_SR         	(*((volatile u32 *)(0x40011000)))
+#define UART1_DR         	(*((volatile u32 *)(0x40011004)))
+#define UART1_BRR        	(*((volatile u32 *)(0x40011008)))
+#define UART1_CR1        	(*((volatile u32 *)(0x4001100C)))
+#define UART1_CR2        	(*((volatile u32 *)(0x40011010)))
+#define UART1_CR3        	(*((volatile u32 *)(0x40011014)))
+#define UART1_GTPR       	(*((volatile u32 *)(0x40011018)))
 
 
 /* Clock & Oscillator Registers */
@@ -26,6 +36,7 @@
 #define RCC_PLLCFGR             (*((volatile u32 *)(0x40023804)))
 #define RCC_CFGR                (*((volatile u32 *)(0x40023808)))
 #define RCC_APB1RSTR            (*((volatile u32 *)(0x40023820)))
+#define RCC_AHB1ENR             (*((volatile u32 *)(0x40023830)))
 #define RCC_APB1ENR             (*((volatile u32 *)(0x40023840)))
 #define RCC_APB2ENR             (*((volatile u32 *)(0x40023844)))
 
@@ -33,7 +44,7 @@
 /* Timer Registers */
 //================================
 /* SysTick Control and Status Register */
-#define CM4_SYSTICK_STCSR       (*((volatile u32 *)(0xE000E010))) 
+#define CM4_SYSTICK_STCSR       (*((volatile u32 *)(0xE000E010)))
 /* SysTick Reload Value Register */
 #define CM4_SYSTICK_STRVR       (*((volatile u32 *)(0xE000E014)))
 /* SysTick Current Value Register */
@@ -58,6 +69,17 @@
 #define TIM2_CNT                (*((volatile u32 *)(0x40000024)))
 /* Prescalar Register */
 #define TIM2_PSC                (*((volatile u32 *)(0x40000028)))
+
+
+
+
+/* STM32F407VE Port A Registers */
+#define GPIOA_MODER             (*((volatile u32 *)(0x40020000)))
+#define GPIOA_ODR		(*((volatile u32 *)(0x40020014)))
+#define GPIOx_BSRR		(*((volatile u32 *)(0x40020018)))
+#define GPIOA_AFRL              (*((volatile u32 *)(0x40020020)))
+#define GPIOA_AFRH              (*((volatile u32 *)(0x40020024)))
+
 
 
 #endif

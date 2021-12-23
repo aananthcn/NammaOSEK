@@ -4,6 +4,8 @@
 
 #include <osek_sg.h>
 
+#include "stm32f407vet6.h"
+
 
 #define GETEVENT_TEST
 #define GET_RELEASE_RESOURCE_TEST
@@ -100,8 +102,12 @@ TASK(Task_A) {
 	EnableAllInterrupts();
 #endif
 
+	// Test code, should be removed after STM32F407VET6 bringup is completed!
+	GPIOA_MODER |= ((1 << 14) | (1 << 12)); // LED - PA7, PA6: GPIO mode
+
 	if (toggle_bit) {
 		toggle_bit = false;
+		GPIOA_ODR |= 0xC0;
 		SetEvent(1, 0x101);
 		pr_log("Task A: Triggered event for Task B\n");
 		GetEvent(1, &Event);
@@ -114,6 +120,7 @@ TASK(Task_A) {
 	}
 	else {
 		toggle_bit = true;
+		GPIOA_ODR &= ~(0xC0);
 		#ifdef GET_RELEASE_RESOURCE_TEST
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
 		GetResource(RES(mutex1));
