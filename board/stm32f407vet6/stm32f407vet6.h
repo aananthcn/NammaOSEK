@@ -18,17 +18,6 @@
 
 
 
-/* UART / USART Registers */
-//================================
-#define UART1_SR         	(*((volatile u32 *)(0x40011000)))
-#define UART1_DR         	(*((volatile u32 *)(0x40011004)))
-#define UART1_BRR        	(*((volatile u32 *)(0x40011008)))
-#define UART1_CR1        	(*((volatile u32 *)(0x4001100C)))
-#define UART1_CR2        	(*((volatile u32 *)(0x40011010)))
-#define UART1_CR3        	(*((volatile u32 *)(0x40011014)))
-#define UART1_GTPR       	(*((volatile u32 *)(0x40011018)))
-
-
 /* Clock & Oscillator Registers */
 //================================
 /* RCC clock control register */
@@ -72,13 +61,25 @@
 
 
 
-
 /* STM32F407VE Port A Registers */
+//================================
 #define GPIOA_MODER             (*((volatile u32 *)(0x40020000)))
 #define GPIOA_ODR		(*((volatile u32 *)(0x40020014)))
 #define GPIOx_BSRR		(*((volatile u32 *)(0x40020018)))
 #define GPIOA_AFRL              (*((volatile u32 *)(0x40020020)))
 #define GPIOA_AFRH              (*((volatile u32 *)(0x40020024)))
+
+
+
+/* UART / USART Registers */
+//================================
+#define USART1_SR         	(*((volatile u32 *)(0x40011000)))
+#define USART1_DR         	(*((volatile u32 *)(0x40011004)))
+#define USART1_BRR        	(*((volatile u32 *)(0x40011008)))
+#define USART1_CR1        	(*((volatile u32 *)(0x4001100C)))
+#define USART1_CR2        	(*((volatile u32 *)(0x40011010)))
+#define USART1_CR3        	(*((volatile u32 *)(0x40011014)))
+#define USART1_GTPR       	(*((volatile u32 *)(0x40011018)))
 
 
 
