@@ -107,7 +107,7 @@ TASK(Task_A) {
 
 	if (toggle_bit) {
 		toggle_bit = false;
-		GPIOA_ODR |= 0xC0;
+		GPIOA_ODR |= 0x40;
 		SetEvent(1, 0x101);
 		pr_log("Task A: Triggered event for Task B\n");
 		GetEvent(1, &Event);
@@ -120,7 +120,7 @@ TASK(Task_A) {
 	}
 	else {
 		toggle_bit = true;
-		GPIOA_ODR &= ~(0xC0);
+		GPIOA_ODR &= ~(0x40);
 		#ifdef GET_RELEASE_RESOURCE_TEST
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
 		GetResource(RES(mutex1));
@@ -150,6 +150,16 @@ TASK(Task_B) {
 	GetEvent(1, &Event);
 	pr_log("Task B: Event = 0x%016X\n", Event);
 #endif
+	static bool toggle_bit;
+	if (toggle_bit) {
+		toggle_bit = false;
+		GPIOA_ODR |= 0x80;
+	}
+	else {
+		toggle_bit = true;
+		GPIOA_ODR &= ~(0x80);
+	}
+
 }
 
 TASK(Task_C) {
