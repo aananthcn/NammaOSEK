@@ -4,7 +4,7 @@ import sys
 import os
 
 from common import import_or_install, print_info
-from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, OS_Params, STSZ
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, OS_Params, OSEK_Params, STSZ
 
 import sg_counter
 import sg_tasks
@@ -18,7 +18,8 @@ import sg_os_param
 import sg_isrs
 
 import colorama
-from colorama import Fore, Back, Style
+from colorama import init, Fore, Back, Style
+init(convert=True)
 
 
 # Global Variables
@@ -27,6 +28,7 @@ Alarms = []
 Tasks = []
 AppModes = []
 ISRs = []
+OS_Cfgs = {}
 
 
 
@@ -175,12 +177,12 @@ def parse_counter(oil_lines, line_num):
 
 
 
-def parse_os_params(oil_lines, line_num):
+def parse_os_params(oil_lines, line_num, par_list):
     os_params = {}
     line_num += 1
     while "};" not in oil_lines[line_num]:
         line = oil_lines[line_num]
-        for osp in OS_Params:
+        for osp in par_list:
             if osp in line:
                 os_params[osp] = line.replace('=', ';').split(';')[1].strip()
         line_num += 1
@@ -204,12 +206,27 @@ def parse_isr(oil_lines, line_num):
 
 
 
-def main(of):
+def main(oilfile, gencode):
+    # Validate and open OIL file
+    print_info("Opening " + oilfile)
+    if "oil" != oilfile.split(".")[-1]:
+        print(Fore.RED + "Error: Input file is not an OIL file!", Style.RESET_ALL)
+        return -1
+    
+    if not os.path.exists(oilfile):
+        print(Fore.RED + "Error: Can't open OIL file: \""+oilfile+"\"!", Style.RESET_ALL)
+        return -1
+    
+    of = open(oilfile, "r")
+    print(Style.RESET_ALL, "\033[F")
+    
+    # Create output directory for generating source files
     path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
     if not os.path.exists(path):
         print_info("Creating source file directory " + path)
         os.mkdir(path)
     
+    # Parse the OIL file
     print_info("Parsing " + oilfile)
     oil_lines = of.readlines()
     total_lines = len(oil_lines)
@@ -229,19 +246,28 @@ def main(of):
             line_num, isr = parse_isr(oil_lines, line_num)
             ISRs.append(isr)
         if "FreeOSEK_PARAMS" in words and "{" in oil_lines[line_num]:
-            line_num, os_params = parse_os_params(oil_lines, line_num)
+            line_num, os_params = parse_os_params(oil_lines, line_num, OS_Params)
+            OS_Cfgs.update(os_params)
+        if "OS" in words and "{" in oil_lines[line_num]:
+            OS_Cfgs["OS"] = words[1]
+            line_num, os_params = parse_os_params(oil_lines, line_num, OSEK_Params)
+            OS_Cfgs.update(os_params)
         line_num += 1
+        
+    # Get CPU / Target name
+    OS_Cfgs["CPU"] = oil_lines[0].split(" ")[1]
 
-    sg_counter.generate_code(path, Counters)
-    sg_appmodes.generate_code(path, AppModes, Tasks)
-    sg_events.generate_code(path, Tasks)
-    sg_messages.generate_code(path, Tasks)
-    ResTaskList = sg_resources.generate_code(path, Tasks)
-    sg_tasks.generate_code(path, Tasks)
-    sg_alarms.generate_code(path, Alarms, Counters, Tasks)
-    sg_fifo.generate_code(path, Tasks, ResTaskList)
-    sg_os_param.generate_code(path, os_params)
-    sg_isrs.generate_code(path, ISRs)
+    if gencode:
+        sg_counter.generate_code(path, Counters)
+        sg_appmodes.generate_code(path, AppModes, Tasks)
+        sg_events.generate_code(path, Tasks)
+        sg_messages.generate_code(path, Tasks)
+        ResTaskList = sg_resources.generate_code(path, Tasks)
+        sg_tasks.generate_code(path, Tasks)
+        sg_alarms.generate_code(path, Alarms, Counters, Tasks)
+        sg_fifo.generate_code(path, Tasks, ResTaskList)
+        sg_os_param.generate_code(path, os_params)
+        sg_isrs.generate_code(path, ISRs)
 
 
 
@@ -256,13 +282,4 @@ if __name__ == '__main__':
     import_or_install("colorama")
 
     oilfile = sys.argv[1]
-    print_info("Opening " + oilfile)
-    if "oil" != oilfile.split(".")[-1]:
-        print(Fore.RED + "Error: Input file is not an OIL file!", Style.RESET_ALL)
-    
-    if not os.path.exists(oilfile):
-        print(Fore.RED + "Error: Can't open OIL file: \""+oilfile+"\"!", Style.RESET_ALL)
-    else:
-        of = open(oilfile, "r")
-        print(Style.RESET_ALL, "\033[F")
-        main(of)
+    main(oilfile, True)

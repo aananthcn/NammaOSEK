@@ -1,4 +1,4 @@
-CPU cortex_m4 {
+CPU cortex-m4 {
 	OS osek_os {
 		STATUS = STANDARD;
 		STARTUPHOOK = FALSE;
@@ -19,21 +19,21 @@ CPU cortex_m4 {
 			APPMODE = MANUFACT_MODE;
 			APPMODE = HW_TEST_MODE;
 		};
+		RESOURCE = mutex1;
 		MESSAGE = inter_task_message;
-		STACK_SIZE = 1024;
+		STACK_SIZE = 512;
 	};
 	TASK Task_B {
-		PRIORITY = 1;
+		PRIORITY = 2;
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = FALSE;
-		RESOURCE = mutex1;
 		EVENT = event1;
 		MESSAGE = inter_task_message;
-		STACK_SIZE = 1024;
+		STACK_SIZE = 512;
 	};
 	TASK Task_C {
-		PRIORITY = 4;
+		PRIORITY = 3;
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = TRUE {
@@ -41,7 +41,15 @@ CPU cortex_m4 {
 		};
 		EVENT = event1;
 		EVENT = event2;
-		STACK_SIZE = 1024;
+		STACK_SIZE = 512;
+	};
+	TASK Task_D {
+		PRIORITY = 4;
+		SCHEDULE = NON;
+		ACTIVATION = 1;
+		AUTOSTART = FALSE;
+		RESOURCE = mutex1;
+		STACK_SIZE = 512;
 	};
 	COUNTER mSecCounter {
 		MINCYCLE = 1;
@@ -62,7 +70,7 @@ CPU cortex_m4 {
 		};
 		AUTOSTART = TRUE {
 			ALARMTIME = 40;
-			CYCLETIME = 1000;
+			CYCLETIME = 500;
 			APPMODE = OSDEFAULTAPPMODE;
 			APPMODE = MANUFACT_MODE;
 		};
@@ -82,7 +90,20 @@ CPU cortex_m4 {
 		};
 		AUTOSTART = FALSE;
 	};
-	ISR isr_func1 {
+	ALARM WakeTaskD {
+		COUNTER = mSecCounter;
+		ACTION = ACTIVATETASK {
+			TASK = Task_D;
+		};
+		AUTOSTART = TRUE {
+			ALARMTIME = 40;
+			CYCLETIME = 1000;
+			APPMODE = OSDEFAULTAPPMODE;
+		};
+	};
+
+	ISR SystemTickISR {
+		IRQn = 4;
 		CATEGORY = 2;
 	};
 
@@ -90,6 +111,6 @@ CPU cortex_m4 {
 		OS_STACK_SIZE = 512;
 		OS_CTX_SAVE_SZ = 128;
 		IRQ_STACK_SIZE = 512;
-		TASK_STACK_SIZE = 3456;
+		TASK_STACK_SIZE = 2560;
 	};
 };
