@@ -16,7 +16,7 @@ def n_appmodes(tab, modes):
     update_app_mode_tab(tab)
     
 
-def draw_app_mode_tab(tab):
+def draw_app_mode_tab(tab, appmodes):
     global N_AppModes, AppModeObjs
     N_AppModes_str = tk.StringVar(value=N_AppModes)
     

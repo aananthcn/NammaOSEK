@@ -42,7 +42,7 @@ def show_os_config(view):
     tabControl.pack(expand = 1, fill ="both")
     
     gui_os_tab.draw_os_tab(os_tab, sg.OS_Cfgs)
-    gui_am_tab.draw_app_mode_tab(am_tab)
+    gui_am_tab.draw_app_mode_tab(am_tab, sg.AppModes)
     gui_cr_tab.draw_counters_tab(cr_tab)
         
 
