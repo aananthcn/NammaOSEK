@@ -42,7 +42,6 @@ def update_app_mode_tab(tab):
 
     # StrVar memory allocation checks
     n_am_strvar = len(AM_StrVar)-1
-    print("N_AppModes = "+str(N_AppModes)+", n_am_strvar = "+str(n_am_strvar))
     if N_AppModes > n_am_strvar:
         for i in range(N_AppModes - n_am_strvar):
             AM_StrVar.insert(len(AM_StrVar), tk.StringVar())

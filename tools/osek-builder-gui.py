@@ -17,6 +17,7 @@ import gui.os.cnt_tab as gui_cr_tab
 
 
 # Globals
+MainWindow = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
@@ -30,16 +31,22 @@ def about():
 
     
 def show_os_config(view):
-    tabControl = ttk.Notebook(view)
+    global MainWindow
+
+    if MainWindow != None:
+        for widget in MainWindow.winfo_children():
+            widget.destroy()
+        MainWindow.destroy()
+    MainWindow = ttk.Notebook(view)
     
-    os_tab = ttk.Frame(tabControl)
-    am_tab = ttk.Frame(tabControl)
-    cr_tab = ttk.Frame(tabControl)
+    os_tab = ttk.Frame(MainWindow)
+    am_tab = ttk.Frame(MainWindow)
+    cr_tab = ttk.Frame(MainWindow)
     
-    tabControl.add(os_tab, text ='OS Configs')
-    tabControl.add(am_tab, text ='AppModes')
-    tabControl.add(cr_tab, text ='Counters')
-    tabControl.pack(expand = 1, fill ="both")
+    MainWindow.add(os_tab, text ='OS Configs')
+    MainWindow.add(am_tab, text ='AppModes')
+    MainWindow.add(cr_tab, text ='Counters')
+    MainWindow.pack(expand = 1, fill ="both")
     
     gui_os_tab.draw_os_tab(os_tab, sg.OS_Cfgs)
     gui_am_tab.draw_app_mode_tab(am_tab, sg.AppModes)
