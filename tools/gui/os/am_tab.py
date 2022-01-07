@@ -27,8 +27,8 @@ class AmTab:
         del self.AM_StrVar[:]
 
 
-    def n_appmodes(self, tab, modes):
-        self.N_AppModes = int(modes.get())
+    def update_am(self, tab, am_str):
+        self.N_AppModes = int(am_str.get())
         for i, item in enumerate(tab.winfo_children()):
             if i >= self.HeaderObjs:
                 item.destroy()
@@ -40,7 +40,7 @@ class AmTab:
         label = tk.Label(tab, text="Number of Modes ")
         label.grid(row=1, column=1, sticky="w")
         spinb = tk.Spinbox(tab, width=28, values=tuple(range(1,self.MaxAppModes+1)), textvariable=self.AM_StrVar[0], 
-                        command=lambda: self.n_appmodes(tab, self.AM_StrVar[0]))
+                        command=lambda: self.update_am(tab, self.AM_StrVar[0]))
         self.AM_StrVar[0].set(self.N_AppModes)
         spinb.grid(row=1, column=2)
         self.update(tab)    

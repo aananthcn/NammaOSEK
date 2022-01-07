@@ -12,8 +12,7 @@ class OsTab:
             self.OS_StrVar.insert(i, tk.StringVar())
 
     def __del__(self):
-        for obj in self.OS_StrVar:
-            del obj
+        del self.OS_StrVar[:]
         self.OsCfg = None
 
     def draw(self, tab):

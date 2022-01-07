@@ -21,6 +21,7 @@ MainWindow = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
+OsTab = AmTab = CtrTab = None
 
 
 # Functions
@@ -31,7 +32,7 @@ def about():
 
     
 def show_os_config(view):
-    global MainWindow
+    global MainWindow, OsTab, AmTab, CtrTab
 
     if MainWindow != None:
         for widget in MainWindow.winfo_children():
@@ -49,14 +50,22 @@ def show_os_config(view):
     MainWindow.pack(expand = 1, fill ="both")
     
     #gui_os_tab.draw_os_tab(os_tab, sg.OS_Cfgs)
-    osTab = gui_os_tab.OsTab(sg.OS_Cfgs)
-    osTab.draw(os_tab)
+    if OsTab != None:
+        del OsTab
+    OsTab = gui_os_tab.OsTab(sg.OS_Cfgs)
+    OsTab.draw(os_tab)
 
     #gui_am_tab.draw_app_mode_tab(am_tab, sg.AppModes)
-    amTab = gui_am_tab.AmTab(sg.AppModes)
-    amTab.draw(am_tab)
+    if AmTab != None:
+        del AmTab
+    AmTab = gui_am_tab.AmTab(sg.AppModes)
+    AmTab.draw(am_tab)
     
-    gui_cr_tab.draw_counters_tab(cr_tab)
+    #gui_cr_tab.draw_counters_tab(cr_tab)
+    if CtrTab != None:
+        del CtrTab
+    CtrTab = gui_cr_tab.CounterTab(sg.Counters)
+    CtrTab.draw(cr_tab)
         
 
 
