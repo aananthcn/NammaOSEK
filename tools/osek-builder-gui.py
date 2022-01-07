@@ -48,8 +48,14 @@ def show_os_config(view):
     MainWindow.add(cr_tab, text ='Counters')
     MainWindow.pack(expand = 1, fill ="both")
     
-    gui_os_tab.draw_os_tab(os_tab, sg.OS_Cfgs)
-    gui_am_tab.draw_app_mode_tab(am_tab, sg.AppModes)
+    #gui_os_tab.draw_os_tab(os_tab, sg.OS_Cfgs)
+    osTab = gui_os_tab.OsTab(sg.OS_Cfgs)
+    osTab.draw(os_tab)
+
+    #gui_am_tab.draw_app_mode_tab(am_tab, sg.AppModes)
+    amTab = gui_am_tab.AmTab(sg.AppModes)
+    amTab.draw(am_tab)
+    
     gui_cr_tab.draw_counters_tab(cr_tab)
         
 
@@ -60,6 +66,7 @@ def open_file():
     if RootView != None:
         RootView.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
     sg.main(OIL_FileName, False)
+    show_os_config(RootView)
 
  
 ###############################################################################
