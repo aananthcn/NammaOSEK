@@ -1,6 +1,33 @@
 import tkinter as tk
 from tkinter import ttk
 
+
+class CounterStr:
+    name = None
+    mincycle = None
+    maxallowed = None
+    ticksperbase = None
+    tick_duration = None
+    comment = None
+
+    def __init__(self):
+        self.name = tk.StringVar()
+        self.mincycle = tk.StringVar()
+        self.maxallowed = tk.StringVar()
+        self.ticksperbase = tk.StringVar()
+        self.tick_duration = tk.StringVar()
+        self.comment = tk.StringVar()
+
+    def __del__(self):
+        del self.name
+        del self.mincycle
+        del self.maxallowed
+        del self.ticksperbase
+        del self.tick_duration
+        del self.comment
+
+
+
 class CounterTab:
     N_Counters = 1
     N_Counters_str = None
@@ -9,16 +36,20 @@ class CounterTab:
     HeaderObjs = 9 #Objects / widgets that are part of the header and shouldn't be destroyed
 
     Counters = None
+    Ctr_StrVar = []
 
 
     def __init__(self, cntrs):
         self.N_Counters_str = tk.StringVar(value=self.N_Counters)
         self.Counters = cntrs
         self.N_Counters = len(cntrs)
+        for i in range(self.N_Counters):
+            self.Ctr_StrVar.insert(i, CounterStr())
 
 
     def __del__(self):
         del self.N_Counters_str
+        del self.Ctr_StrVar[:]
 
 
     def update_ctrs(self, tab):
@@ -58,19 +89,37 @@ class CounterTab:
 
 
     def update(self, tab):
-        # Draw new objects
-        for i in range(1, int(self.N_Counters)+1):
+        # StrVar memory allocation checks
+        n_strvar = len(self.Ctr_StrVar)
+        if int(self.N_Counters) > n_strvar:
+            for i in range(int(self.N_Counters) - n_strvar):
+                self.Ctr_StrVar.insert(len(self.Ctr_StrVar), CounterStr())
+                self.Counters.append(self.Counters[-1])
+        elif n_strvar > int(self.N_Counters):
+            # print("n_strvar = "+ str(n_strvar) + ", N_Counters = " + str(self.N_Counters))
+            for i in range(n_strvar - int(self.N_Counters)):
+                del self.Ctr_StrVar[-1]
+                del self.Counters[-1]
+
+        # Draw counter objects
+        for i in range(0, int(self.N_Counters)):
             label = tk.Label(tab, text="Counter "+str(i)+" : ")
-            label.grid(row=self.HeaderSize+i, column=1, sticky="e")
-            entry = tk.Entry(tab, width=30) # Counter Name
-            entry.grid(row=self.HeaderSize+i, column=2)
-            entry = tk.Entry(tab, width=15) # MINCYCLE
-            entry.grid(row=self.HeaderSize+i, column=3)
-            entry = tk.Entry(tab, width=20) # MAXALLOWEDVALUE
-            entry.grid(row=self.HeaderSize+i, column=4)
-            entry = tk.Entry(tab, width=15) # TICKSPERBASE
-            entry.grid(row=self.HeaderSize+i, column=5)
-            entry = tk.Entry(tab, width=20) # TICKDURATION (ns)
-            entry.grid(row=self.HeaderSize+i, column=6)
-            entry = tk.Entry(tab, width=40) # Comments
-            entry.grid(row=self.HeaderSize+i, column=7)
+            label.grid(row=self.HeaderSize+i+1, column=1, sticky="e")
+            entry = tk.Entry(tab, width=30, textvariable=self.Ctr_StrVar[i].name) # Counter Name
+            self.Ctr_StrVar[i].name.set(self.Counters[i]["Counter Name"])
+            entry.grid(row=self.HeaderSize+i+1, column=2)
+            entry = tk.Entry(tab, width=15, textvariable=self.Ctr_StrVar[i].mincycle) # MINCYCLE
+            self.Ctr_StrVar[i].mincycle.set(self.Counters[i]["MINCYCLE"])
+            entry.grid(row=self.HeaderSize+i+1, column=3)
+            entry = tk.Entry(tab, width=20, textvariable=self.Ctr_StrVar[i].maxallowed) # MAXALLOWEDVALUE
+            self.Ctr_StrVar[i].maxallowed.set(self.Counters[i]["MAXALLOWEDVALUE"])
+            entry.grid(row=self.HeaderSize+i+1, column=4)
+            entry = tk.Entry(tab, width=15, textvariable=self.Ctr_StrVar[i].ticksperbase) # TICKSPERBASE
+            self.Ctr_StrVar[i].ticksperbase.set(self.Counters[i]["TICKSPERBASE"])
+            entry.grid(row=self.HeaderSize+i+1, column=5)
+            entry = tk.Entry(tab, width=20, textvariable=self.Ctr_StrVar[i].tick_duration) # TICKDURATION (ns)
+            self.Ctr_StrVar[i].tick_duration.set(self.Counters[i]["TICKDURATION"])
+            entry.grid(row=self.HeaderSize+i+1, column=6)
+            entry = tk.Entry(tab, width=40, textvariable=self.Ctr_StrVar[i].comment) # Comments
+            self.Ctr_StrVar[i].comment.set("") # comments not yet supported!
+            entry.grid(row=self.HeaderSize+i+1, column=7)
