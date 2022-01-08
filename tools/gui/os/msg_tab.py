@@ -94,7 +94,7 @@ class MessageTab:
                 del self.msgs_str[-1]
                 del self.msgs[-1]
 
-        print("n_msgs_str = "+ str(n_msgs_str) + ", n_msgs = " + str(self.n_msgs))
+        #print("n_msgs_str = "+ str(n_msgs_str) + ", n_msgs = " + str(self.n_msgs))
         # Draw new objects
         for i in range(0, self.n_msgs):
             label = tk.Label(self.mnf, text="Msg "+str(i)+": ")

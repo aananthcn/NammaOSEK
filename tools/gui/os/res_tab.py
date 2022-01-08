@@ -96,7 +96,7 @@ class ResourceTab:
                 del self.ress_str[-1]
                 del self.ress[-1]
 
-        print("n_ress_str = "+ str(n_ress_str) + ", n_ress = " + str(self.n_ress))
+        #print("n_ress_str = "+ str(n_ress_str) + ", n_ress = " + str(self.n_ress))
         # Draw new objects
         for i in range(0, self.n_ress):
             label = tk.Label(self.mnf, text="Msg "+str(i)+": ")
@@ -109,7 +109,6 @@ class ResourceTab:
         self.cv.config(scrollregion=self.cv.bbox("all"))
 
     def extract_resources(self, tasks):
-        print(tasks)
         for task in tasks:
             if "RESOURCE" in task:
                 for res in task["RESOURCE"]:

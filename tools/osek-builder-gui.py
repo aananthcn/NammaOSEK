@@ -15,6 +15,7 @@ import gui.os.am_tab as gui_am_tab
 import gui.os.cnt_tab as gui_cr_tab
 import gui.os.msg_tab as gui_ms_tab
 import gui.os.res_tab as gui_rs_tab
+import gui.os.tsk_tab as gui_tk_tab
 
 
 
@@ -23,7 +24,7 @@ MainWindow = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
-OsTab = AmTab = CtrTab = MsgTab = ResTab = None
+OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = None
 
 
 # Functions
@@ -34,7 +35,7 @@ def about():
 
     
 def show_os_config(view):
-    global MainWindow, OsTab, AmTab, CtrTab, MsgTab, ResTab
+    global MainWindow, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab
 
     if MainWindow != None:
         for widget in MainWindow.winfo_children():
@@ -83,6 +84,12 @@ def show_os_config(view):
         del ResTab
     ResTab = gui_rs_tab.ResourceTab(sg.Tasks)
     ResTab.draw(rs_tab)
+
+    if TskTab != None:
+        del TskTab
+    TskTab = gui_tk_tab.TaskTab(sg.Tasks)
+    TskTab.draw(tk_tab)
+    
 
 def open_file():
     global OIL_FileName, AppTitle
