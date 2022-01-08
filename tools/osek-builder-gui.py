@@ -13,6 +13,7 @@ from tkinter import filedialog
 import gui.os.os_tab as gui_os_tab
 import gui.os.am_tab as gui_am_tab
 import gui.os.cnt_tab as gui_cr_tab
+import gui.os.msg_tab as gui_ms_tab
 
 
 
@@ -21,7 +22,7 @@ MainWindow = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
-OsTab = AmTab = CtrTab = None
+OsTab = AmTab = CtrTab = MsgTab = None
 
 
 # Functions
@@ -32,7 +33,7 @@ def about():
 
     
 def show_os_config(view):
-    global MainWindow, OsTab, AmTab, CtrTab
+    global MainWindow, OsTab, AmTab, CtrTab, MsgTab
 
     if MainWindow != None:
         for widget in MainWindow.winfo_children():
@@ -43,7 +44,6 @@ def show_os_config(view):
     os_tab = ttk.Frame(MainWindow)
     am_tab = ttk.Frame(MainWindow)
     cr_tab = ttk.Frame(MainWindow)
-    ev_tab = ttk.Frame(MainWindow)
     ms_tab = ttk.Frame(MainWindow)
     rs_tab = ttk.Frame(MainWindow)
     tk_tab = ttk.Frame(MainWindow)
@@ -52,31 +52,31 @@ def show_os_config(view):
     MainWindow.add(os_tab, text ='OS Configs')
     MainWindow.add(am_tab, text =' AppModes ')
     MainWindow.add(cr_tab, text =' Counters ')
-    MainWindow.add(ev_tab, text ='  Events  ')
     MainWindow.add(ms_tab, text =' Messages ')
     MainWindow.add(rs_tab, text =' Resources ')
     MainWindow.add(tk_tab, text ='   Tasks   ')
     MainWindow.add(al_tab, text ='  Alarms  ')
     MainWindow.pack(expand = 1, fill ="both")
     
-    #gui_os_tab.draw_os_tab(os_tab, sg.OS_Cfgs)
     if OsTab != None:
         del OsTab
     OsTab = gui_os_tab.OsTab(sg.OS_Cfgs)
     OsTab.draw(os_tab)
 
-    #gui_am_tab.draw_app_mode_tab(am_tab, sg.AppModes)
     if AmTab != None:
         del AmTab
     AmTab = gui_am_tab.AmTab(sg.AppModes)
     AmTab.draw(am_tab)
     
-    #gui_cr_tab.draw_counters_tab(cr_tab)
     if CtrTab != None:
         del CtrTab
     CtrTab = gui_cr_tab.CounterTab(sg.Counters)
     CtrTab.draw(cr_tab)
-        
+
+    if MsgTab != None:
+        del MsgTab
+    MsgTab = gui_ms_tab.MessageTab(sg.Tasks)
+    MsgTab.draw(ms_tab)
 
 
 def open_file():
