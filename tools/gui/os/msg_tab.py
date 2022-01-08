@@ -5,9 +5,10 @@ from tkinter import ttk
 
 class MessageTab:
     n_msgs = 1
+    max_msgs = 1024*5
     n_msgs_str = None
     msgs_str = []
-    msgs = None
+    msgs = []
     HeaderObjs = 2 #Objects / widgets that are part of the header and shouldn't be destroyed
     HeaderSize = 1
     prf = None  # Parent Frame
@@ -16,9 +17,9 @@ class MessageTab:
     sb  = None  # Scrollbar
     mnf = None  # Main Frame - where the widgets are scrolled
 
-    def __init__(self, msgs):
-        self.msgs = msgs
-        self.n_msgs = len(msgs)
+    def __init__(self, tasks):
+        self.extract_messages(tasks)
+        self.n_msgs = len(self.msgs)
         self.n_msgs_str = tk.StringVar()
         for i in range(self.n_msgs):
             self.msgs_str.insert(i, tk.StringVar())
@@ -29,6 +30,7 @@ class MessageTab:
 
     def update_msgs(self, mstr):
         self.n_msgs = int(mstr.get())
+        print("Update messages: "+ str(self.n_msgs))        
         for i, item in enumerate(self.mnf.winfo_children()):
             if i >= self.HeaderObjs:
                 item.destroy()
@@ -46,11 +48,11 @@ class MessageTab:
         self.cvf.grid_rowconfigure(0, weight=1)
         self.cvf.grid_columnconfigure(0, weight=1)
 
-        # Set grid_propagate to False to allow 5-by-5 buttons resizing later
+        # Set grid_propagate to False to allow canvas frame resizing later
         self.cvf.grid_propagate(False)
 
         # Add a canvas in that frame
-        self.cv = tk.Canvas(self.cvf, bg="yellow")
+        self.cv = tk.Canvas(self.cvf)
         self.cv.grid(row=0, column=0, sticky="news")
 
         # Link a scrollbar to the canvas
@@ -65,22 +67,13 @@ class MessageTab:
         #Number of modes - Label + Spinbox
         label = tk.Label(self.mnf, text="No. of Messages:")
         label.grid(row=0, column=0, sticky="w")
-        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_msgs_str, command=lambda: self.update_msgs(self.n_msgs_str))
+        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_msgs_str, command=lambda: self.update_msgs(self.n_msgs_str),
+                    values=tuple(range(1,self.max_msgs+1)))
         self.n_msgs_str.set(self.n_msgs)
         spinb.grid(row=0, column=1, sticky="w")
 
-        # Add 9-by-5 buttons to the frame
-        rows = 9
-        columns = 5
-        buttons = [[tk.Button() for j in range(columns)] for i in range(rows)]
-        for i in range(0, rows):
-            for j in range(0, columns):
-                buttons[i][j] = tk.Button(self.mnf, text=("%d,%d" % (i+1, j+1)))
-                buttons[i][j].grid(row=i+1, column=j, sticky='news')
-
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.mnf.update_idletasks()
-
         # Resize the main frame to show contents for FULL SCREEN (Todo: scroll bars won't work in reduced size window)
         canvas_w = tab.winfo_screenwidth()-self.sb.winfo_width()
         canvas_h = tab.winfo_screenheight()-(spinb.winfo_height()*6)
@@ -88,49 +81,37 @@ class MessageTab:
         print("canvas: "+str(canvas_w)+" x "+str(canvas_h))
         self.cvf.config(width=canvas_w, height=canvas_h)
 
-        # Set the self.cv scrolling region
-        self.cv.config(scrollregion=self.cv.bbox("all"))
+        self.update()
 
-        #self.mnf = tk.Frame(tab)
-        #self.mnf.grid(row=0, column=0, sticky="NW")
-        #self.sbf = tk.Frame(tab)
-        #self.sbf.grid(row=0, column=2, sticky="NW")
-
-        #sb = tk.Scrollbar(self.sbf, orient=tk.VERTICAL)
-        #sb.grid(row=0, column=0, sticky="NE")
-
-
-        #Number of modes - Label + Spinbox
-        #label = tk.Label(self.mnf, text="No. of Messages:")
-        #label.grid(row=0, column=0, sticky="w")
-        #spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_msgs_str, command=lambda: self.update_msgs(self.n_msgs_str))
-        #self.n_msgs_str.set(self.n_msgs)
-        #spinb.grid(row=0, column=1, sticky="w")
-        #self.update()
 
     def update(self):
         # Tune memory allocations based on number of rows or boxes
-        n_msgs_bx = int(self.n_msgs_str.get())
-        if self.n_msgs > n_msgs_bx:
-            for i in range(self.n_msgs - n_msgs_bx):
+        n_msgs_str = len(self.msgs_str)
+        if self.n_msgs > n_msgs_str:
+            for i in range(self.n_msgs - n_msgs_str):
                 self.msgs_str.insert(len(self.msgs_str), tk.StringVar())
                 self.msgs.insert(len(self.msgs), "")
-        elif n_msgs_bx > self.n_msgs:
-            # print("n_msgs_bx = "+ str(n_msgs_bx) + ", n_msgs = " + str(self.n_msgs))
-            for i in range(n_msgs_bx - self.n_msgs):
+        elif n_msgs_str > self.n_msgs:
+            for i in range(n_msgs_str - self.n_msgs):
                 del self.msgs_str[-1]
                 del self.msgs[-1]
 
+        print("n_msgs_str = "+ str(n_msgs_str) + ", n_msgs = " + str(self.n_msgs))
         # Draw new objects
         for i in range(0, self.n_msgs):
             label = tk.Label(self.mnf, text="Msg "+str(i)+": ")
             label.grid(row=self.HeaderSize+i, column=0, sticky="w")
             entry = tk.Entry(self.mnf, width=40, textvariable=self.msgs_str[i])
-            self.msgs_str[i].set(self.msgs[i-1])
+            self.msgs_str[i].set(self.msgs[i])
             entry.grid(row=self.HeaderSize+i, column=1)
 
-        # Redraw scroll bar
-        #for item in self.sbf.winfo_children():
-        #    item.destroy()
-        #sb = tk.Scrollbar(self.sbf, orient=tk.VERTICAL)
-        #sb.grid(row=0, column=0, sticky="NE")
+        # Set the self.cv scrolling region
+        self.cv.config(scrollregion=self.cv.bbox("all"))
+
+    def extract_messages(self, tasks):
+        for task in tasks:
+            if "MESSAGE" in task:
+                for msg in task["MESSAGE"]:
+                    if msg not in self.msgs:
+                        self.msgs.append(msg)
+        return tasks
