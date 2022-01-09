@@ -62,14 +62,6 @@ class TaskTab:
         del self.n_tasks_str
         del self.tasks_str[:]
 
-    def update_tasks(self, mstr):
-        self.n_tasks = int(mstr.get())
-        print("Update tasks: "+ str(self.n_tasks))        
-        for i, item in enumerate(self.mnf.winfo_children()):
-            if i >= self.HeaderObjs:
-                item.destroy()
-        self.update()
-
     def draw(self, tab):
         tab.grid_rowconfigure(0, weight=1)
         tab.columnconfigure(0, weight=1)
@@ -101,7 +93,7 @@ class TaskTab:
         #Number of modes - Label + Spinbox
         label = tk.Label(self.mnf, text="No. of Tasks:")
         label.grid(row=0, column=0, sticky="w")
-        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_tasks_str, command=lambda: self.update_tasks(self.n_tasks_str),
+        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_tasks_str, command=lambda : self.update_tasks(),
                     values=tuple(range(1,self.max_tasks+1)))
         self.n_tasks_str.set(self.n_tasks)
         spinb.grid(row=0, column=1, sticky="w")
@@ -141,6 +133,13 @@ class TaskTab:
 
 
     def update(self):
+        # destroy most old gui widgets
+        self.n_tasks = int(self.n_tasks_str.get())
+        print("Update tasks: "+ str(self.n_tasks))        
+        for i, item in enumerate(self.mnf.winfo_children()):
+            if i >= self.HeaderObjs:
+                item.destroy()
+
         # Tune memory allocations based on number of rows or boxes
         n_tasks_str = len(self.tasks_str)
         if self.n_tasks > n_tasks_str:
