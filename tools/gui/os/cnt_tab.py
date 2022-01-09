@@ -94,7 +94,7 @@ class CounterTab:
         if int(self.N_Counters) > n_strvar:
             for i in range(int(self.N_Counters) - n_strvar):
                 self.Ctr_StrVar.insert(len(self.Ctr_StrVar), CounterStr())
-                self.Counters.append(self.Counters[-1])
+                self.Counters.append(self.create_empty_counter())
         elif n_strvar > int(self.N_Counters):
             # print("n_strvar = "+ str(n_strvar) + ", N_Counters = " + str(self.N_Counters))
             for i in range(n_strvar - int(self.N_Counters)):
@@ -123,3 +123,15 @@ class CounterTab:
             entry = tk.Entry(tab, width=40, textvariable=self.Ctr_StrVar[i].comment) # Comments
             self.Ctr_StrVar[i].comment.set("") # comments not yet supported!
             entry.grid(row=self.HeaderSize+i+1, column=7)
+
+    def create_empty_counter(self):
+        counter = {}
+        
+        # Use the last counter's name and numbers to ease the edits made by user 
+        counter["Counter Name"] = self.Counters[-1]["Counter Name"]
+        counter["MINCYCLE"] = self.Counters[-1]["MINCYCLE"]
+        counter["MAXALLOWEDVALUE"] = self.Counters[-1]["MAXALLOWEDVALUE"]
+        counter["TICKSPERBASE"] = self.Counters[-1]["TICKSPERBASE"]
+        counter["TICKDURATION"] = self.Counters[-1]["TICKDURATION"]
+
+        return counter

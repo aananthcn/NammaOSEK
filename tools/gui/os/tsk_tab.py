@@ -145,7 +145,7 @@ class TaskTab:
         if self.n_tasks > n_tasks_str:
             for i in range(self.n_tasks - n_tasks_str):
                 self.tasks_str.insert(len(self.tasks_str), TaskStr(n_tasks_str+i))
-                self.tasks.insert(len(self.tasks), self.tasks[-1])
+                self.tasks.insert(len(self.tasks), self.create_empty_task())
         elif n_tasks_str > self.n_tasks:
             for i in range(n_tasks_str - self.n_tasks):
                 del self.tasks_str[-1]
@@ -214,13 +214,18 @@ class TaskTab:
                     self.events.append(evt)
         return task
 
-    def on_dialog_close(self, task_id, type):
-        # remove old selections and update new selections
-        if type == "autostart":
-            if "AUTOSTART_APPMODE" in self.tasks[task_id]:
-                del self.tasks[task_id]["AUTOSTART_APPMODE"][:]
-            else:
-                self.tasks[task_id]["AUTOSTART_APPMODE"] = []
+    def on_autostart_dialog_close(self, task_id):
+        # remove old selections
+        if "AUTOSTART_APPMODE" in self.tasks[task_id]:
+            del self.tasks[task_id]["AUTOSTART_APPMODE"][:]
+        else:
+            self.tasks[task_id]["AUTOSTART_APPMODE"] = []
+
+        # update new selections
+        if len(self.active_lstbox.curselection()) == 0:
+            self.tasks[task_id]["AUTOSTART"] = "FALSE"
+        else:
+            self.tasks[task_id]["AUTOSTART"] = "TRUE"
             for i in self.active_lstbox.curselection():
                 self.tasks[task_id]["AUTOSTART_APPMODE"].append(self.active_lstbox.get(i))
         
@@ -239,7 +244,7 @@ class TaskTab:
 
         # function to create dialog window
         self.active_dialog = tk.Toplevel() # create an instance of toplevel
-        self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_dialog_close(id, "autostart"))
+        self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_autostart_dialog_close(id))
 
         # create widgets with toplevel instance as parent
         # var = tk.StringVar().set(str(id))
@@ -253,3 +258,20 @@ class TaskTab:
                 if appmode in self.tasks[id]["AUTOSTART_APPMODE"]:
                     self.active_lstbox.selection_set(i)
         self.active_lstbox.pack()
+
+    def create_empty_task(self):
+        task = {}
+        
+        # Use the last task's name and numbers to ease the edits made by user 
+        task["Task Name"] = self.tasks[-1]["Task Name"]
+        task["PRIORITY"] = self.tasks[-1]["PRIORITY"]
+        task["SCHEDULE"] = self.tasks[-1]["SCHEDULE"] # Pre-emption (NON / FULL)
+        task["ACTIVATION"] = self.tasks[-1]["ACTIVATION"]
+        task["AUTOSTART"] = "FALSE"
+        task["AUTOSTART_APPMODE"] = []
+        task["RESOURCE"] = []
+        task["EVENT"] = []
+        task["MESSAGE"] = []
+        task["STACK_SIZE"] = self.tasks[-1]["STACK_SIZE"]
+
+        return task
