@@ -41,12 +41,20 @@ class TaskTab:
     sb  = None  # Scrollbar
     mnf = None  # Main Frame - where the widgets are scrolled
 
-    def __init__(self, tasks):
+    active_dialog = None
+
+    amtab = None
+
+
+    def __init__(self, tasks, amtab):
         self.tasks = tasks
         self.n_tasks = len(self.tasks)
         self.n_tasks_str = tk.StringVar()
         for i in range(self.n_tasks):
             self.tasks_str.insert(i, TaskStr(i))
+        
+        # collect all info from other tabs
+        self.amtab = amtab
 
     def __del__(self):
         del self.n_tasks_str
@@ -171,7 +179,7 @@ class TaskTab:
             entry.grid(row=self.HeaderSize+i, column=4)
 
             # AUTOSTART[]
-            select = tk.Button(self.mnf, width=10, text="SELECT")
+            select = tk.Button(self.mnf, width=10, text="SELECT", command=lambda id = i: self.autostart_options(id))
             select.grid(row=self.HeaderSize+i, column=5)
 
             # EVENT[]
@@ -194,9 +202,33 @@ class TaskTab:
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
 
-    def extract_event(self, task):
+
+    def extract_events(self, task):
         if "EVENT" in task:
             for evt in task["EVENT"]:
                 if evt not in self.tasks:
                     self.events.append(evt)
         return task
+
+    def on_dialog_close(self):
+        self.active_dialog.destroy()
+        del self.active_dialog
+
+    def autostart_options(self, id):
+        if self.active_dialog != None:
+            return
+
+        # function to create dialog window
+        self.active_dialog = tk.Toplevel() # create an instance of toplevel
+        self.active_dialog.protocol("WM_DELETE_WINDOW", self.on_dialog_close)
+
+        # create widgets with toplevel instance as parent
+        var = tk.StringVar().set(str(id))
+        print("id = "+ str(id))
+
+        # show all app modes
+        lb = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
+        for i, obj in enumerate(self.amtab.AM_StrVar):
+            lb.insert(i+1, obj.get())
+            print(obj.get())
+        lb.pack()

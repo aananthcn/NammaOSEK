@@ -2,6 +2,7 @@ import os
 import sys
 
 
+# Let us use the System Generator functions to parse OIL and Generate code
 sys.path.insert(0, os.getcwd()+"/tools/scripts")
 import scripts.System_Generator as sg
 
@@ -87,7 +88,7 @@ def show_os_config(view):
 
     if TskTab != None:
         del TskTab
-    TskTab = gui_tk_tab.TaskTab(sg.Tasks)
+    TskTab = gui_tk_tab.TaskTab(sg.Tasks, AmTab)
     TskTab.draw(tk_tab)
     
 

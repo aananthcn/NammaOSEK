@@ -3,16 +3,18 @@ from tkinter import ttk
 
 class AmTab:
     N_AppModes = 1
+    N_AppModes_str = None
     AppModes = None
     MaxAppModes = 16
-    HeaderSize = 1
+    HeaderSize = 2
     HeaderObjs = 2 #Objects / widgets that are part of the header and shouldn't be destroyed
     AM_StrVar = []
 
     def __init__(self, appmodes):
+        self.N_AppModes_str = tk.StringVar()
         self.AppModes = appmodes
         self.N_AppModes = len(appmodes)
-        n_strvar = self.N_AppModes + 1
+        n_strvar = self.N_AppModes
         self.destroy_old_strvars()
         for i in range(n_strvar):
             self.AM_StrVar.insert(i, tk.StringVar())
@@ -39,16 +41,16 @@ class AmTab:
         #Number of modes - Label + Spinbox
         label = tk.Label(tab, text="Number of Modes ")
         label.grid(row=1, column=1, sticky="w")
-        spinb = tk.Spinbox(tab, width=28, values=tuple(range(1,self.MaxAppModes+1)), textvariable=self.AM_StrVar[0], 
-                        command=lambda: self.update_am(tab, self.AM_StrVar[0]))
-        self.AM_StrVar[0].set(self.N_AppModes)
+        spinb = tk.Spinbox(tab, width=28, values=tuple(range(1,self.MaxAppModes+1)), textvariable=self.N_AppModes_str, 
+                        command=lambda: self.update_am(tab, self.N_AppModes_str))
+        self.N_AppModes_str.set(self.N_AppModes)
         spinb.grid(row=1, column=2)
         self.update(tab)    
 
             
     def update(self, tab):
         # StrVar memory allocation checks
-        n_am_strvar = len(self.AM_StrVar)-1
+        n_am_strvar = len(self.AM_StrVar)
         if self.N_AppModes > n_am_strvar:
             for i in range(self.N_AppModes - n_am_strvar):
                 self.AM_StrVar.insert(len(self.AM_StrVar), tk.StringVar())
@@ -60,9 +62,9 @@ class AmTab:
                 del self.AppModes[-1]
 
         # Draw new objects
-        for i in range(1, self.N_AppModes+1):
+        for i in range(0, self.N_AppModes):
             label = tk.Label(tab, text="Mode "+str(i)+": ")
             label.grid(row=self.HeaderSize+i, column=1, sticky="w")
             entry = tk.Entry(tab, width=30, textvariable=self.AM_StrVar[i])
-            self.AM_StrVar[i].set(self.AppModes[i-1])
+            self.AM_StrVar[i].set(self.AppModes[i])
             entry.grid(row=self.HeaderSize+i, column=2)
