@@ -44,6 +44,7 @@ class TaskTab:
     mnf = None  # Main Frame - where the widgets are scrolled
 
     active_dialog = None
+    active_lstbox = None
 
     amtab = None
 
@@ -93,7 +94,7 @@ class TaskTab:
         #Number of modes - Label + Spinbox
         label = tk.Label(self.mnf, text="No. of Tasks:")
         label.grid(row=0, column=0, sticky="w")
-        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_tasks_str, command=lambda : self.update_tasks(),
+        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_tasks_str, command=lambda : self.update(),
                     values=tuple(range(1,self.max_tasks+1)))
         self.n_tasks_str.set(self.n_tasks)
         spinb.grid(row=0, column=1, sticky="w")
@@ -135,7 +136,6 @@ class TaskTab:
     def update(self):
         # destroy most old gui widgets
         self.n_tasks = int(self.n_tasks_str.get())
-        print("Update tasks: "+ str(self.n_tasks))        
         for i, item in enumerate(self.mnf.winfo_children()):
             if i >= self.HeaderObjs:
                 item.destroy()
@@ -214,9 +214,24 @@ class TaskTab:
                     self.events.append(evt)
         return task
 
-    def on_dialog_close(self):
+    def on_dialog_close(self, task_id, type):
+        # remove old selections and update new selections
+        if type == "autostart":
+            if "AUTOSTART_APPMODE" in self.tasks[task_id]:
+                del self.tasks[task_id]["AUTOSTART_APPMODE"][:]
+            else:
+                self.tasks[task_id]["AUTOSTART_APPMODE"] = []
+            for i in self.active_lstbox.curselection():
+                self.tasks[task_id]["AUTOSTART_APPMODE"].append(self.active_lstbox.get(i))
+        
+        # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
+        self.active_lstbox.destroy()
+        del self.active_lstbox
         self.active_dialog.destroy()
         del self.active_dialog
+
+        # refresh screen
+        self.update()
 
     def autostart_options(self, id):
         if self.active_dialog != None:
@@ -224,17 +239,17 @@ class TaskTab:
 
         # function to create dialog window
         self.active_dialog = tk.Toplevel() # create an instance of toplevel
-        self.active_dialog.protocol("WM_DELETE_WINDOW", self.on_dialog_close)
+        self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_dialog_close(id, "autostart"))
 
         # create widgets with toplevel instance as parent
-        var = tk.StringVar().set(str(id))
+        # var = tk.StringVar().set(str(id))
 
         # show all app modes
-        lb = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
+        self.active_lstbox = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
         for i, obj in enumerate(self.amtab.AM_StrVar):
             appmode = obj.get()
-            lb.insert(i, appmode)
+            self.active_lstbox.insert(i, appmode)
             if "AUTOSTART_APPMODE" in self.tasks[id]:
                 if appmode in self.tasks[id]["AUTOSTART_APPMODE"]:
-                    lb.selection_set(i)
-        lb.pack()
+                    self.active_lstbox.selection_set(i)
+        self.active_lstbox.pack()
