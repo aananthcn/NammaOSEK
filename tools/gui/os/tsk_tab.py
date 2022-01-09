@@ -9,6 +9,7 @@ class TaskStr:
     schedule = None
     activation = None
     stack_sz = None
+    autostart = 0  # zero appmodes
 
     def __init__(self, id):
         self.id = id
@@ -17,6 +18,7 @@ class TaskStr:
         self.schedule = tk.StringVar()
         self.activation = tk.StringVar()
         self.stack_sz = tk.StringVar()
+        self.appmodes = 0  # zero appmodes
 
     def __del__(self):
         del self.name
@@ -150,7 +152,7 @@ class TaskTab:
                 del self.tasks_str[-1]
                 del self.tasks[-1]
 
-        print("n_tasks_str = "+ str(n_tasks_str) + ", n_tasks = " + str(self.n_tasks))
+        #print("n_tasks_str = "+ str(n_tasks_str) + ", n_tasks = " + str(self.n_tasks))
         # Draw new objects
         for i in range(0, self.n_tasks):
             label = tk.Label(self.mnf, text="Task "+str(i)+": ")
@@ -179,7 +181,10 @@ class TaskTab:
             entry.grid(row=self.HeaderSize+i, column=4)
 
             # AUTOSTART[]
-            select = tk.Button(self.mnf, width=10, text="SELECT", command=lambda id = i: self.autostart_options(id))
+            if "AUTOSTART_APPMODE" in self.tasks[i]:
+                self.tasks_str[i].autostart = len(self.tasks[i]["AUTOSTART_APPMODE"])
+            text = "SELECT["+str(self.tasks_str[i].autostart)+"]"
+            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.autostart_options(id))
             select.grid(row=self.HeaderSize+i, column=5)
 
             # EVENT[]
@@ -224,11 +229,13 @@ class TaskTab:
 
         # create widgets with toplevel instance as parent
         var = tk.StringVar().set(str(id))
-        print("id = "+ str(id))
 
         # show all app modes
         lb = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
         for i, obj in enumerate(self.amtab.AM_StrVar):
-            lb.insert(i+1, obj.get())
-            print(obj.get())
+            appmode = obj.get()
+            lb.insert(i, appmode)
+            if "AUTOSTART_APPMODE" in self.tasks[id]:
+                if appmode in self.tasks[id]["AUTOSTART_APPMODE"]:
+                    lb.selection_set(i)
         lb.pack()
