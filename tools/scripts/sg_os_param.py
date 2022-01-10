@@ -18,6 +18,7 @@ def generate_code(path, OsParams):
     hf.write("#define ACN_OSEK_OS_PARAM_H\n")
     hf.write("\n\n")
 
+    # generate code from OsParams but limited to OS_Params (ignore others)
     for param in OS_Params:
         lf.write("_"+param + " = " + OsParams[param] + ";\n")
         hf.write("#define _"+param + "  \t(" + OsParams[param] + ")\n")
