@@ -124,6 +124,7 @@ class CounterTab:
             self.Ctr_StrVar[i].comment.set("") # comments not yet supported!
             entry.grid(row=self.HeaderSize+i+1, column=7)
 
+
     def create_empty_counter(self):
         counter = {}
         

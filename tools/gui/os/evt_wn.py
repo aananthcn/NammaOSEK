@@ -1,14 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
 
+from copy import copy
 
 
-class MessageTab:
-    n_msgs = 1
-    max_msgs = 1024*5
-    n_msgs_str = None
-    msgs_str = []
-    msgs = []
+
+class EventWindow:
+    n_events = 1
+    max_events = 64
+    n_events_str = None
+    events_str = []
+    events = []
     HeaderObjs = 2 #Objects / widgets that are part of the header and shouldn't be destroyed
     HeaderSize = 1
     prf = None  # Parent Frame
@@ -17,20 +19,21 @@ class MessageTab:
     sb  = None  # Scrollbar
     mnf = None  # Main Frame - where the widgets are scrolled
 
-    def __init__(self, tasks):
-        self.extract_messages(tasks)
-        self.n_msgs = len(self.msgs)
-        self.n_msgs_str = tk.StringVar()
-        for i in range(self.n_msgs):
-            self.msgs_str.insert(i, tk.StringVar())
+    def __init__(self, task):
+        self.extract_events(task)
+        print("constructor: " + str(self.events))
+        self.n_events = len(self.events)
+        self.n_events_str = tk.StringVar()
+        for i in range(self.n_events):
+            self.events_str.insert(i, tk.StringVar())
 
     def __del__(self):
-        del self.n_msgs_str
-        del self.msgs_str[:]
+        del self.n_events_str
+        del self.events_str[:]
 
-    def update_msgs(self, mstr):
-        self.n_msgs = int(mstr.get())
-        # print("Update messages: "+ str(self.n_msgs))        
+    def update_events(self, mstr):
+        self.n_events = int(mstr.get())
+        # print("Update events: "+ str(self.n_events))        
         for i, item in enumerate(self.mnf.winfo_children()):
             if i >= self.HeaderObjs:
                 item.destroy()
@@ -60,23 +63,25 @@ class MessageTab:
         self.sb.grid(row=0, column=1, sticky='ns')
         self.cv.configure(yscrollcommand=self.sb.set)
 
-        # Create a frame to draw message table
+        # Create a frame to draw resource table
         self.mnf = tk.Frame(self.cv)
         self.cv.create_window((0, 0), window=self.mnf, anchor='nw')
 
-        #Number of modes - Label + Spinbox
-        label = tk.Label(self.mnf, text="No. of Messages:")
+        #Number of Events - Label + Spinbox
+        label = tk.Label(self.mnf, text="No. of Events:")
         label.grid(row=0, column=0, sticky="w")
-        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_msgs_str, command=lambda: self.update_msgs(self.n_msgs_str),
-                    values=tuple(range(1,self.max_msgs)))
-        self.n_msgs_str.set(self.n_msgs)
+        spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_events_str, command=lambda: self.update_events(self.n_events_str),
+                    values=tuple(range(0,self.max_events)))
+        self.n_events_str.set(self.n_events)
         spinb.grid(row=0, column=1, sticky="w")
 
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.mnf.update_idletasks()
         # Resize the main frame to show contents for FULL SCREEN (Todo: scroll bars won't work in reduced size window)
-        canvas_w = tab.winfo_screenwidth()-self.sb.winfo_width()
-        canvas_h = tab.winfo_screenheight()-(spinb.winfo_height()*6)
+        canvas_w = tab.winfo_screenwidth()/2-self.sb.winfo_width()
+        canvas_h = tab.winfo_screenheight()*14/16-(spinb.winfo_height()*6)
+        # print("screen: "+str(tab.winfo_screenwidth())+" x "+str(tab.winfo_screenheight()))
+        # print("canvas: "+str(canvas_w)+" x "+str(canvas_h))
         self.cvf.config(width=canvas_w, height=canvas_h)
 
         self.update()
@@ -84,32 +89,32 @@ class MessageTab:
 
     def update(self):
         # Tune memory allocations based on number of rows or boxes
-        n_msgs_str = len(self.msgs_str)
-        if self.n_msgs > n_msgs_str:
-            for i in range(self.n_msgs - n_msgs_str):
-                self.msgs_str.insert(len(self.msgs_str), tk.StringVar())
-                self.msgs.insert(len(self.msgs), "")
-        elif n_msgs_str > self.n_msgs:
-            for i in range(n_msgs_str - self.n_msgs):
-                del self.msgs_str[-1]
-                del self.msgs[-1]
+        n_events_str = len(self.events_str)
+        if self.n_events > n_events_str:
+            for i in range(self.n_events - n_events_str):
+                self.events_str.insert(len(self.events_str), tk.StringVar())
+                self.events.insert(len(self.events), "event_")
+        elif n_events_str > self.n_events:
+            for i in range(n_events_str - self.n_events):
+                del self.events_str[-1]
+                del self.events[-1]
 
-        #print("n_msgs_str = "+ str(n_msgs_str) + ", n_msgs = " + str(self.n_msgs))
+        print("n_events_str = "+ str(n_events_str) + ", n_events = " + str(self.n_events))
         # Draw new objects
-        for i in range(0, self.n_msgs):
-            label = tk.Label(self.mnf, text="Msg "+str(i)+": ")
+        for i in range(0, self.n_events):
+            label = tk.Label(self.mnf, text="Event "+str(i)+": ")
             label.grid(row=self.HeaderSize+i, column=0, sticky="w")
-            entry = tk.Entry(self.mnf, width=40, textvariable=self.msgs_str[i])
-            self.msgs_str[i].set(self.msgs[i])
+            entry = tk.Entry(self.mnf, width=40, textvariable=self.events_str[i])
+            self.events_str[i].set(self.events[i])
             entry.grid(row=self.HeaderSize+i, column=1)
 
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
 
-    def extract_messages(self, tasks):
-        for task in tasks:
-            if "MESSAGE" in task:
-                for msg in task["MESSAGE"]:
-                    if msg not in self.msgs:
-                        self.msgs.append(msg)
-        return tasks
+
+    def extract_events(self, task):
+        if "EVENT" in task:
+            print(task["EVENT"])
+            self.events = copy(task["EVENT"])
+        else:
+            self.events = []

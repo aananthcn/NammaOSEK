@@ -97,6 +97,8 @@ def open_file():
     OIL_FileName = filedialog.askopenfilename(initialdir=os.getcwd()+"/tools/oil-files")
     if RootView != None:
         RootView.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
+
+    # Make System Generator to parse, so that we can use the content in GUI.
     sg.parse(OIL_FileName)
     show_os_config(RootView)
 

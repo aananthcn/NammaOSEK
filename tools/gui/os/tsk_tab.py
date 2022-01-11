@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from .evt_wn import EventWindow
+
 
 class TaskStr:
     id = 0
@@ -9,7 +11,8 @@ class TaskStr:
     schedule = None
     activation = None
     stack_sz = None
-    autostart = 0  # zero appmodes
+    n_appmod = 0
+    n_events = 0 
 
     def __init__(self, id):
         self.id = id
@@ -18,7 +21,8 @@ class TaskStr:
         self.schedule = tk.StringVar()
         self.activation = tk.StringVar()
         self.stack_sz = tk.StringVar()
-        self.appmodes = 0  # zero appmodes
+        self.n_appmod = 0  # start with zero appmodes
+        self.n_events = 0  # start with zero events
 
     def __del__(self):
         del self.name
@@ -44,7 +48,7 @@ class TaskTab:
     mnf = None  # Main Frame - where the widgets are scrolled
 
     active_dialog = None
-    active_lstbox = None
+    active_widget = None
 
     amtab = None
 
@@ -59,9 +63,29 @@ class TaskTab:
         # collect all info from other tabs
         self.amtab = amtab
 
+
     def __del__(self):
         del self.n_tasks_str
         del self.tasks_str[:]
+
+
+    def create_empty_task(self):
+        task = {}
+        
+        # Use the last task's name and numbers to ease the edits made by user 
+        task["Task Name"] = self.tasks[-1]["Task Name"]
+        task["PRIORITY"] = self.tasks[-1]["PRIORITY"]
+        task["SCHEDULE"] = self.tasks[-1]["SCHEDULE"] # Pre-emption (NON / FULL)
+        task["ACTIVATION"] = self.tasks[-1]["ACTIVATION"]
+        task["AUTOSTART"] = "FALSE"
+        task["AUTOSTART_APPMODE"] = []
+        task["RESOURCE"] = []
+        task["EVENT"] = []
+        task["MESSAGE"] = []
+        task["STACK_SIZE"] = self.tasks[-1]["STACK_SIZE"]
+
+        return task
+
 
     def draw(self, tab):
         tab.grid_rowconfigure(0, weight=1)
@@ -181,13 +205,16 @@ class TaskTab:
 
             # AUTOSTART[]
             if "AUTOSTART_APPMODE" in self.tasks[i]:
-                self.tasks_str[i].autostart = len(self.tasks[i]["AUTOSTART_APPMODE"])
-            text = "SELECT["+str(self.tasks_str[i].autostart)+"]"
-            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.autostart_options(id))
+                self.tasks_str[i].n_appmod = len(self.tasks[i]["AUTOSTART_APPMODE"])
+            text = "SELECT["+str(self.tasks_str[i].n_appmod)+"]"
+            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_autostart_modes(id))
             select.grid(row=self.HeaderSize+i, column=5)
 
             # EVENT[]
-            select = tk.Button(self.mnf, width=10, text="SELECT")
+            if "EVENT" in self.tasks[i]:
+                self.tasks_str[i].n_events = len(self.tasks[i]["EVENT"])
+            text = "EDIT["+str(self.tasks_str[i].n_events)+"]"
+            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_events(id))
             select.grid(row=self.HeaderSize+i, column=6)
 
             # RESOURCE[]
@@ -207,13 +234,6 @@ class TaskTab:
         self.cv.config(scrollregion=self.cv.bbox("all"))
 
 
-    def extract_events(self, task):
-        if "EVENT" in task:
-            for evt in task["EVENT"]:
-                if evt not in self.tasks:
-                    self.events.append(evt)
-        return task
-
     def on_autostart_dialog_close(self, task_id):
         # remove old selections
         if "AUTOSTART_APPMODE" in self.tasks[task_id]:
@@ -222,23 +242,24 @@ class TaskTab:
             self.tasks[task_id]["AUTOSTART_APPMODE"] = []
 
         # update new selections
-        if len(self.active_lstbox.curselection()) == 0:
+        if len(self.active_widget.curselection()) == 0:
             self.tasks[task_id]["AUTOSTART"] = "FALSE"
         else:
             self.tasks[task_id]["AUTOSTART"] = "TRUE"
-            for i in self.active_lstbox.curselection():
-                self.tasks[task_id]["AUTOSTART_APPMODE"].append(self.active_lstbox.get(i))
+            for i in self.active_widget.curselection():
+                self.tasks[task_id]["AUTOSTART_APPMODE"].append(self.active_widget.get(i))
         
         # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
-        self.active_lstbox.destroy()
-        del self.active_lstbox
+        self.active_widget.destroy()
+        del self.active_widget
         self.active_dialog.destroy()
         del self.active_dialog
 
         # refresh screen
         self.update()
 
-    def autostart_options(self, id):
+
+    def select_autostart_modes(self, id):
         if self.active_dialog != None:
             return
 
@@ -246,32 +267,50 @@ class TaskTab:
         self.active_dialog = tk.Toplevel() # create an instance of toplevel
         self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_autostart_dialog_close(id))
 
-        # create widgets with toplevel instance as parent
-        # var = tk.StringVar().set(str(id))
-
         # show all app modes
-        self.active_lstbox = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
+        self.active_widget = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
         for i, obj in enumerate(self.amtab.AM_StrVar):
             appmode = obj.get()
-            self.active_lstbox.insert(i, appmode)
+            self.active_widget.insert(i, appmode)
             if "AUTOSTART_APPMODE" in self.tasks[id]:
                 if appmode in self.tasks[id]["AUTOSTART_APPMODE"]:
-                    self.active_lstbox.selection_set(i)
-        self.active_lstbox.pack()
+                    self.active_widget.selection_set(i)
+        self.active_widget.pack()
 
-    def create_empty_task(self):
-        task = {}
+
+    def on_event_dialog_close(self, task_id):
+        # remove old selections
+        if "EVENT" in self.tasks[task_id]:
+            del self.tasks[task_id]["EVENT"][:]
+        else:
+            self.tasks[task_id]["EVENT"] = []
+
+        # update new selections
+        for strvar in self.active_widget.events_str:
+            self.tasks[task_id]["EVENT"].append(strvar.get())
         
-        # Use the last task's name and numbers to ease the edits made by user 
-        task["Task Name"] = self.tasks[-1]["Task Name"]
-        task["PRIORITY"] = self.tasks[-1]["PRIORITY"]
-        task["SCHEDULE"] = self.tasks[-1]["SCHEDULE"] # Pre-emption (NON / FULL)
-        task["ACTIVATION"] = self.tasks[-1]["ACTIVATION"]
-        task["AUTOSTART"] = "FALSE"
-        task["AUTOSTART_APPMODE"] = []
-        task["RESOURCE"] = []
-        task["EVENT"] = []
-        task["MESSAGE"] = []
-        task["STACK_SIZE"] = self.tasks[-1]["STACK_SIZE"]
+        # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
+        #self.active_widget.destroy()
+        del self.active_widget
+        self.active_dialog.destroy()
+        del self.active_dialog
 
-        return task
+        # refresh screen
+        self.update()
+
+
+    def select_events(self, id):
+        if self.active_dialog != None:
+            return
+
+        # function to create dialog window
+        self.active_dialog = tk.Toplevel() # create an instance of toplevel
+        self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_event_dialog_close(id))
+        x = self.active_dialog.winfo_screenwidth()
+        y = self.active_dialog.winfo_screenheight()
+        self.active_dialog.geometry("+%d+%d" % (0 + x/2, y/16))
+
+        # show all events
+        self.active_widget = EventWindow(self.tasks[id])
+        self.active_widget.draw(self.active_dialog)
+
