@@ -98,7 +98,7 @@ class EventWindow:
         if self.n_events > n_events_str:
             for i in range(self.n_events - n_events_str):
                 self.events_str.insert(len(self.events_str), tk.StringVar())
-                self.events.insert(len(self.events), "ev_")
+                self.events.insert(len(self.events), "EVT_")
         elif n_events_str > self.n_events:
             for i in range(n_events_str - self.n_events):
                 del self.events_str[-1]

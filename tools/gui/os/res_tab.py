@@ -23,6 +23,7 @@ class ResourceTab:
         self.n_ress_str = tk.StringVar()
         for i in range(self.n_ress):
             self.ress_str.insert(i, tk.StringVar())
+            self.ress_str[i].set(self.ress[i])
 
     def __del__(self):
         del self.n_ress_str
@@ -30,7 +31,7 @@ class ResourceTab:
 
     def update_ress(self, mstr):
         self.n_ress = int(mstr.get())
-        print("Update resources: "+ str(self.n_ress))        
+        # print("Update resources: "+ str(self.n_ress))        
         for i, item in enumerate(self.mnf.winfo_children()):
             if i >= self.HeaderObjs:
                 item.destroy()
@@ -85,12 +86,16 @@ class ResourceTab:
 
 
     def update(self):
-        # Tune memory allocations based on number of rows or boxes
+        # Backup current entries
         n_ress_str = len(self.ress_str)
+        for i in range(n_ress_str):
+            self.ress[i] = self.ress_str[i].get()
+
+        # Tune memory allocations based on number of rows or boxes
         if self.n_ress > n_ress_str:
             for i in range(self.n_ress - n_ress_str):
                 self.ress_str.insert(len(self.ress_str), tk.StringVar())
-                self.ress.insert(len(self.ress), "")
+                self.ress.insert(len(self.ress), "RES_")
         elif n_ress_str > self.n_ress:
             for i in range(n_ress_str - self.n_ress):
                 del self.ress_str[-1]

@@ -23,6 +23,7 @@ class MessageTab:
         self.n_msgs_str = tk.StringVar()
         for i in range(self.n_msgs):
             self.msgs_str.insert(i, tk.StringVar())
+            self.msgs_str[i].set(self.msgs[i])
 
     def __del__(self):
         del self.n_msgs_str
@@ -83,12 +84,16 @@ class MessageTab:
 
 
     def update(self):
-        # Tune memory allocations based on number of rows or boxes
+        # backup current entries
         n_msgs_str = len(self.msgs_str)
+        for i in range(n_msgs_str):
+            self.msgs[i] = self.msgs_str[i].get()
+
+        # Tune memory allocations based on number of rows or boxes
         if self.n_msgs > n_msgs_str:
             for i in range(self.n_msgs - n_msgs_str):
                 self.msgs_str.insert(len(self.msgs_str), tk.StringVar())
-                self.msgs.insert(len(self.msgs), "")
+                self.msgs.insert(len(self.msgs), "MSG_")
         elif n_msgs_str > self.n_msgs:
             for i in range(n_msgs_str - self.n_msgs):
                 del self.msgs_str[-1]
