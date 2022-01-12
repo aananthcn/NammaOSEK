@@ -88,7 +88,7 @@ def show_os_config(view):
 
     if TskTab != None:
         del TskTab
-    TskTab = gui_tk_tab.TaskTab(sg.Tasks, AmTab)
+    TskTab = gui_tk_tab.TaskTab(sg.Tasks, AmTab, ResTab)
     TskTab.draw(tk_tab)
     
 
