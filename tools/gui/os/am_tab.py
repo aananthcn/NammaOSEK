@@ -18,6 +18,7 @@ class AmTab:
         self.destroy_old_strvars()
         for i in range(n_strvar):
             self.AM_StrVar.insert(i, tk.StringVar())
+            self.AM_StrVar[i].set(self.AppModes[i])
 
     def __del__(self):
         self.destroy_old_strvars()
@@ -49,12 +50,16 @@ class AmTab:
 
             
     def update(self, tab):
-        # StrVar memory allocation checks
+        # Backup current entries
         n_am_strvar = len(self.AM_StrVar)
+        for i in range(n_am_strvar):
+            self.AppModes[i] = self.AM_StrVar[i].get()
+
+        # StrVar memory allocation checks
         if self.N_AppModes > n_am_strvar:
             for i in range(self.N_AppModes - n_am_strvar):
                 self.AM_StrVar.insert(len(self.AM_StrVar), tk.StringVar())
-                self.AppModes.insert(len(self.AppModes), "")
+                self.AppModes.insert(len(self.AppModes), "AM_")
         elif n_am_strvar > self.N_AppModes:
             # print("n_am_strvar = "+ str(n_am_strvar) + ", N_AppModes = " + str(self.N_AppModes))
             for i in range(n_am_strvar - self.N_AppModes):
