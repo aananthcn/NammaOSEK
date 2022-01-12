@@ -10,13 +10,14 @@ class CounterStr:
     tick_duration = None
     comment = None
 
-    def __init__(self):
-        self.name = tk.StringVar()
-        self.mincycle = tk.StringVar()
-        self.maxallowed = tk.StringVar()
-        self.ticksperbase = tk.StringVar()
-        self.tick_duration = tk.StringVar()
-        self.comment = tk.StringVar()
+
+    def __init__(self, nm, mi, ma, tb, td, cm):
+        self.name = tk.StringVar(value=nm)
+        self.mincycle = tk.StringVar(value=mi)
+        self.maxallowed = tk.StringVar(value=ma)
+        self.ticksperbase = tk.StringVar(value=tb)
+        self.tick_duration = tk.StringVar(value=td)
+        self.comment = tk.StringVar(value=cm)
 
     def __del__(self):
         del self.name
@@ -44,7 +45,12 @@ class CounterTab:
         self.Counters = cntrs
         self.N_Counters = len(cntrs)
         for i in range(self.N_Counters):
-            self.Ctr_StrVar.insert(i, CounterStr())
+            self.Ctr_StrVar.insert(i, CounterStr(self.Counters[i]['Counter Name'],
+                self.Counters[i]['MINCYCLE'],
+                self.Counters[i]['MAXALLOWEDVALUE'],
+                self.Counters[i]['TICKSPERBASE'],
+                self.Counters[i]['TICKDURATION'],
+                ""))
 
 
     def __del__(self):
@@ -89,11 +95,19 @@ class CounterTab:
 
 
     def update(self, tab):
-        # StrVar memory allocation checks
+        # Backup current entries
         n_strvar = len(self.Ctr_StrVar)
+        for i in range(n_strvar):
+            self.Counters[i]["Counter Name"] = self.Ctr_StrVar[i].name.get()
+            self.Counters[i]["MINCYCLE"] = self.Ctr_StrVar[i].mincycle.get()
+            self.Counters[i]["MAXALLOWEDVALUE"] = self.Ctr_StrVar[i].maxallowed.get()
+            self.Counters[i]["TICKSPERBASE"] = self.Ctr_StrVar[i].ticksperbase.get()
+            self.Counters[i]["TICKDURATION"] = self.Ctr_StrVar[i].tick_duration.get()
+
+        # StrVar memory allocation checks
         if int(self.N_Counters) > n_strvar:
             for i in range(int(self.N_Counters) - n_strvar):
-                self.Ctr_StrVar.insert(len(self.Ctr_StrVar), CounterStr())
+                self.Ctr_StrVar.insert(len(self.Ctr_StrVar), CounterStr("", "", "", "", "", ""))
                 self.Counters.append(self.create_empty_counter())
         elif n_strvar > int(self.N_Counters):
             # print("n_strvar = "+ str(n_strvar) + ", N_Counters = " + str(self.N_Counters))
