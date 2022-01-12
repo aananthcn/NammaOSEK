@@ -14,6 +14,7 @@ class TaskStr:
     n_appmod = 0
     n_events = 0
     n_resources = 0
+    n_messages = 0
 
     def __init__(self, id):
         self.id = id
@@ -25,6 +26,7 @@ class TaskStr:
         self.n_appmod = 0  # start with zero appmodes
         self.n_events = 0  # start with zero events
         self.n_resources = 0 # start with zero resources
+        self.n_messages = 0 # start with zero messages
 
     def __del__(self):
         del self.name
@@ -54,9 +56,10 @@ class TaskTab:
 
     amtab = None
     rstab = None
+    mstab = None
 
 
-    def __init__(self, tasks, amtab, rstab):
+    def __init__(self, tasks, amtab, rstab, mstab):
         self.tasks = tasks
         self.n_tasks = len(self.tasks)
         self.n_tasks_str = tk.StringVar()
@@ -66,6 +69,7 @@ class TaskTab:
         # collect all info from other tabs
         self.amtab = amtab
         self.rstab = rstab
+        self.mstab = mstab
 
 
     def __del__(self):
@@ -229,7 +233,10 @@ class TaskTab:
             select.grid(row=self.HeaderSize+i, column=7)
 
             # MESSAGE[]
-            select = tk.Button(self.mnf, width=10, text="SELECT")
+            if "MESSAGE" in self.tasks[i]:
+                self.tasks_str[i].n_messages = len(self.tasks[i]["MESSAGE"])
+            text = "SELECT["+str(self.tasks_str[i].n_messages)+"]"
+            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_messages(id))
             select.grid(row=self.HeaderSize+i, column=8)
             
             # STACK_SIZE
@@ -359,6 +366,47 @@ class TaskTab:
             self.active_widget.insert(i, res)
             if "RESOURCE" in self.tasks[id]:
                 if res in self.tasks[id]["RESOURCE"]:
+                    self.active_widget.selection_set(i)
+        self.active_widget.pack()
+
+
+    def on_message_dialog_close(self, task_id):
+        # remove old selections
+        if "MESSAGE" in self.tasks[task_id]:
+            del self.tasks[task_id]["MESSAGE"][:]
+        else:
+            self.tasks[task_id]["MESSAGE"] = []
+
+        # update new selections
+        if len(self.active_widget.curselection()):
+            for i in self.active_widget.curselection():
+                self.tasks[task_id]["MESSAGE"].append(self.active_widget.get(i))
+        
+        # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
+        self.active_widget.destroy()
+        del self.active_widget
+        self.active_dialog.destroy()
+        del self.active_dialog
+
+        # refresh screen
+        self.update()
+
+
+    def select_messages(self, id):
+        if self.active_dialog != None:
+            return
+
+        # function to create dialog window
+        self.active_dialog = tk.Toplevel() # create an instance of toplevel
+        self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_message_dialog_close(id))
+
+        # show all app modes
+        self.active_widget = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
+        for i, obj in enumerate(self.mstab.msgs_str):
+            msg = obj.get()
+            self.active_widget.insert(i, msg)
+            if "MESSAGE" in self.tasks[id]:
+                if msg in self.tasks[id]["MESSAGE"]:
                     self.active_widget.selection_set(i)
         self.active_widget.pack()
 
