@@ -285,7 +285,7 @@ class TaskTab:
         else:
             self.tasks[task_id]["EVENT"] = []
 
-        # update new selections
+        # update new selections from last window session
         for strvar in self.active_widget.events_str:
             self.tasks[task_id]["EVENT"].append(strvar.get())
         

@@ -21,11 +21,12 @@ class EventWindow:
 
     def __init__(self, task):
         self.extract_events(task)
-        print("constructor: " + str(self.events))
+        # print("constructor: " + str(self.events))
         self.n_events = len(self.events)
         self.n_events_str = tk.StringVar()
         for i in range(self.n_events):
             self.events_str.insert(i, tk.StringVar())
+            self.events_str[i].set(self.events[i])
 
     def __del__(self):
         del self.n_events_str
@@ -88,18 +89,22 @@ class EventWindow:
 
 
     def update(self):
-        # Tune memory allocations based on number of rows or boxes
+        # backup current entries
         n_events_str = len(self.events_str)
+        for i in range(n_events_str):
+            self.events[i] = self.events_str[i].get()
+
+        # Tune memory allocations based on number of rows or boxes
         if self.n_events > n_events_str:
             for i in range(self.n_events - n_events_str):
                 self.events_str.insert(len(self.events_str), tk.StringVar())
-                self.events.insert(len(self.events), "event_")
+                self.events.insert(len(self.events), "ev_")
         elif n_events_str > self.n_events:
             for i in range(n_events_str - self.n_events):
                 del self.events_str[-1]
                 del self.events[-1]
 
-        print("n_events_str = "+ str(n_events_str) + ", n_events = " + str(self.n_events))
+        # print("n_events_str = "+ str(n_events_str) + ", n_events = " + str(self.n_events))
         # Draw new objects
         for i in range(0, self.n_events):
             label = tk.Label(self.mnf, text="Event "+str(i)+": ")
@@ -114,7 +119,7 @@ class EventWindow:
 
     def extract_events(self, task):
         if "EVENT" in task:
-            print(task["EVENT"])
+            # print(task["EVENT"])
             self.events = copy(task["EVENT"])
         else:
             self.events = []
