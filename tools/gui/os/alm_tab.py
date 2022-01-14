@@ -102,9 +102,8 @@ class AlarmTab:
     
     def extract_counter_names(self):
         del self.counter_names[:]
-        for cntr in self.crtab.Counters:
-            if "Counter Name" in cntr:
-                self.counter_names.append(cntr["Counter Name"])
+        for cntr in self.crtab.Ctr_StrVar:
+            self.counter_names.append(cntr.name.get())
         return self.counter_names
 
 
@@ -201,7 +200,7 @@ class AlarmTab:
             label.grid(row=self.HeaderSize+i, column=0, sticky="e")
             
             # Alarm Name
-            entry = tk.Entry(self.mnf, width=25, textvariable=self.alarms_str[i].name)
+            entry = tk.Entry(self.mnf, width=30, textvariable=self.alarms_str[i].name)
             self.alarms_str[i].name.set(self.sg_alarms[i]["Alarm Name"])
             entry.grid(row=self.HeaderSize+i, column=1)
 
@@ -222,12 +221,12 @@ class AlarmTab:
             # arg1
             if self.sg_alarms[i]["Action-Type"] == "ALARMCALLBACK":
                 # Draw Entry box for ALARMCALLBACK
-                entry = tk.Entry(self.mnf, width=11, textvariable=self.alarms_str[i].action_arg1, justify='center')
+                entry = tk.Entry(self.mnf, width=30, textvariable=self.alarms_str[i].action_arg1, justify='center')
                 self.alarms_str[i].action_arg1.set(self.sg_alarms[i]["arg1"])
                 entry.grid(row=self.HeaderSize+i, column=4)
             else: 
                 # Draw Combobox for Task select
-                entry = tk.Entry(self.mnf, width=11, textvariable=self.alarms_str[i].action_arg1, justify='center')
+                entry = tk.Entry(self.mnf, width=30, textvariable=self.alarms_str[i].action_arg1, justify='center')
                 self.alarms_str[i].action_arg1.set(self.sg_alarms[i]["arg1"])
                 entry.grid(row=self.HeaderSize+i, column=4)
 

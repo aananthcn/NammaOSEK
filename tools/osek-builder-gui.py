@@ -35,6 +35,10 @@ def about():
     messagebox.showinfo("OSEK Builder", "This tool is developed to replace the OSEK-Builder.xlsx and to set path for AUTOSAR development")
 
 
+def show_os_tab_switch(event):
+    global MainWindow, AlmTab
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "Alarms":
+        AlmTab.update()
     
 def show_os_config(view):
     global MainWindow, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab
@@ -96,6 +100,8 @@ def show_os_config(view):
         del AlmTab
     AlmTab = gui_al_tab.AlarmTab(sg.Alarms, AmTab, CtrTab)
     AlmTab.draw(al_tab)
+
+    MainWindow.bind("<<NotebookTabChanged>>", show_os_tab_switch)
     
 
 def open_file():
