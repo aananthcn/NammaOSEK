@@ -98,7 +98,7 @@ def show_os_config(view):
     
     if AlmTab != None:
         del AlmTab
-    AlmTab = gui_al_tab.AlarmTab(sg.Alarms, AmTab, CtrTab)
+    AlmTab = gui_al_tab.AlarmTab(sg.Alarms, TskTab, AmTab, CtrTab)
     AlmTab.draw(al_tab)
 
     MainWindow.bind("<<NotebookTabChanged>>", show_os_tab_switch)

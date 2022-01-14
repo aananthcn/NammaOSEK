@@ -49,7 +49,6 @@ class AlarmTab:
     max_alarms = 1024
     n_alarms_str = None
     alarms_str = []
-    counter_names = []
     sg_alarms = None
     HeaderObjs = 12 #Objects / widgets that are part of the header and shouldn't be destroyed
     HeaderSize = 3
@@ -64,9 +63,13 @@ class AlarmTab:
 
     amtab = None
     crtab = None
+    tktab = None
+    counter_names = []
+    task_names = []
+    task_events = []
 
 
-    def __init__(self, alarms, amtab, crtab):
+    def __init__(self, alarms, tktab, amtab, crtab):
         self.sg_alarms = alarms
         self.n_alarms = len(self.sg_alarms)
         self.n_alarms_str = tk.StringVar()
@@ -76,6 +79,7 @@ class AlarmTab:
         # collect all info from other tabs
         self.amtab = amtab
         self.crtab = crtab
+        self.tktab = tktab
 
 
     def __del__(self):
@@ -107,6 +111,22 @@ class AlarmTab:
         return self.counter_names
 
 
+    def extract_task_names(self):
+        del self.task_names[:]
+        for tsk in self.tktab.tasks_str:
+            self.task_names.append(tsk.name.get())
+        return self.task_names
+
+
+    def extract_task_events(self, task_id):
+        events = []
+        del self.task_events[:]
+        for tsk in self.tktab.sg_tasks:
+            if "EVENT" in tsk:
+                events = tsk["EVENT"]
+        return events
+
+
     def draw(self, tab):
         tab.grid_rowconfigure(0, weight=1)
         tab.columnconfigure(0, weight=1)
@@ -136,7 +156,7 @@ class AlarmTab:
         self.cv.create_window((0, 0), window=self.mnf, anchor='nw')
 
         #Number of modes - Label + Spinbox
-        label = tk.Label(self.mnf, text="No. of Tasks:")
+        label = tk.Label(self.mnf, text="No. of Alarms:")
         label.grid(row=0, column=0, sticky="w")
         spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_alarms_str, command=lambda : self.update(),
                     values=tuple(range(1,self.max_alarms+1)))
@@ -176,6 +196,26 @@ class AlarmTab:
 
 
     def update(self):
+        # Backup current task entries from GUI
+        n_alarms_str = len(self.alarms_str)
+        for i in range(n_alarms_str):
+            if len(self.alarms_str[i].name.get()):
+                self.sg_alarms[i]["Alarm Name"] = self.alarms_str[i].name.get()
+            if len(self.alarms_str[i].counter.get()):
+                self.sg_alarms[i]["COUNTER"] = self.alarms_str[i].counter.get()
+            if len(self.alarms_str[i].action_type.get()):
+                self.sg_alarms[i]["Action-Type"] = self.alarms_str[i].action_type.get()
+            if len(self.alarms_str[i].action_arg1.get()):
+                self.sg_alarms[i]["arg1"] = self.alarms_str[i].action_arg1.get()
+            if len(self.alarms_str[i].action_arg2.get()):
+                self.sg_alarms[i]["arg2"] = self.alarms_str[i].action_arg2.get()
+            if self.sg_alarms[i]["IsAutostart"] == "FALSE":
+                continue
+            if len(self.alarms_str[i].alarm_time.get()):
+                self.sg_alarms[i]["ALARMTIME"] = self.alarms_str[i].alarm_time.get()
+            if len(self.alarms_str[i].cycle_time.get()):
+                self.sg_alarms[i]["CYCLETIME"] = self.alarms_str[i].cycle_time.get()
+                
         # destroy most old gui widgets
         self.n_alarms = int(self.n_alarms_str.get())
         for i, item in enumerate(self.mnf.winfo_children()):
@@ -183,7 +223,6 @@ class AlarmTab:
                 item.destroy()
 
         # Tune memory allocations based on number of rows or boxes
-        n_alarms_str = len(self.alarms_str)
         if self.n_alarms > n_alarms_str:
             for i in range(self.n_alarms - n_alarms_str):
                 self.alarms_str.insert(len(self.alarms_str), AlarmStr(n_alarms_str+i))
@@ -217,30 +256,31 @@ class AlarmTab:
             self.alarms_str[i].action_type.set(self.sg_alarms[i]["Action-Type"])
             cmbsel.current()
             cmbsel.grid(row=self.HeaderSize+i, column=3)
+            cmbsel.bind("<<ComboboxSelected>>", self.action_type_selected)
 
             # arg1
             if self.sg_alarms[i]["Action-Type"] == "ALARMCALLBACK":
                 # Draw Entry box for ALARMCALLBACK
-                entry = tk.Entry(self.mnf, width=30, textvariable=self.alarms_str[i].action_arg1, justify='center')
+                entry = tk.Entry(self.mnf, width=30, textvariable=self.alarms_str[i].action_arg1)
                 self.alarms_str[i].action_arg1.set(self.sg_alarms[i]["arg1"])
                 entry.grid(row=self.HeaderSize+i, column=4)
             else: 
                 # Draw Combobox for Task select
-                entry = tk.Entry(self.mnf, width=30, textvariable=self.alarms_str[i].action_arg1, justify='center')
+                cmbsel = ttk.Combobox(self.mnf, width=30-3, textvariable=self.alarms_str[i].action_arg1, state="readonly")
+                cmbsel['values'] = self.extract_task_names()
                 self.alarms_str[i].action_arg1.set(self.sg_alarms[i]["arg1"])
-                entry.grid(row=self.HeaderSize+i, column=4)
+                cmbsel.current()
+                cmbsel.grid(row=self.HeaderSize+i, column=4)
 
             # arg2
             if self.sg_alarms[i]["Action-Type"] == "SETEVENT":
                 # Draw Combobox for Event select
-                entry = tk.Entry(self.mnf, width=11, textvariable=self.alarms_str[i].action_arg2, justify='center')
+                cmbsel = ttk.Combobox(self.mnf, width=25-3, textvariable=self.alarms_str[i].action_arg2, state="readonly")
+                cmbsel['values'] = self.extract_task_events(i)
                 self.alarms_str[i].action_arg2.set(self.sg_alarms[i]["arg2"])
-                entry.grid(row=self.HeaderSize+i, column=5)
-            else: 
-                # Draw Label to show nothing
-                entry = tk.Entry(self.mnf, width=11, textvariable=self.alarms_str[i].action_arg2, justify='center')
-                self.alarms_str[i].action_arg2.set("TBD")
-                entry.grid(row=self.HeaderSize+i, column=5)
+                cmbsel.current()
+                cmbsel.grid(row=self.HeaderSize+i, column=5)
+
 
             # IsAutoStart
             cmbsel = ttk.Combobox(self.mnf, width=8, textvariable=self.alarms_str[i].is_autostart, state="readonly")
@@ -248,6 +288,7 @@ class AlarmTab:
             self.alarms_str[i].is_autostart.set(self.sg_alarms[i]["IsAutostart"])
             cmbsel.current()
             cmbsel.grid(row=self.HeaderSize+i, column=6)
+            cmbsel.bind("<<ComboboxSelected>>", self.isautostart_changed)
 
             # ALARMTIME, CYCLETIME AND APPMODE are not required if IsAutostart is False
             if self.sg_alarms[i]["IsAutostart"] == "FALSE":
@@ -264,8 +305,8 @@ class AlarmTab:
             entry.grid(row=self.HeaderSize+i, column=8)
 
             # APPMODE[]
-            if "APPMODE" in self.sg_alarms[i]:
-                self.alarms_str[i].n_appmodes = len(self.sg_alarms[i]["APPMODE"])
+            if "APPMODE[]" in self.sg_alarms[i]:
+                self.alarms_str[i].n_appmodes = len(self.sg_alarms[i]["APPMODE[]"])
             text = "SELECT["+str(self.alarms_str[i].n_appmodes)+"]"
             select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_autostart_modes(id))
             select.grid(row=self.HeaderSize+i, column=9)
@@ -282,10 +323,7 @@ class AlarmTab:
             self.sg_alarms[task_id]["APPMODE[]"] = []
 
         # update new selections
-        if len(self.active_widget.curselection()) == 0:
-            self.sg_alarms[task_id]["arg2"] = "FALSE"
-        else:
-            self.sg_alarms[task_id]["arg2"] = "TRUE"
+        if len(self.active_widget.curselection()):
             for i in self.active_widget.curselection():
                 self.sg_alarms[task_id]["APPMODE[]"].append(self.active_widget.get(i))
         
@@ -312,8 +350,27 @@ class AlarmTab:
         for i, obj in enumerate(self.amtab.AM_StrVar):
             appmode = obj.get()
             self.active_widget.insert(i, appmode)
-            if "IsAutostart" in self.sg_alarms[id]:
-                if appmode in self.sg_alarms[id]["IsAutostart"]:
+            if "APPMODE[]" in self.sg_alarms[id]:
+                if appmode in self.sg_alarms[id]["APPMODE[]"]:
                     self.active_widget.selection_set(i)
         self.active_widget.pack()
 
+
+    def action_type_selected(self, event):
+        for i, alm in enumerate(self.sg_alarms):
+            alm["Action-Type"] = self.alarms_str[i].action_type.get()
+            if "arg2" not in alm:
+                alm["arg2"] = ""
+        self.update()
+
+
+    def isautostart_changed(self, event):
+        for i, alm in enumerate(self.sg_alarms):
+            alm["IsAutostart"] = self.alarms_str[i].is_autostart.get()
+            if "ALARMTIME" not in alm:
+                alm["ALARMTIME"] = "50"
+            if "CYCLETIME" not in alm:
+                alm["CYCLETIME"] = "1000"
+            if "APPMODE[]" not in alm:
+                alm["APPMODE[]"] = []
+        self.update()
