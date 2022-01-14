@@ -44,6 +44,7 @@ class CounterTab:
         self.N_Counters_str = tk.StringVar(value=self.N_Counters)
         self.Counters = cntrs
         self.N_Counters = len(cntrs)
+        del self.Ctr_StrVar[:]
         for i in range(self.N_Counters):
             self.Ctr_StrVar.insert(i, CounterStr(self.Counters[i]['Counter Name'],
                 self.Counters[i]['MINCYCLE'],

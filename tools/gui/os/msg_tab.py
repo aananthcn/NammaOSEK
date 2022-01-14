@@ -21,6 +21,7 @@ class MessageTab:
         self.extract_messages(tasks)
         self.n_msgs = len(self.msgs)
         self.n_msgs_str = tk.StringVar()
+        del self.msgs_str[:]
         for i in range(self.n_msgs):
             self.msgs_str.insert(i, tk.StringVar())
             self.msgs_str[i].set(self.msgs[i])

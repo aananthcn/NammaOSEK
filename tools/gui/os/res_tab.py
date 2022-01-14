@@ -21,6 +21,7 @@ class ResourceTab:
         self.extract_resources(tasks)
         self.n_ress = len(self.ress)
         self.n_ress_str = tk.StringVar()
+        del self.ress_str[:]
         for i in range(self.n_ress):
             self.ress_str.insert(i, tk.StringVar())
             self.ress_str[i].set(self.ress[i])

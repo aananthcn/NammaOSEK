@@ -42,7 +42,7 @@ class TaskTab:
     n_tasks_str = None
     tasks_str = []
     events = []
-    tasks = None
+    sg_tasks = None
     HeaderObjs = 12 #Objects / widgets that are part of the header and shouldn't be destroyed
     HeaderSize = 3
     prf = None  # Parent Frame
@@ -60,8 +60,8 @@ class TaskTab:
 
 
     def __init__(self, tasks, amtab, rstab, mstab):
-        self.tasks = tasks
-        self.n_tasks = len(self.tasks)
+        self.sg_tasks = tasks
+        self.n_tasks = len(self.sg_tasks)
         self.n_tasks_str = tk.StringVar()
         for i in range(self.n_tasks):
             self.tasks_str.insert(i, TaskStr(i))
@@ -81,16 +81,16 @@ class TaskTab:
         task = {}
         
         # Use the last task's name and numbers to ease the edits made by user 
-        task["Task Name"] = self.tasks[-1]["Task Name"]
-        task["PRIORITY"] = self.tasks[-1]["PRIORITY"]
-        task["SCHEDULE"] = self.tasks[-1]["SCHEDULE"] # Pre-emption (NON / FULL)
-        task["ACTIVATION"] = self.tasks[-1]["ACTIVATION"]
+        task["Task Name"] = self.sg_tasks[-1]["Task Name"]
+        task["PRIORITY"] = self.sg_tasks[-1]["PRIORITY"]
+        task["SCHEDULE"] = self.sg_tasks[-1]["SCHEDULE"] # Pre-emption (NON / FULL)
+        task["ACTIVATION"] = self.sg_tasks[-1]["ACTIVATION"]
         task["AUTOSTART"] = "FALSE"
         task["AUTOSTART_APPMODE"] = []
         task["RESOURCE"] = []
         task["EVENT"] = []
         task["MESSAGE"] = []
-        task["STACK_SIZE"] = self.tasks[-1]["STACK_SIZE"]
+        task["STACK_SIZE"] = self.sg_tasks[-1]["STACK_SIZE"]
 
         return task
 
@@ -177,11 +177,11 @@ class TaskTab:
         if self.n_tasks > n_tasks_str:
             for i in range(self.n_tasks - n_tasks_str):
                 self.tasks_str.insert(len(self.tasks_str), TaskStr(n_tasks_str+i))
-                self.tasks.insert(len(self.tasks), self.create_empty_task())
+                self.sg_tasks.insert(len(self.sg_tasks), self.create_empty_task())
         elif n_tasks_str > self.n_tasks:
             for i in range(n_tasks_str - self.n_tasks):
                 del self.tasks_str[-1]
-                del self.tasks[-1]
+                del self.sg_tasks[-1]
 
         #print("n_tasks_str = "+ str(n_tasks_str) + ", n_tasks = " + str(self.n_tasks))
         # Draw new objects
@@ -191,57 +191,57 @@ class TaskTab:
             
             # Task Name
             entry = tk.Entry(self.mnf, width=30, textvariable=self.tasks_str[i].name)
-            self.tasks_str[i].name.set(self.tasks[i]["Task Name"])
+            self.tasks_str[i].name.set(self.sg_tasks[i]["Task Name"])
             entry.grid(row=self.HeaderSize+i, column=1)
 
             # PRIORITY
             entry = tk.Entry(self.mnf, width=10, textvariable=self.tasks_str[i].prio, justify='center')
-            self.tasks_str[i].prio.set(self.tasks[i]["PRIORITY"])
+            self.tasks_str[i].prio.set(self.sg_tasks[i]["PRIORITY"])
             entry.grid(row=self.HeaderSize+i, column=2)
 
             # SCHEDULE
             cmbsel = ttk.Combobox(self.mnf, width=8, textvariable=self.tasks_str[i].schedule, state="readonly")
             cmbsel['values'] = ("NON", "FULL")
-            self.tasks_str[i].schedule.set(self.tasks[i]["SCHEDULE"])
+            self.tasks_str[i].schedule.set(self.sg_tasks[i]["SCHEDULE"])
             cmbsel.current()
             cmbsel.grid(row=self.HeaderSize+i, column=3)
 
             # ACTIVATION
             entry = tk.Entry(self.mnf, width=11, textvariable=self.tasks_str[i].activation, justify='center')
-            self.tasks_str[i].activation.set(self.tasks[i]["ACTIVATION"])
+            self.tasks_str[i].activation.set(self.sg_tasks[i]["ACTIVATION"])
             entry.grid(row=self.HeaderSize+i, column=4)
 
             # AUTOSTART[]
-            if "AUTOSTART_APPMODE" in self.tasks[i]:
-                self.tasks_str[i].n_appmod = len(self.tasks[i]["AUTOSTART_APPMODE"])
+            if "AUTOSTART_APPMODE" in self.sg_tasks[i]:
+                self.tasks_str[i].n_appmod = len(self.sg_tasks[i]["AUTOSTART_APPMODE"])
             text = "SELECT["+str(self.tasks_str[i].n_appmod)+"]"
             select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_autostart_modes(id))
             select.grid(row=self.HeaderSize+i, column=5)
 
             # EVENT[]
-            if "EVENT" in self.tasks[i]:
-                self.tasks_str[i].n_events = len(self.tasks[i]["EVENT"])
+            if "EVENT" in self.sg_tasks[i]:
+                self.tasks_str[i].n_events = len(self.sg_tasks[i]["EVENT"])
             text = "EDIT["+str(self.tasks_str[i].n_events)+"]"
             select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_events(id))
             select.grid(row=self.HeaderSize+i, column=6)
 
             # RESOURCE[]
-            if "RESOURCE" in self.tasks[i]:
-                self.tasks_str[i].n_resources = len(self.tasks[i]["RESOURCE"])
+            if "RESOURCE" in self.sg_tasks[i]:
+                self.tasks_str[i].n_resources = len(self.sg_tasks[i]["RESOURCE"])
             text = "SELECT["+str(self.tasks_str[i].n_resources)+"]"
             select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_resources(id))
             select.grid(row=self.HeaderSize+i, column=7)
 
             # MESSAGE[]
-            if "MESSAGE" in self.tasks[i]:
-                self.tasks_str[i].n_messages = len(self.tasks[i]["MESSAGE"])
+            if "MESSAGE" in self.sg_tasks[i]:
+                self.tasks_str[i].n_messages = len(self.sg_tasks[i]["MESSAGE"])
             text = "SELECT["+str(self.tasks_str[i].n_messages)+"]"
             select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_messages(id))
             select.grid(row=self.HeaderSize+i, column=8)
             
             # STACK_SIZE
             entry = tk.Entry(self.mnf, width=11, textvariable=self.tasks_str[i].stack_sz, justify='center')
-            self.tasks_str[i].stack_sz.set(self.tasks[i]["STACK_SIZE"])
+            self.tasks_str[i].stack_sz.set(self.sg_tasks[i]["STACK_SIZE"])
             entry.grid(row=self.HeaderSize+i, column=9)
 
         # Set the self.cv scrolling region
@@ -250,18 +250,18 @@ class TaskTab:
 
     def on_autostart_dialog_close(self, task_id):
         # remove old selections
-        if "AUTOSTART_APPMODE" in self.tasks[task_id]:
-            del self.tasks[task_id]["AUTOSTART_APPMODE"][:]
+        if "AUTOSTART_APPMODE" in self.sg_tasks[task_id]:
+            del self.sg_tasks[task_id]["AUTOSTART_APPMODE"][:]
         else:
-            self.tasks[task_id]["AUTOSTART_APPMODE"] = []
+            self.sg_tasks[task_id]["AUTOSTART_APPMODE"] = []
 
         # update new selections
         if len(self.active_widget.curselection()) == 0:
-            self.tasks[task_id]["AUTOSTART"] = "FALSE"
+            self.sg_tasks[task_id]["AUTOSTART"] = "FALSE"
         else:
-            self.tasks[task_id]["AUTOSTART"] = "TRUE"
+            self.sg_tasks[task_id]["AUTOSTART"] = "TRUE"
             for i in self.active_widget.curselection():
-                self.tasks[task_id]["AUTOSTART_APPMODE"].append(self.active_widget.get(i))
+                self.sg_tasks[task_id]["AUTOSTART_APPMODE"].append(self.active_widget.get(i))
         
         # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
         self.active_widget.destroy()
@@ -286,22 +286,22 @@ class TaskTab:
         for i, obj in enumerate(self.amtab.AM_StrVar):
             appmode = obj.get()
             self.active_widget.insert(i, appmode)
-            if "AUTOSTART_APPMODE" in self.tasks[id]:
-                if appmode in self.tasks[id]["AUTOSTART_APPMODE"]:
+            if "AUTOSTART_APPMODE" in self.sg_tasks[id]:
+                if appmode in self.sg_tasks[id]["AUTOSTART_APPMODE"]:
                     self.active_widget.selection_set(i)
         self.active_widget.pack()
 
 
     def on_event_dialog_close(self, task_id):
         # remove old selections
-        if "EVENT" in self.tasks[task_id]:
-            del self.tasks[task_id]["EVENT"][:]
+        if "EVENT" in self.sg_tasks[task_id]:
+            del self.sg_tasks[task_id]["EVENT"][:]
         else:
-            self.tasks[task_id]["EVENT"] = []
+            self.sg_tasks[task_id]["EVENT"] = []
 
         # update new selections from last window session
         for strvar in self.active_widget.events_str:
-            self.tasks[task_id]["EVENT"].append(strvar.get())
+            self.sg_tasks[task_id]["EVENT"].append(strvar.get())
         
         # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
         #self.active_widget.destroy()
@@ -325,21 +325,21 @@ class TaskTab:
         self.active_dialog.geometry("+%d+%d" % (0 + x/2, y/16))
 
         # show all events
-        self.active_widget = EventWindow(self.tasks[id])
+        self.active_widget = EventWindow(self.sg_tasks[id])
         self.active_widget.draw(self.active_dialog)
 
 
     def on_resource_dialog_close(self, task_id):
         # remove old selections
-        if "RESOURCE" in self.tasks[task_id]:
-            del self.tasks[task_id]["RESOURCE"][:]
+        if "RESOURCE" in self.sg_tasks[task_id]:
+            del self.sg_tasks[task_id]["RESOURCE"][:]
         else:
-            self.tasks[task_id]["RESOURCE"] = []
+            self.sg_tasks[task_id]["RESOURCE"] = []
 
         # update new selections
         if len(self.active_widget.curselection()):
             for i in self.active_widget.curselection():
-                self.tasks[task_id]["RESOURCE"].append(self.active_widget.get(i))
+                self.sg_tasks[task_id]["RESOURCE"].append(self.active_widget.get(i))
         
         # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
         self.active_widget.destroy()
@@ -364,23 +364,23 @@ class TaskTab:
         for i, obj in enumerate(self.rstab.ress_str):
             res = obj.get()
             self.active_widget.insert(i, res)
-            if "RESOURCE" in self.tasks[id]:
-                if res in self.tasks[id]["RESOURCE"]:
+            if "RESOURCE" in self.sg_tasks[id]:
+                if res in self.sg_tasks[id]["RESOURCE"]:
                     self.active_widget.selection_set(i)
         self.active_widget.pack()
 
 
     def on_message_dialog_close(self, task_id):
         # remove old selections
-        if "MESSAGE" in self.tasks[task_id]:
-            del self.tasks[task_id]["MESSAGE"][:]
+        if "MESSAGE" in self.sg_tasks[task_id]:
+            del self.sg_tasks[task_id]["MESSAGE"][:]
         else:
-            self.tasks[task_id]["MESSAGE"] = []
+            self.sg_tasks[task_id]["MESSAGE"] = []
 
         # update new selections
         if len(self.active_widget.curselection()):
             for i in self.active_widget.curselection():
-                self.tasks[task_id]["MESSAGE"].append(self.active_widget.get(i))
+                self.sg_tasks[task_id]["MESSAGE"].append(self.active_widget.get(i))
         
         # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
         self.active_widget.destroy()
@@ -405,8 +405,8 @@ class TaskTab:
         for i, obj in enumerate(self.mstab.msgs_str):
             msg = obj.get()
             self.active_widget.insert(i, msg)
-            if "MESSAGE" in self.tasks[id]:
-                if msg in self.tasks[id]["MESSAGE"]:
+            if "MESSAGE" in self.sg_tasks[id]:
+                if msg in self.sg_tasks[id]["MESSAGE"]:
                     self.active_widget.selection_set(i)
         self.active_widget.pack()
 
