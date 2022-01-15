@@ -36,9 +36,12 @@ def about():
 
 
 def show_os_tab_switch(event):
-    global MainWindow, AlmTab
+    global MainWindow, AlmTab, OsTab, TskTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "Alarms":
         AlmTab.update()
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "OS Configs":
+        TskTab.backup_data()  # take the lastest stack size updates from Task tab.
+        OsTab.update()
     
 def show_os_config(view):
     global MainWindow, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab
@@ -68,7 +71,7 @@ def show_os_config(view):
     
     if OsTab != None:
         del OsTab
-    OsTab = gui_os_tab.OsTab(sg.OS_Cfgs)
+    OsTab = gui_os_tab.OsTab(sg.OS_Cfgs, sg.Tasks)
     OsTab.draw(os_tab)
 
     if AmTab != None:

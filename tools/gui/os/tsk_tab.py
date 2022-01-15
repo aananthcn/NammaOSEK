@@ -167,26 +167,7 @@ class TaskTab:
 
     def update(self):
         # Backup current task entries from GUI
-        n_tasks_str = len(self.tasks_str)
-        for i in range(n_tasks_str):
-            if len(self.tasks_str[i].name.get()):
-                self.sg_tasks[i]["Task Name"] = self.tasks_str[i].name.get()
-            if len(self.tasks_str[i].prio.get()):
-                self.sg_tasks[i]["PRIORITY"] = self.tasks_str[i].prio.get()
-            if len(self.tasks_str[i].schedule.get()):
-                self.sg_tasks[i]["SCHEDULE"] = self.tasks_str[i].schedule.get()
-            if len(self.tasks_str[i].activation.get()):
-                self.sg_tasks[i]["ACTIVATION"] = self.tasks_str[i].activation.get()
-            if "AUTOSTART_APPMODE" in self.sg_tasks[i]:
-                if len(self.sg_tasks[i]["AUTOSTART_APPMODE"]):
-                    self.sg_tasks[i]["AUTOSTART"] = "TRUE"
-                else:
-                    self.sg_tasks[i]["AUTOSTART"] = "FALSE"
-            else:
-                self.sg_tasks[i]["AUTOSTART"] = "FALSE"
-            if len(self.tasks_str[i].stack_sz.get()):
-                self.sg_tasks[i]["STACK_SIZE"] = self.tasks_str[i].stack_sz.get()
-        
+        self.backup_data()
 
         # destroy most old gui widgets
         self.n_tasks = int(self.n_tasks_str.get())
@@ -195,6 +176,7 @@ class TaskTab:
                 item.destroy()
 
         # Tune memory allocations based on number of rows or boxes
+        n_tasks_str = len(self.tasks_str)
         if self.n_tasks > n_tasks_str:
             for i in range(self.n_tasks - n_tasks_str):
                 self.tasks_str.insert(len(self.tasks_str), TaskStr(n_tasks_str+i))
@@ -267,6 +249,28 @@ class TaskTab:
 
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
+
+
+    def backup_data(self):
+        n_tasks_str = len(self.tasks_str)
+        for i in range(n_tasks_str):
+            if len(self.tasks_str[i].name.get()):
+                self.sg_tasks[i]["Task Name"] = self.tasks_str[i].name.get()
+            if len(self.tasks_str[i].prio.get()):
+                self.sg_tasks[i]["PRIORITY"] = self.tasks_str[i].prio.get()
+            if len(self.tasks_str[i].schedule.get()):
+                self.sg_tasks[i]["SCHEDULE"] = self.tasks_str[i].schedule.get()
+            if len(self.tasks_str[i].activation.get()):
+                self.sg_tasks[i]["ACTIVATION"] = self.tasks_str[i].activation.get()
+            if "AUTOSTART_APPMODE" in self.sg_tasks[i]:
+                if len(self.sg_tasks[i]["AUTOSTART_APPMODE"]):
+                    self.sg_tasks[i]["AUTOSTART"] = "TRUE"
+                else:
+                    self.sg_tasks[i]["AUTOSTART"] = "FALSE"
+            else:
+                self.sg_tasks[i]["AUTOSTART"] = "FALSE"
+            if len(self.tasks_str[i].stack_sz.get()):
+                self.sg_tasks[i]["STACK_SIZE"] = self.tasks_str[i].stack_sz.get()
 
 
     def on_autostart_dialog_close(self, task_id):
