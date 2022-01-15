@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .evt_wn import EventWindow
+from copy import copy
 
 
 class AlarmStr:
@@ -118,12 +119,22 @@ class AlarmTab:
         return self.task_names
 
 
-    def extract_task_events(self, task_id):
+    def extract_task_events(self, aid):
         events = []
-        del self.task_events[:]
-        for tsk in self.tktab.sg_tasks:
-            if "EVENT" in tsk:
-                events = tsk["EVENT"]
+        alarm_id = int(aid)
+
+        # For action type == ALARMCALLBACK, there are no events associated!
+        if self.sg_alarms[alarm_id]["Action-Type"] == "ALARMCALLBACK":
+            return events
+
+        # get events from tasks configured in Alarm[alarm_id]
+        task_name = self.sg_alarms[alarm_id]["arg1"]
+        for task in self.tktab.sg_tasks:
+            if task_name == task["Task Name"]:
+                if "EVENT" in task:
+                    events = copy(task["EVENT"])
+                    break
+
         return events
 
 
@@ -197,24 +208,7 @@ class AlarmTab:
 
     def update(self):
         # Backup current task entries from GUI
-        n_alarms_str = len(self.alarms_str)
-        for i in range(n_alarms_str):
-            if len(self.alarms_str[i].name.get()):
-                self.sg_alarms[i]["Alarm Name"] = self.alarms_str[i].name.get()
-            if len(self.alarms_str[i].counter.get()):
-                self.sg_alarms[i]["COUNTER"] = self.alarms_str[i].counter.get()
-            if len(self.alarms_str[i].action_type.get()):
-                self.sg_alarms[i]["Action-Type"] = self.alarms_str[i].action_type.get()
-            if len(self.alarms_str[i].action_arg1.get()):
-                self.sg_alarms[i]["arg1"] = self.alarms_str[i].action_arg1.get()
-            if len(self.alarms_str[i].action_arg2.get()):
-                self.sg_alarms[i]["arg2"] = self.alarms_str[i].action_arg2.get()
-            if self.sg_alarms[i]["IsAutostart"] == "FALSE":
-                continue
-            if len(self.alarms_str[i].alarm_time.get()):
-                self.sg_alarms[i]["ALARMTIME"] = self.alarms_str[i].alarm_time.get()
-            if len(self.alarms_str[i].cycle_time.get()):
-                self.sg_alarms[i]["CYCLETIME"] = self.alarms_str[i].cycle_time.get()
+        self.backup_data()
                 
         # destroy most old gui widgets
         self.n_alarms = int(self.n_alarms_str.get())
@@ -223,6 +217,7 @@ class AlarmTab:
                 item.destroy()
 
         # Tune memory allocations based on number of rows or boxes
+        n_alarms_str = len(self.alarms_str)
         if self.n_alarms > n_alarms_str:
             for i in range(self.n_alarms - n_alarms_str):
                 self.alarms_str.insert(len(self.alarms_str), AlarmStr(n_alarms_str+i))
@@ -271,13 +266,18 @@ class AlarmTab:
                 self.alarms_str[i].action_arg1.set(self.sg_alarms[i]["arg1"])
                 cmbsel.current()
                 cmbsel.grid(row=self.HeaderSize+i, column=4)
+                cmbsel.bind("<<ComboboxSelected>>", self.arg1_task_selected)
 
             # arg2
             if self.sg_alarms[i]["Action-Type"] == "SETEVENT":
                 # Draw Combobox for Event select
                 cmbsel = ttk.Combobox(self.mnf, width=25-3, textvariable=self.alarms_str[i].action_arg2, state="readonly")
-                cmbsel['values'] = self.extract_task_events(i)
-                self.alarms_str[i].action_arg2.set(self.sg_alarms[i]["arg2"])
+                event_list = self.extract_task_events(i)
+                cmbsel['values'] = event_list
+                if self.sg_alarms[i]["arg2"] in event_list:
+                    self.alarms_str[i].action_arg2.set(self.sg_alarms[i]["arg2"])
+                else:
+                    self.alarms_str[i].action_arg2.set("")
                 cmbsel.current()
                 cmbsel.grid(row=self.HeaderSize+i, column=5)
 
@@ -313,6 +313,27 @@ class AlarmTab:
 
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
+
+
+    def backup_data(self):
+        n_alarms_str = len(self.alarms_str)
+        for i in range(n_alarms_str):
+            if len(self.alarms_str[i].name.get()):
+                self.sg_alarms[i]["Alarm Name"] = self.alarms_str[i].name.get()
+            if len(self.alarms_str[i].counter.get()):
+                self.sg_alarms[i]["COUNTER"] = self.alarms_str[i].counter.get()
+            if len(self.alarms_str[i].action_type.get()):
+                self.sg_alarms[i]["Action-Type"] = self.alarms_str[i].action_type.get()
+            if len(self.alarms_str[i].action_arg1.get()):
+                self.sg_alarms[i]["arg1"] = self.alarms_str[i].action_arg1.get()
+            if len(self.alarms_str[i].action_arg2.get()):
+                self.sg_alarms[i]["arg2"] = self.alarms_str[i].action_arg2.get()
+            if self.sg_alarms[i]["IsAutostart"] == "FALSE":
+                continue
+            if len(self.alarms_str[i].alarm_time.get()):
+                self.sg_alarms[i]["ALARMTIME"] = self.alarms_str[i].alarm_time.get()
+            if len(self.alarms_str[i].cycle_time.get()):
+                self.sg_alarms[i]["CYCLETIME"] = self.alarms_str[i].cycle_time.get()
 
 
     def on_autostart_dialog_close(self, task_id):
@@ -357,10 +378,15 @@ class AlarmTab:
 
 
     def action_type_selected(self, event):
+        # backup all action_type selects and update the screen
         for i, alm in enumerate(self.sg_alarms):
             alm["Action-Type"] = self.alarms_str[i].action_type.get()
             if "arg2" not in alm:
                 alm["arg2"] = ""
+        self.update()
+
+
+    def arg1_task_selected(self, event):
         self.update()
 
 

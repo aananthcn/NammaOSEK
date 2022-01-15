@@ -79,7 +79,7 @@ class EventWindow:
         # Update buttons frames idle tasks to let tkinter calculate buttons sizes
         self.mnf.update_idletasks()
         # Resize the main frame to show contents for FULL SCREEN (Todo: scroll bars won't work in reduced size window)
-        canvas_w = tab.winfo_screenwidth()/2-self.sb.winfo_width()
+        canvas_w = tab.winfo_screenwidth()/2-(3*self.sb.winfo_width())
         canvas_h = tab.winfo_screenheight()*14/16-(spinb.winfo_height()*6)
         # print("screen: "+str(tab.winfo_screenwidth())+" x "+str(tab.winfo_screenheight()))
         # print("canvas: "+str(canvas_w)+" x "+str(canvas_h))
