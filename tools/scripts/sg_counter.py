@@ -48,11 +48,11 @@ def generate_code(path, Counters):
             cf.write(",\n")
         
         # Find out if this Counter is optimal for OS Tick scheduling
-        if cntr[CntrParams[4]] >= 1000000: #nano sec
+        if int(cntr[CntrParams[4]]) >= 1000000: #nano sec
             if os_counter_duration == -1:
                 os_counter_duration = cntr[CntrParams[4]]
                 os_counter_index = i
-            elif cntr[CntrParams[4]] < os_counter_duration: 
+            elif int(cntr[CntrParams[4]]) < os_counter_duration: 
                 os_counter_duration = cntr[CntrParams[4]]
                 os_counter_index = i
 

@@ -2,6 +2,7 @@
 # generates .c/.h/.mk files as output.
 import sys
 import os
+import traceback
 
 from common import import_or_install, print_info
 from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, FreeOSEK_Params, OSEK_Params, STSZ
@@ -207,9 +208,12 @@ def parse_isr(oil_lines, line_num):
 
 
 
-def parse(oilfile):
+def set_source_file_path(path):
     global SrcFilePath
+    SrcFilePath = path
 
+
+def parse(oilfile):
     # Validate and open OIL file
     print_info("Opening " + oilfile)
     if "oil" != oilfile.split(".")[-1]:
@@ -224,10 +228,11 @@ def parse(oilfile):
     print(Style.RESET_ALL, "\033[F")
     
     # Create output directory for generating source files
-    SrcFilePath = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
-    if not os.path.exists(SrcFilePath):
-        print_info("Creating source file directory " + SrcFilePath)
-        os.mkdir(SrcFilePath)
+    path = "/".join(oilfile.split("/")[0:-2]) + "/src"
+    set_source_file_path(path)
+    if not os.path.exists(path):
+        print_info("Creating source file directory " + path)
+        os.mkdir(path)
     
     # Parse the OIL file
     print_info("Parsing " + oilfile)
@@ -260,7 +265,7 @@ def parse(oilfile):
     # Get CPU / Target name
     OS_Cfgs["CPU"] = oil_lines[0].split(" ")[1]
 
-    return SrcFilePath
+    return path
 
 
 
@@ -268,16 +273,22 @@ def generate_code():
     global SrcFilePath
 
     path = SrcFilePath
-    sg_counter.generate_code(path, Counters)
-    sg_appmodes.generate_code(path, AppModes, Tasks)
-    sg_events.generate_code(path, Tasks)
-    sg_messages.generate_code(path, Tasks)
-    ResTaskList = sg_resources.generate_code(path, Tasks)
-    sg_tasks.generate_code(path, Tasks)
-    sg_alarms.generate_code(path, Alarms, Counters, Tasks)
-    sg_fifo.generate_code(path, Tasks, ResTaskList)
-    sg_os_param.generate_code(path, OS_Cfgs)
-    sg_isrs.generate_code(path, ISRs)
+    try:
+        sg_counter.generate_code(path, Counters)
+        sg_appmodes.generate_code(path, AppModes, Tasks)
+        sg_events.generate_code(path, Tasks)
+        sg_messages.generate_code(path, Tasks)
+        ResTaskList = sg_resources.generate_code(path, Tasks)
+        sg_tasks.generate_code(path, Tasks)
+        sg_alarms.generate_code(path, Alarms, Counters, Tasks)
+        sg_fifo.generate_code(path, Tasks, ResTaskList)
+        sg_os_param.generate_code(path, OS_Cfgs)
+        sg_isrs.generate_code(path, ISRs)
+    except:
+        traceback.print_exc()
+        return -1
+
+    return 0
 
 
 

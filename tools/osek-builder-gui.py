@@ -155,7 +155,12 @@ def save_oil_file():
 
 
 def generate_oil_file():
-    print("Generate OIL File --> Underconstruction")
+    if 0 == sg.generate_code():
+        messagebox.showinfo("OSEK Builder", "Code Generated Successfully!")
+    else:
+        messagebox.showinfo("OSEK Builder", "Code Generation Failed!")
+
+
 
  
 ###############################################################################
