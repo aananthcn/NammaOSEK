@@ -4,7 +4,7 @@ import sys
 import os
 
 from common import import_or_install, print_info
-from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, OS_Params, OSEK_Params, STSZ
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, TNMI, FreeOSEK_Params, OSEK_Params, STSZ
 
 import sg_counter
 import sg_tasks
@@ -249,7 +249,7 @@ def parse(oilfile):
             line_num, isr = parse_isr(oil_lines, line_num)
             ISRs.append(isr)
         if "FreeOSEK_PARAMS" in words and "{" in oil_lines[line_num]:
-            line_num, os_params = parse_os_params(oil_lines, line_num, OS_Params)
+            line_num, os_params = parse_os_params(oil_lines, line_num, FreeOSEK_Params)
             OS_Cfgs.update(os_params)
         if "OS" in words and "{" in oil_lines[line_num]:
             OS_Cfgs["OS"] = words[1]

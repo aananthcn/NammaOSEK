@@ -1,5 +1,5 @@
 from common import print_info
-from ob_globals import OS_Params
+from ob_globals import FreeOSEK_Params
 
 import colorama
 from colorama import Fore, Back, Style
@@ -18,8 +18,8 @@ def generate_code(path, OsParams):
     hf.write("#define ACN_OSEK_OS_PARAM_H\n")
     hf.write("\n\n")
 
-    # generate code from OsParams but limited to OS_Params (ignore others)
-    for param in OS_Params:
+    # generate code from OsParams but limited to FreeOSEK_Params (ignore others)
+    for param in FreeOSEK_Params:
         lf.write("_"+param + " = " + OsParams[param] + ";\n")
         hf.write("#define _"+param + "  \t(" + OsParams[param] + ")\n")
     

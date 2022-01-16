@@ -5,6 +5,7 @@ import sys
 # Let us use the System Generator functions to parse OIL and Generate code
 sys.path.insert(0, os.getcwd()+"/tools/scripts")
 import scripts.System_Generator as sg
+import scripts.oil as oil
 
 import tkinter as tk
 from tkinter import messagebox
@@ -128,9 +129,29 @@ def open_file():
 
 
 def save_oil_file():
-    saved_filename = filedialog.askopenfilename(initialdir=os.getcwd()+"/tools/oil-files")
-    RootView.title(AppTitle + " [" + str(saved_filename).split("/")[-1] +"]")
-    print("Save As --> Underconstruction")
+    global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
+
+    file_exts = [('Oil Files', '*.oil')]
+    saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/tools/oil-files", filetypes = file_exts, defaultextension = file_exts)
+    if saved_filename == None:
+        messagebox.showinfo("OSEK Builder", "File to save is not done correctly, saving aborted!")
+        return
+
+    RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
+
+    # Do the stack memory calculation before save
+    OsTab.update()
+
+    # Backup GUI strings to System Generator global data
+    OsTab.backup_data()
+    AmTab.backup_data()
+    CtrTab.backup_data()
+    MsgTab.backup_data()
+    ResTab.backup_data()
+    TskTab.backup_data()
+    AlmTab.backup_data()
+    IsrTab.backup_data()
+    oil.save_oil_file(saved_filename.name)
 
 
 def generate_oil_file():

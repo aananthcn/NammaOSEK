@@ -1,7 +1,150 @@
 import os
 
-from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params
+from ob_globals import TaskParams, CntrParams, AlarmParams, ISR_Params, OSEK_Params, FreeOSEK_Params
 from ob_globals import STSZ
+
+import scripts.System_Generator as sg
+
+
+
+
+def print_oil_autostart(f, task, indent):
+    if task["AUTOSTART"] == "FALSE":
+        f.write(indent*"\t" + "AUTOSTART = FALSE;\n")
+        return
+    else:
+        f.write(indent*"\t" + "AUTOSTART = TRUE {\n")
+    indent += 1
+    for item in task["AUTOSTART_APPMODE"]:
+        f.write(indent*"\t" + "APPMODE = " + item + ";\n")
+    indent -= 1
+    f.write(indent*"\t" + "};\n")
+
+
+
+def print_oil_list_item(f, task, param, indent):
+    if param in task:
+        for item in task[param]:
+            f.write(indent*"\t" + param + " = " + item + ";\n")
+
+
+
+def save_oil_file(filename):
+    if filename.split(".")[-1] != "oil":
+        full_filename = filename + ".oil"
+    else:
+        full_filename = filename
+    f = open(full_filename, "w")
+
+    # start of CPU body (root)
+    indent = 0
+    f.write("CPU " + sg.OS_Cfgs["CPU"] + " {\n")
+    indent += 1
+
+    # Print OSEK Parameters
+    f.write(indent*"\t" + "OS " + sg.OS_Cfgs["OS"] + " {\n")
+    indent += 1
+    for item in OSEK_Params:
+        f.write(indent*"\t" + item + " = " + sg.OS_Cfgs[item] + ";\n")
+    indent -= 1
+    f.write(indent*"\t" + "};\n\n")
+
+    # Print FreeOSEK Parameters
+    f.write(indent*"\t" + "FreeOSEK_Params {\n")
+    indent += 1
+    for item in FreeOSEK_Params:
+        f.write(indent*"\t" + item + " = " + sg.OS_Cfgs[item] + ";\n")
+    indent -= 1
+    f.write(indent*"\t" + "};\n\n")
+
+    # write tasks
+    for task in sg.Tasks:
+        # Start of TaskData body
+        f.write(indent*"\t"+ "TASK " + task[TaskParams[0]] + " {\n")
+        indent += 1
+        spl_param = ['RESOURCE', 'EVENT', 'MESSAGE']
+        for i in range(1, len(TaskParams)):
+            if TaskParams[i] == "AUTOSTART":
+                print_oil_autostart(f, task, indent)
+            elif TaskParams[i] in spl_param:
+                print_oil_list_item(f, task, TaskParams[i], indent)
+            else:
+                f.write(indent*"\t" + TaskParams[i] +" = " + str(task[TaskParams[i]]) + ";\n")
+        # End of TaskData body
+        indent -= 1
+        f.write(indent*"\t" + "};\n\n")
+
+    # Start of COUNTER
+    for cntr in sg.Counters:
+        # Start of Counters
+        f.write(indent*"\t"+ "COUNTER " + cntr[CntrParams[0]] + " {\n")
+        indent += 1
+        f.write(indent*"\t" +"MINCYCLE = " + str(cntr[CntrParams[1]]) + ";\n")
+        f.write(indent*"\t" +"MAXALLOWEDVALUE = " + str(cntr[CntrParams[2]]) + ";\n")
+        f.write(indent*"\t" +"TICKSPERBASE = " + str(cntr[CntrParams[3]]) + ";\n")
+        f.write(indent*"\t" +"TICKDURATION = " + str(cntr[CntrParams[4]]) + "; /* nsec */\n")
+        # End of Counters
+        indent -= 1
+        f.write(indent*"\t" + "};\n\n")
+
+    # Start of ALARM
+    for alrm in sg.Alarms:
+        # Start of Alarms body
+        f.write(indent*"\t"+ "ALARM " + alrm[AlarmParams[0]] + " {\n")
+        indent += 1
+        f.write(indent*"\t" +"COUNTER = " + str(alrm[AlarmParams[1]]) + ";\n")
+        # Start of Actions
+        f.write(indent*"\t"+ "ACTION = " + alrm[AlarmParams[2]] + " {\n")
+        indent += 1
+        if alrm[AlarmParams[2]] == "ACTIVATETASK":
+	        f.write(indent*"\t" +"TASK = " + str(alrm[AlarmParams[3]]) + ";\n")
+        if alrm[AlarmParams[2]] == "SETEVENT":
+	        f.write(indent*"\t" +"TASK = " + str(alrm[AlarmParams[3]]) + ";\n")
+	        f.write(indent*"\t" +"EVENT = " + str(alrm[AlarmParams[4]]) + ";\n")
+        if alrm[AlarmParams[2]] == "ALARMCALLBACK":
+	        f.write(indent*"\t" +"ALARMCALLBACKNAME = " + str(alrm[AlarmParams[3]]) + ";\n")
+        # End of Actions
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
+        # Start of Autostart
+        if alrm["IsAutostart"] == "FALSE":
+            f.write(indent*"\t" +"AUTOSTART = FALSE;\n")
+        else:
+            f.write(indent*"\t"+ "AUTOSTART = TRUE {\n")
+            indent += 1
+            f.write(indent*"\t" +"ALARMTIME = " + alrm[AlarmParams[6]] + ";\n")
+            f.write(indent*"\t" +"CYCLETIME = " + alrm[AlarmParams[7]] + ";\n")
+            alrm_app_modes = alrm[AlarmParams[8]]
+            for mode in alrm_app_modes:
+                f.write(indent*"\t" +"APPMODE = " + mode + ";\n")
+            # End of Autostart
+            indent -= 1
+            f.write(indent*"\t" + "};\n")
+        # End of Alarms body
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
+
+    # Start of ISRs
+    for isr in sg.ISRs:
+        # Start of ISR body 
+        f.write(indent*"\n\t"+ "ISR " + isr[ISR_Params[0]] + " {\n")
+        indent += 1
+        f.write(indent*"\t" +"IRQn = " + str(isr[ISR_Params[1]]) + ";\n")
+        f.write(indent*"\t" +"CATEGORY = " + str(isr[ISR_Params[2]]) + ";\n")
+        if ISR_Params[3] in isr:
+            for res in isr[ISR_Params[3]]:
+	            f.write(indent*"\t" +"RESOURCE = " + res + ";\n")
+        if ISR_Params[4] in isr:
+            for msg in isr[ISR_Params[4]]:
+	            f.write(indent*"\t" +"MESSAGE = " + msg + ";\n")
+        # End of ISR body
+        indent -= 1
+        f.write(indent*"\t" + "};\n")
+
+    #end of CPU body (root)
+    indent -= 1
+    f.write(indent*"\t" + "};\n")
+    f.close()
 
 
 
