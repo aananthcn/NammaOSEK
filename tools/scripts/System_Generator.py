@@ -232,8 +232,11 @@ def parse(oilfile):
     of = open(oilfile, "r")
     print(Style.RESET_ALL, "\033[F")
     
-    # Create output directory for generating source files
-    path = "/".join(oilfile.split("/")[0:-2]) + "/src"
+    # Generate source in src folder under tools, else create it in current directory
+    if oilfile.split("/")[-2] == "oil-files" and oilfile.split("/")[-3] == "tools":
+        path = "/".join(oilfile.split("/")[0:-2]) + "/src"
+    else:
+        path = "/".join(oilfile.split("/")[0:-1]) + "/src"
     set_source_file_path(path)
     if not os.path.exists(path):
         print_info("Creating source file directory " + path)
