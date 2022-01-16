@@ -214,6 +214,11 @@ def set_source_file_path(path):
 
 
 def parse(oilfile):
+    global Counters, Alarms, Tasks, AppModes, ISRs, OS_Cfgs
+
+    # Sometimes the parse is called without close of previous session
+    sg_reset()
+
     # Validate and open OIL file
     print_info("Opening " + oilfile)
     if "oil" != oilfile.split(".")[-1]:
@@ -290,6 +295,15 @@ def generate_code():
 
     return 0
 
+
+def sg_reset():
+    global Counters, Alarms, Tasks, AppModes, ISRs
+
+    del Counters[:]
+    del Alarms[:]
+    del Tasks[:]
+    del AppModes[:]
+    del ISRs[:]
 
 
 if __name__ == '__main__':
