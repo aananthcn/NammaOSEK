@@ -186,7 +186,7 @@ def add_menus(rv):
     menubar.add_cascade(label="View", menu=view)
 
     gen = tk.Menu(menubar, tearoff=0)
-    gen.add_command(label="Generate OIL file", command=generate_oil_file)
+    gen.add_command(label="Generate Source", command=generate_oil_file)
     menubar.add_cascade(label="Generate", menu=gen)
 
     help = tk.Menu(menubar, tearoff=0)
