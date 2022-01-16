@@ -86,11 +86,10 @@ class MessageTab:
 
     def update(self):
         # backup current entries
-        n_msgs_str = len(self.msgs_str)
-        for i in range(n_msgs_str):
-            self.msgs[i] = self.msgs_str[i].get()
+        self.backup_data()
 
         # Tune memory allocations based on number of rows or boxes
+        n_msgs_str = len(self.msgs_str)
         if self.n_msgs > n_msgs_str:
             for i in range(self.n_msgs - n_msgs_str):
                 self.msgs_str.insert(len(self.msgs_str), tk.StringVar())
@@ -111,6 +110,13 @@ class MessageTab:
 
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
+
+
+    def backup_data(self):
+        n_msgs_str = len(self.msgs_str)
+        for i in range(n_msgs_str):
+            self.msgs[i] = self.msgs_str[i].get()
+
 
     def extract_messages(self, tasks):
         for task in tasks:

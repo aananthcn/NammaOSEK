@@ -17,6 +17,7 @@ class ResourceTab:
     sb  = None  # Scrollbar
     mnf = None  # Main Frame - where the widgets are scrolled
 
+
     def __init__(self, tasks):
         self.extract_resources(tasks)
         self.n_ress = len(self.ress)
@@ -26,9 +27,11 @@ class ResourceTab:
             self.ress_str.insert(i, tk.StringVar())
             self.ress_str[i].set(self.ress[i])
 
+
     def __del__(self):
         del self.n_ress_str
         del self.ress_str[:]
+
 
     def update_ress(self, mstr):
         self.n_ress = int(mstr.get())
@@ -37,6 +40,7 @@ class ResourceTab:
             if i >= self.HeaderObjs:
                 item.destroy()
         self.update()
+
 
     def draw(self, tab):
         tab.grid_rowconfigure(0, weight=1)
@@ -88,11 +92,10 @@ class ResourceTab:
 
     def update(self):
         # Backup current entries
-        n_ress_str = len(self.ress_str)
-        for i in range(n_ress_str):
-            self.ress[i] = self.ress_str[i].get()
+        self.backup_data()
 
         # Tune memory allocations based on number of rows or boxes
+        n_ress_str = len(self.ress_str)
         if self.n_ress > n_ress_str:
             for i in range(self.n_ress - n_ress_str):
                 self.ress_str.insert(len(self.ress_str), tk.StringVar())
@@ -113,6 +116,13 @@ class ResourceTab:
 
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
+
+
+    def backup_data(self):
+        n_ress_str = len(self.ress_str)
+        for i in range(n_ress_str):
+            self.ress[i] = self.ress_str[i].get()
+
 
     def extract_resources(self, tasks):
         for task in tasks:

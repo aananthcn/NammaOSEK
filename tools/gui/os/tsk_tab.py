@@ -63,6 +63,7 @@ class TaskTab:
         self.sg_tasks = tasks
         self.n_tasks = len(self.sg_tasks)
         self.n_tasks_str = tk.StringVar()
+        del self.tasks_str[:]
         for i in range(self.n_tasks):
             self.tasks_str.insert(i, TaskStr(i))
         
@@ -217,29 +218,29 @@ class TaskTab:
             # AUTOSTART[]
             if "AUTOSTART_APPMODE" in self.sg_tasks[i]:
                 self.tasks_str[i].n_appmod = len(self.sg_tasks[i]["AUTOSTART_APPMODE"])
-            text = "SELECT["+str(self.tasks_str[i].n_appmod)+"]"
-            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_autostart_modes(id))
+            text = "AppModes["+str(self.tasks_str[i].n_appmod)+"]"
+            select = tk.Button(self.mnf, width=13, text=text, command=lambda id = i: self.select_autostart_modes(id))
             select.grid(row=self.HeaderSize+i, column=5)
 
             # EVENT[]
             if "EVENT" in self.sg_tasks[i]:
                 self.tasks_str[i].n_events = len(self.sg_tasks[i]["EVENT"])
-            text = "EDIT["+str(self.tasks_str[i].n_events)+"]"
-            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_events(id))
+            text = "Events["+str(self.tasks_str[i].n_events)+"]"
+            select = tk.Button(self.mnf, width=13, text=text, command=lambda id = i: self.select_events(id))
             select.grid(row=self.HeaderSize+i, column=6)
 
             # RESOURCE[]
             if "RESOURCE" in self.sg_tasks[i]:
                 self.tasks_str[i].n_resources = len(self.sg_tasks[i]["RESOURCE"])
-            text = "SELECT["+str(self.tasks_str[i].n_resources)+"]"
-            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_resources(id))
+            text = "Resources["+str(self.tasks_str[i].n_resources)+"]"
+            select = tk.Button(self.mnf, width=13, text=text, command=lambda id = i: self.select_resources(id))
             select.grid(row=self.HeaderSize+i, column=7)
 
             # MESSAGE[]
             if "MESSAGE" in self.sg_tasks[i]:
                 self.tasks_str[i].n_messages = len(self.sg_tasks[i]["MESSAGE"])
-            text = "SELECT["+str(self.tasks_str[i].n_messages)+"]"
-            select = tk.Button(self.mnf, width=10, text=text, command=lambda id = i: self.select_messages(id))
+            text = "Messages["+str(self.tasks_str[i].n_messages)+"]"
+            select = tk.Button(self.mnf, width=13, text=text, command=lambda id = i: self.select_messages(id))
             select.grid(row=self.HeaderSize+i, column=8)
             
             # STACK_SIZE

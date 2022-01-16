@@ -51,11 +51,10 @@ class AmTab:
             
     def update(self, tab):
         # Backup current entries
-        n_am_strvar = len(self.AM_StrVar)
-        for i in range(n_am_strvar):
-            self.AppModes[i] = self.AM_StrVar[i].get()
+        self.backup_data()
 
         # StrVar memory allocation checks
+        n_am_strvar = len(self.AM_StrVar)
         if self.N_AppModes > n_am_strvar:
             for i in range(self.N_AppModes - n_am_strvar):
                 self.AM_StrVar.insert(len(self.AM_StrVar), tk.StringVar())
@@ -73,3 +72,8 @@ class AmTab:
             entry = tk.Entry(tab, width=30, textvariable=self.AM_StrVar[i])
             self.AM_StrVar[i].set(self.AppModes[i])
             entry.grid(row=self.HeaderSize+i, column=2)
+
+    def backup_data(self):
+        n_am_strvar = len(self.AM_StrVar)
+        for i in range(n_am_strvar):
+            self.AppModes[i] = self.AM_StrVar[i].get()

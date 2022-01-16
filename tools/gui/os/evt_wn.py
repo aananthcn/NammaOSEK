@@ -90,11 +90,10 @@ class EventWindow:
 
     def update(self):
         # backup current entries
-        n_events_str = len(self.events_str)
-        for i in range(n_events_str):
-            self.events[i] = self.events_str[i].get()
+        self.backup_data()
 
         # Tune memory allocations based on number of rows or boxes
+        n_events_str = len(self.events_str)
         if self.n_events > n_events_str:
             for i in range(self.n_events - n_events_str):
                 self.events_str.insert(len(self.events_str), tk.StringVar())
@@ -115,6 +114,12 @@ class EventWindow:
 
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
+
+
+    def backup_data(self):
+        n_events_str = len(self.events_str)
+        for i in range(n_events_str):
+            self.events[i] = self.events_str[i].get()
 
 
     def extract_events(self, task):

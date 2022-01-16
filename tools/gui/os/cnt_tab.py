@@ -97,15 +97,10 @@ class CounterTab:
 
     def update(self, tab):
         # Backup current entries
-        n_strvar = len(self.Ctr_StrVar)
-        for i in range(n_strvar):
-            self.Counters[i]["Counter Name"] = self.Ctr_StrVar[i].name.get()
-            self.Counters[i]["MINCYCLE"] = self.Ctr_StrVar[i].mincycle.get()
-            self.Counters[i]["MAXALLOWEDVALUE"] = self.Ctr_StrVar[i].maxallowed.get()
-            self.Counters[i]["TICKSPERBASE"] = self.Ctr_StrVar[i].ticksperbase.get()
-            self.Counters[i]["TICKDURATION"] = self.Ctr_StrVar[i].tick_duration.get()
+        self.backup_data()
 
         # StrVar memory allocation checks
+        n_strvar = len(self.Ctr_StrVar)
         if int(self.N_Counters) > n_strvar:
             for i in range(int(self.N_Counters) - n_strvar):
                 self.Ctr_StrVar.insert(len(self.Ctr_StrVar), CounterStr("", "", "", "", "", ""))
@@ -138,6 +133,16 @@ class CounterTab:
             entry = tk.Entry(tab, width=40, textvariable=self.Ctr_StrVar[i].comment) # Comments
             self.Ctr_StrVar[i].comment.set("") # comments not yet supported!
             entry.grid(row=self.HeaderSize+i+1, column=7)
+
+
+    def backup_data(self):
+        n_strvar = len(self.Ctr_StrVar)
+        for i in range(n_strvar):
+            self.Counters[i]["Counter Name"] = self.Ctr_StrVar[i].name.get()
+            self.Counters[i]["MINCYCLE"] = self.Ctr_StrVar[i].mincycle.get()
+            self.Counters[i]["MAXALLOWEDVALUE"] = self.Ctr_StrVar[i].maxallowed.get()
+            self.Counters[i]["TICKSPERBASE"] = self.Ctr_StrVar[i].ticksperbase.get()
+            self.Counters[i]["TICKDURATION"] = self.Ctr_StrVar[i].tick_duration.get()
 
 
     def create_empty_counter(self):

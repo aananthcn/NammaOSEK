@@ -18,6 +18,7 @@ import gui.os.msg_tab as gui_ms_tab
 import gui.os.res_tab as gui_rs_tab
 import gui.os.tsk_tab as gui_tk_tab
 import gui.os.alm_tab as gui_al_tab
+import gui.os.isr_tab as gui_ir_tab
 
 
 
@@ -26,7 +27,7 @@ MainWindow = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
-OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = None
+OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
 
 
 # Functions
@@ -42,9 +43,10 @@ def show_os_tab_switch(event):
     if MainWindow.tab(MainWindow.select(), "text").strip() == "OS Configs":
         TskTab.backup_data()  # take the lastest stack size updates from Task tab.
         OsTab.update()
+
     
 def show_os_config(view):
-    global MainWindow, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab
+    global MainWindow, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
 
     if MainWindow != None:
         for widget in MainWindow.winfo_children():
@@ -59,6 +61,7 @@ def show_os_config(view):
     rs_tab = ttk.Frame(MainWindow)
     tk_tab = ttk.Frame(MainWindow)
     al_tab = ttk.Frame(MainWindow)
+    ir_tab = ttk.Frame(MainWindow)
     
     MainWindow.add(os_tab, text ='OS Configs')
     MainWindow.add(am_tab, text =' AppModes ')
@@ -67,6 +70,7 @@ def show_os_config(view):
     MainWindow.add(rs_tab, text =' Resources ')
     MainWindow.add(tk_tab, text ='   Tasks   ')
     MainWindow.add(al_tab, text ='  Alarms  ')
+    MainWindow.add(ir_tab, text ='   ISRs   ')
     MainWindow.pack(expand = 1, fill ="both")
     
     if OsTab != None:
@@ -104,6 +108,11 @@ def show_os_config(view):
     AlmTab = gui_al_tab.AlarmTab(sg.Alarms, TskTab, AmTab, CtrTab)
     AlmTab.draw(al_tab)
 
+    if IsrTab != None:
+        del IsrTab
+    IsrTab = gui_ir_tab.IsrTab(sg.ISRs, ResTab, MsgTab)
+    IsrTab.draw(ir_tab)
+
     MainWindow.bind("<<NotebookTabChanged>>", show_os_tab_switch)
     
 
@@ -117,29 +126,40 @@ def open_file():
     sg.parse(OIL_FileName)
     show_os_config(RootView)
 
+
+def save_oil_file():
+    saved_filename = filedialog.askopenfilename(initialdir=os.getcwd()+"/tools/oil-files")
+    RootView.title(AppTitle + " [" + str(saved_filename).split("/")[-1] +"]")
+    print("Save As --> Underconstruction")
+
+
+def generate_oil_file():
+    print("Generate OIL File --> Underconstruction")
+
  
 ###############################################################################
 # Fuction: add_menus
 # args: rv - root view
 #    
 def add_menus(rv):
-    menubar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')  
-    file = tk.Menu(menubar, tearoff=0)  
-    file.add_command(label="Open OIL file", command=open_file)  
-    file.add_separator()  
-    file.add_command(label="Exit", command=rv.quit)  
-    menubar.add_cascade(label="File", menu=file)  
+    menubar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
+    file = tk.Menu(menubar, tearoff=0)
+    file.add_command(label="Open OIL file", command=open_file)
+    file.add_command(label="Save As", command=save_oil_file)
+    file.add_separator()
+    file.add_command(label="Exit", command=rv.quit)
+    menubar.add_cascade(label="File", menu=file)
 
-    view = tk.Menu(menubar, tearoff=0)  
-    view.add_command(label="OS Config", command=lambda: show_os_config(rv))  
-    menubar.add_cascade(label="View", menu=view)  
+    view = tk.Menu(menubar, tearoff=0)
+    view.add_command(label="OS Config", command=lambda: show_os_config(rv))
+    menubar.add_cascade(label="View", menu=view)
 
-    gen = tk.Menu(menubar, tearoff=0)  
-    gen.add_command(label="Generate OIL file")  
-    menubar.add_cascade(label="Generate", menu=gen)  
+    gen = tk.Menu(menubar, tearoff=0)
+    gen.add_command(label="Generate OIL file", command=generate_oil_file)
+    menubar.add_cascade(label="Generate", menu=gen)
 
-    help = tk.Menu(menubar, tearoff=0)  
-    help.add_command(label="About", command=about)  
+    help = tk.Menu(menubar, tearoff=0)
+    help.add_command(label="About", command=about)
     menubar.add_cascade(label="Help", menu=help)
     
     rv.config(menu=menubar)

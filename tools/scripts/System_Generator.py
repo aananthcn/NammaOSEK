@@ -29,6 +29,7 @@ Tasks = []
 AppModes = []
 ISRs = []
 OS_Cfgs = {}
+SrcFilePath = None
 
 
 
@@ -206,71 +207,9 @@ def parse_isr(oil_lines, line_num):
 
 
 
-def main(oilfile, gencode):
-    # Validate and open OIL file
-    print_info("Opening " + oilfile)
-    if "oil" != oilfile.split(".")[-1]:
-        print(Fore.RED + "Error: Input file is not an OIL file!", Style.RESET_ALL)
-        return -1
-    
-    if not os.path.exists(oilfile):
-        print(Fore.RED + "Error: Can't open OIL file: \""+oilfile+"\"!", Style.RESET_ALL)
-        return -1
-    
-    of = open(oilfile, "r")
-    print(Style.RESET_ALL, "\033[F")
-    
-    # Create output directory for generating source files
-    path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
-    if not os.path.exists(path):
-        print_info("Creating source file directory " + path)
-        os.mkdir(path)
-    
-    # Parse the OIL file
-    print_info("Parsing " + oilfile)
-    oil_lines = of.readlines()
-    total_lines = len(oil_lines)
-    line_num = 1
-    while line_num < total_lines:
-        words = oil_lines[line_num].split()
-        if "COUNTER" in words and "{" in oil_lines[line_num]:
-            line_num, cntr = parse_counter(oil_lines, line_num)
-            Counters.append(cntr)
-        if "ALARM" in words and "{" in oil_lines[line_num]:
-            line_num, alrms = parse_alarms(oil_lines, line_num)
-            Alarms.append(alrms)
-        if "TASK" in words and "{" in oil_lines[line_num]:
-            line_num, task = parse_tasks(oil_lines, line_num)
-            Tasks.append(task)
-        if "ISR" in words and "{" in oil_lines[line_num]:
-            line_num, isr = parse_isr(oil_lines, line_num)
-            ISRs.append(isr)
-        if "FreeOSEK_PARAMS" in words and "{" in oil_lines[line_num]:
-            line_num, os_params = parse_os_params(oil_lines, line_num, OS_Params)
-            OS_Cfgs.update(os_params)
-        if "OS" in words and "{" in oil_lines[line_num]:
-            OS_Cfgs["OS"] = words[1]
-            line_num, os_params = parse_os_params(oil_lines, line_num, OSEK_Params)
-            OS_Cfgs.update(os_params)
-        line_num += 1
-        
-    # Get CPU / Target name
-    OS_Cfgs["CPU"] = oil_lines[0].split(" ")[1]
-
-    if gencode:
-        sg_counter.generate_code(path, Counters)
-        sg_appmodes.generate_code(path, AppModes, Tasks)
-        sg_events.generate_code(path, Tasks)
-        sg_messages.generate_code(path, Tasks)
-        ResTaskList = sg_resources.generate_code(path, Tasks)
-        sg_tasks.generate_code(path, Tasks)
-        sg_alarms.generate_code(path, Alarms, Counters, Tasks)
-        sg_fifo.generate_code(path, Tasks, ResTaskList)
-        sg_os_param.generate_code(path, os_params)
-        sg_isrs.generate_code(path, ISRs)
-
-
 def parse(oilfile):
+    global SrcFilePath
+
     # Validate and open OIL file
     print_info("Opening " + oilfile)
     if "oil" != oilfile.split(".")[-1]:
@@ -285,10 +224,10 @@ def parse(oilfile):
     print(Style.RESET_ALL, "\033[F")
     
     # Create output directory for generating source files
-    path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
-    if not os.path.exists(path):
-        print_info("Creating source file directory " + path)
-        os.mkdir(path)
+    SrcFilePath = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/src"
+    if not os.path.exists(SrcFilePath):
+        print_info("Creating source file directory " + SrcFilePath)
+        os.mkdir(SrcFilePath)
     
     # Parse the OIL file
     print_info("Parsing " + oilfile)
@@ -321,11 +260,14 @@ def parse(oilfile):
     # Get CPU / Target name
     OS_Cfgs["CPU"] = oil_lines[0].split(" ")[1]
 
-    return path
+    return SrcFilePath
 
 
 
-def generate_code(path):
+def generate_code():
+    global SrcFilePath
+
+    path = SrcFilePath
     sg_counter.generate_code(path, Counters)
     sg_appmodes.generate_code(path, AppModes, Tasks)
     sg_events.generate_code(path, Tasks)
@@ -350,5 +292,5 @@ if __name__ == '__main__':
     import_or_install("colorama")
 
     oilfile = sys.argv[1]
-    path = parse(oilfile)
-    generate_code(path)
+    parse(oilfile)
+    generate_code()
