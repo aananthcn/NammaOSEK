@@ -11,7 +11,7 @@ CPU cortex-m4 {
 		USERESSCHEDULER = FALSE;
 	};
 
-	FreeOSEK_Params {
+	FreeOSEK_PARAMS {
 		OS_STACK_SIZE = 512;
 		OS_CTX_SAVE_SZ = 128;
 		IRQ_STACK_SIZE = 512;
@@ -119,11 +119,5 @@ CPU cortex-m4 {
 	ISR SystemTickISR {
 		IRQn = 4;
 		CATEGORY = 2;
-		RESOURCE = mutex1;
-		RESOURCE = RES_1;
-		RESOURCE = RES_2;
-		MESSAGE = inter_task_message;
-		MESSAGE = MSG_1;
-		MESSAGE = MSG_2;
 	};
 };

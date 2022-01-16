@@ -119,7 +119,12 @@ def show_os_config(view):
 
 def open_file():
     global OIL_FileName, AppTitle
-    OIL_FileName = filedialog.askopenfilename(initialdir=os.getcwd()+"/tools/oil-files")
+
+    init_dir = os.getcwd()
+    if os.path.exists(os.getcwd()+"/tools/oil-files"):
+        init_dir = os.getcwd()+"/tools/oil-files"
+
+    OIL_FileName = filedialog.askopenfilename(initialdir=init_dir)
     if RootView != None:
         RootView.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
 

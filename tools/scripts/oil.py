@@ -50,7 +50,7 @@ def save_oil_file(filename):
     f.write(indent*"\t" + "};\n\n")
 
     # Print FreeOSEK Parameters
-    f.write(indent*"\t" + "FreeOSEK_Params {\n")
+    f.write(indent*"\t" + "FreeOSEK_PARAMS {\n")
     indent += 1
     for item in FreeOSEK_Params:
         f.write(indent*"\t" + item + " = " + sg.OS_Cfgs[item] + ";\n")
