@@ -20,7 +20,7 @@ LDFLAGS  += -nostdlib -g -L${LIB_GCC_A_PATH} -lgcc
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += ${INCDIRS} -g
 
-$(info compilating stm32f407vet6 board specific files)
+$(info compiling stm32f407vet6 board specific files)
 #CFLAGS  += -march=armv7e-m 
 #ASFLAGS += -march=armv7e-m
 CFLAGS  += -mthumb -mthumb-interwork -march=armv7e-m -mcpu=cortex-m4 

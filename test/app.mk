@@ -11,7 +11,7 @@ LDFLAGS  += -g
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += ${INCDIRS} -g
 
-$(info compilating Test Application source files)
+$(info compiling Test Application source files)
 
 
 APP_OBJS	:= \

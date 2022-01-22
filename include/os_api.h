@@ -12,7 +12,7 @@ u32 _set_stack_ptr(u32 new_stack);
 u32 _get_stack_ptr(void);
 u32 _get_next_pc(void);
 void _set_sp_and_pc(u32 sp, u32 pc);
-void _save_context(u32 sp);
+u32 _save_context(u32 sp);
 void _restore_context(u32 sp);
 
 /* low level APIs  - Interrupt functions */

@@ -12,7 +12,7 @@ CMN_OBJS := \
 	${CWD}/kernel/os_res.o
 
 
-$(info compilating Common source files)
+$(info compiling Common source files)
 
 OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(ARCH_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
 

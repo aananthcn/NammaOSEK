@@ -16,7 +16,7 @@ LDFLAGS  += -nostdlib -g
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += ${INCDIRS} -g
 
-$(info compilating for "-m armelf")
+$(info compiling for "-m armelf")
 #CFLAGS  += -march=armv7-m -mcpu=cortex-m4
 #ASFLAGS += -march=armv7-m -mcpu=cortex-m4
 #CFLAGS  += -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 

@@ -12,7 +12,7 @@ LDFLAGS  += -g -lrt
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += ${INCDIRS} -g
 
-$(info compilating for "Linux PC")
+$(info compiling for "Linux PC")
 
 
 BRD_OBJS	:= \

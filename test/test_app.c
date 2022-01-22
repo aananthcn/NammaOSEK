@@ -9,7 +9,10 @@
 
 #define GETEVENT_TEST
 #define GET_RELEASE_RESOURCE_TEST
-//#define SCHEDULE_TEST
+#define SCHEDULE_TEST
+//#define TERMINATE_TASK_TEST
+//#define CHAINTASK_TEST
+
 
 /*#############*/
 // this block of code is writte only for testing purpose, doesn't mean that

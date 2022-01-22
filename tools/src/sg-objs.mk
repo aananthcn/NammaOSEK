@@ -11,7 +11,7 @@ LDFLAGS  += -g
 CFLAGS   += -Werror ${INCDIRS} -g
 ASFLAGS  += ${INCDIRS} -g
 
-$(info compilating System Generator source files)
+$(info compiling System Generator source files)
 
 
 SG_OBJS	:= \
