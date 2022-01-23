@@ -7,6 +7,7 @@
 typedef struct {
 	u32 activations;
 	u32 sp_top;
+	u32 sp_ctx;
 	u32 sp_tsk;
         TaskStateType state;
 	bool context_saved; /* this will be true for schedule() and premption cases */

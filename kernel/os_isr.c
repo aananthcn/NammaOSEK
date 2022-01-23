@@ -31,7 +31,7 @@ Parameters: none
 Description: This service restores the state saved by DisableAllInterrupts.
 /*/
 void EnableAllInterrupts(void) {
-	_OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
+	_OsIsrBitsSaved = _clear_interrupt_bits(ENABLE_INTERRUPT);
 }
 
 

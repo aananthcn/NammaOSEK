@@ -53,6 +53,8 @@ void StartOS(AppModeType mode) {
 	_OsKernelSp = _get_stack_ptr();
 	_OsKernelPc = _get_next_pc();
 
+re_entry_point:
+
 	EnableAllInterrupts();
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		OsScheduleTasks();

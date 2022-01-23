@@ -3,12 +3,16 @@
 #include <os_api.h>
 
 #include <osek_sg.h>
+#include <board.h>
 
+
+#if BOARD == STM32F407VET6
 #include "stm32f407vet6.h"
+#endif
 
 
 #define GETEVENT_TEST
-#define GET_RELEASE_RESOURCE_TEST
+//#define GET_RELEASE_RESOURCE_TEST
 #define SCHEDULE_TEST
 //#define TERMINATE_TASK_TEST
 //#define CHAINTASK_TEST
@@ -105,12 +109,16 @@ TASK(Task_A) {
 	EnableAllInterrupts();
 #endif
 
-	// Test code, should be removed after STM32F407VET6 bringup is completed!
+#if BOARD == STM32F407VET6
+	// Test code - turn on/off LED D2 & D3 on the board
 	GPIOA_MODER |= ((1 << 14) | (1 << 12)); // LED - PA7, PA6: GPIO mode
+#endif
 
 	if (toggle_bit) {
 		toggle_bit = false;
+#if BOARD == STM32F407VET6
 		GPIOA_ODR |= 0x40;
+#endif
 		SetEvent(1, 0x101);
 		pr_log("Task A: Triggered event for Task B\n");
 		GetEvent(1, &Event);
@@ -123,7 +131,9 @@ TASK(Task_A) {
 	}
 	else {
 		toggle_bit = true;
+#if BOARD == STM32F407VET6
 		GPIOA_ODR &= ~(0x40);
+#endif
 		#ifdef GET_RELEASE_RESOURCE_TEST
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
 		GetResource(RES(mutex1));
@@ -132,6 +142,8 @@ TASK(Task_A) {
 	}
 #endif
 }
+
+
 
 TASK(Task_B) {
 	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
@@ -156,18 +168,26 @@ TASK(Task_B) {
 	static bool toggle_bit;
 	if (toggle_bit) {
 		toggle_bit = false;
+#if BOARD == STM32F407VET6
 		GPIOA_ODR |= 0x80;
+#endif
 	}
 	else {
 		toggle_bit = true;
+#if BOARD == STM32F407VET6
 		GPIOA_ODR &= ~(0x80);
+#endif
 	}
 
 }
+
+
 
 TASK(Task_C) {
 	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());
 }
+
+
 
 void Alarm_uSecAlarm_callback(void) {
 	pr_log("%s, sp=0x%08X\n", __func__, _get_stack_ptr());

@@ -108,6 +108,8 @@ Running FreeOSEK on QEMU (ARM926EJ-S)
 To run the image on QEMU, use the following command
 * `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -kernel osek-os.bin`
 
+To stop QEMU running in -nographic mode, type the following
+* `CTRL+a x`
 <br>
 
 Debugging FreeOSEK on QEMU (ARM926EJ-S)

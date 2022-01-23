@@ -93,7 +93,7 @@ static inline int OsScheduleCall(OsTaskType* task) {
 
 	if (_OsTaskCtrlBlk[task->id].context_saved) {
 		/* continue task from where it was switched before */
-		_restore_context(_OsTaskCtrlBlk[task->id].sp_top);
+		_restore_context(_OsTaskCtrlBlk[task->id].sp_ctx);
 		/* The call shouldn't return here after the above call */
 		/* instead it should return from the else block below  */
 	}
@@ -251,15 +251,17 @@ Description: If a higher-priority task is ready, the internal resource of the
 	     Otherwise the calling task is continued.
 /*/
 StatusType Schedule(void) {
-	u32 sp_top_new;
+	u32 sp_ctx;
+	//pr_log("sp_top: %X\n", _OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
 	/* save the context of this task, for resuming later */
-	sp_top_new = _save_context(_OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
+	sp_ctx = _save_context(_OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
 	/* return if this call is resuming from previous context save */
 	if (_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved) {
 		_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = false;
 		return E_OK;
 	}
-	_OsTaskCtrlBlk[_OsCurrentTask.id].sp_top = sp_top_new;
+	//pr_log("sp_ctx: %X\n", sp_ctx);
+	_OsTaskCtrlBlk[_OsCurrentTask.id].sp_ctx = sp_ctx;
 	_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = true;
 
 	/* add this task to ready queue, as the scheduler would have removed it */

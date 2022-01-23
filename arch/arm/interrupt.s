@@ -58,7 +58,7 @@ Description: This function clears the FIRQ and IRQ bits as passed as arguments.
  _clear_interrupt_bits:
         and r0, r0, #0xC0       @ clear bits other than 6th and 7th
         mrs r2, cpsr
-        bic r1, r2, #0xC0       @ clear bits other than 6th and 7th
+        bic r1, r2, #0xC0       @ clear 6th and 7th bits
         orr r0, r1, r0
         msr cpsr, r0
         mov r0, r2

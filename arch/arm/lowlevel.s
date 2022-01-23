@@ -45,7 +45,7 @@ _get_stack_ptr:
  *              the point this function was called from.
 /*/
 _get_next_pc:
-	mov r0, lr 
+	mov r0, lr
 	mov pc, lr
 
 
@@ -72,7 +72,9 @@ _set_sp_and_pc:
  *              argument passed.
 /*/
 _save_context:
+	mov r1, r0
 	stmia   r0!, {r4 - sl, fp, sp, lr}   @ sl = r10, stack limit
+	mov r0, r1
 	mov pc, lr
 
 
@@ -85,7 +87,7 @@ _save_context:
  *              the argument passed.
 /*/
 _restore_context:
-	ldmia   r0!, {r4 - sl, fp, sp, pc}      @ Load all regs saved previously
+	ldmia   r0!, {r4 - sl, fp, sp, lr}      @ Load all regs saved previously
 	mov pc, lr
 
 

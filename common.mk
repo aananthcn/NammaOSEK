@@ -1,5 +1,6 @@
 TARGET = osek-os
 
+INCDIRS  += -I ${CWD}/board
 
 CMN_OBJS := \
 	${CWD}/kernel/os_entry.o \

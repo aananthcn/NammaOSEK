@@ -32,7 +32,12 @@ int console_fputs(const char *s) {
 }
 
 
-#define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */ 
+#if 0
+/* The timer on our QEMU system defaults to using a 1MHz reference. */
+#define TIMER_CLK_TO_MILLISEC   (1000) /* 1 MHz == 1000 cycles / milli-sec */
+#endif
+
+#define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */
 /* System Clock = 1 MHz. The timer on our QEMU system defaults to using a 1MHz reference. */
 #define SYSTEM_CLOCK_MHz        (1)
 
@@ -58,8 +63,7 @@ int brd_get_usec_syscount(u32 *ucount) {
         count = (u32)0xFFFFFFFF - *((volatile u32*)(TIMER1_BASE+TIMERVALUE_OFFSET));
 
         /* convert to ucount so that the count value == 1 usec */
-        *ucount = (u32)((count * 1000ull) / TIMER_CLK_TO_MILLISEC);
-        //*ucount = count;
+        *ucount = (u32)((count * 1000ull) / CLOCK_SEC2MSEC);
 
         return 0;
 }
