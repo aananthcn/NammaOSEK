@@ -3,10 +3,8 @@
 print_usage()
 {
   printf "usage: ./configure <board-name>\n"
-  printf "Supported boards:\n  1) ble-carbon\n"
-  printf "  2) linux-app\n"
-  printf "  3) qemu-versatilepb\n"
-  printf "  4) stm32f407vet6\n"
+  printf "Supported boards:\n  1) stm32f407vet6\n"
+  printf "  2) qemu-versatilepb\n"
   printf "\n"
 }
 

@@ -13,23 +13,23 @@
 
 
 /* Serial console functions */
+int console_fputc(const int c) {
+        UART0DR = (unsigned int) (c);
+        return c;
+}
+
+
 int console_fputs(const char *s) {
         int count = 0;
 
         while (*s != '\0') {
-                UART0DR = (unsigned int)(*s);
+                console_fputc(*s);
                 count++;
                 s++;
         }
 
         return count;
 }
-
-int console_fputc(const int c) {
-        UART0DR = (unsigned int) (c);
-        return c;
-}
-
 
 
 #define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */ 
