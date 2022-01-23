@@ -10,6 +10,14 @@ CPU cortex-m4 {
 		USEPARAMETERACCESS = FALSE;
 		USERESSCHEDULER = FALSE;
 	};
+
+	FreeOSEK_PARAMS {
+		OS_STACK_SIZE = 512;
+		OS_CTX_SAVE_SZ = 128;
+		IRQ_STACK_SIZE = 512;
+		TASK_STACK_SIZE = 2560;
+	};
+
 	TASK Task_A {
 		PRIORITY = 1;
 		SCHEDULE = NON;
@@ -23,6 +31,7 @@ CPU cortex-m4 {
 		MESSAGE = inter_task_message;
 		STACK_SIZE = 512;
 	};
+
 	TASK Task_B {
 		PRIORITY = 2;
 		SCHEDULE = NON;
@@ -32,6 +41,7 @@ CPU cortex-m4 {
 		MESSAGE = inter_task_message;
 		STACK_SIZE = 512;
 	};
+
 	TASK Task_C {
 		PRIORITY = 3;
 		SCHEDULE = NON;
@@ -43,6 +53,7 @@ CPU cortex-m4 {
 		EVENT = event2;
 		STACK_SIZE = 512;
 	};
+
 	TASK Task_D {
 		PRIORITY = 4;
 		SCHEDULE = NON;
@@ -51,18 +62,21 @@ CPU cortex-m4 {
 		RESOURCE = mutex1;
 		STACK_SIZE = 512;
 	};
+
 	COUNTER mSecCounter {
 		MINCYCLE = 1;
 		MAXALLOWEDVALUE = 0xFFFFFFFF;
 		TICKSPERBASE = 1;
 		TICKDURATION = 1000000; /* nsec */
 	};
+
 	COUNTER uSecCounter {
 		MINCYCLE = 100;
 		MAXALLOWEDVALUE = 0xFFFFFFFF;
 		TICKSPERBASE = 1;
 		TICKDURATION = 1000; /* nsec */
 	};
+
 	ALARM WakeTaskA {
 		COUNTER = mSecCounter;
 		ACTION = ACTIVATETASK {
@@ -70,7 +84,7 @@ CPU cortex-m4 {
 		};
 		AUTOSTART = TRUE {
 			ALARMTIME = 40;
-			CYCLETIME = 500;
+			CYCLETIME = 250;
 			APPMODE = OSDEFAULTAPPMODE;
 			APPMODE = MANUFACT_MODE;
 		};
@@ -105,12 +119,5 @@ CPU cortex-m4 {
 	ISR SystemTickISR {
 		IRQn = 4;
 		CATEGORY = 2;
-	};
-
-	FreeOSEK_PARAMS {
-		OS_STACK_SIZE = 512;
-		OS_CTX_SAVE_SZ = 128;
-		IRQ_STACK_SIZE = 512;
-		TASK_STACK_SIZE = 2560;
 	};
 };

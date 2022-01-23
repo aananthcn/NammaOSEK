@@ -26,13 +26,13 @@ Motivation to create an OS came from **Ashokkumar Narayanan** (one of my best bu
 
 ### Supported Boards
  * qemu-versatilepb
- * *...more boards will be added later*
+ * stm32f407vet6
 
 <br>
 
 FreeOSEK High Level Architecture
 ---
-The FreeOSEK project uses Excel document as system configuration UI tool and Python scripts as code generators. The workflow supported by FreeOSEK is shown in picture below.
+The FreeOSEK project uses a python (tkinter) based GUI as system configuration UI which can help developers to edit and save OS configs to OIL file. Then it can invoke Python scripts as code generators to convert the OIL file to C source file. The workflow supported by FreeOSEK is shown in picture below.
 ![High Level Architecture and Workflow](https://github.com/aananthcn/FreeOSEK/blob/main/doc/workflow.png)
 
 OSEK Features & Status
@@ -93,12 +93,13 @@ Cloning & Building FreeOSEK
 
 Configuring & (Re-)Generating OIL files and Source files
 ---
-* Open OSEK-Builder.xlsx from ./tools folderpath.
-  * Open different tabs on the excel document, edit according to your application needs and then save it.
-* Run `python tools/scripts/OSEK-Builder.py ./tools/OSEK-Builder.xlsx`
-  * You should see the `osek_os-cortex_m4.oil` file in folder ./tools/oil-files
-  * Note: The name osek_os-cortex_m4.oil comes from the `OSEK-Builder.xlsx` -> `OS` tab -> `CPU` & `OS NAME` fields. If you change them, then the oil file name will change accordingly.
-* Then run `python tools/scripts/System-Generator.py tools/oil-files/osek_os-cortex_m4.oil`
+* Open Windows command prompt and change directory to FreeOSEK (the cloned directory)
+* Run `python tools\osek-builder-gui.py` in Windows command prompt.
+  * You should see a GUI (tkinter based) opening. Do the following:
+    * File -> "Open OIL File" -> select "osek_os-cortex-m4.oil"
+    * Naviage through different tabs, make edits
+    * File -> "Save As", and save it with same or different file name.
+    * Generate -> "Generate Source"
 * After the last step above, you should see new source files generated in path ./tools/src
 
 <br>
