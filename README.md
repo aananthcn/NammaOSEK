@@ -74,24 +74,35 @@ Prerequisites
    * Windows 10 + WSL2 + Ubuntu 20.04 inside WLS2
  * Install following packages inside Ubuntu
    * `apt install gcc-arm-none-eabi qemu-system-arm gdb-multiarch python3`
-
 <br>
 
-Cloning & Building FreeOSEK
+Cloning FreeOSEK
 ---
 * `git clone git@github.com:aananthcn/FreeOSEK.git`
-* `cd FreeOSEK`
-* `./configure qemu-versatilepb`
-* `make`
-* Here you should see following output files created in the current directory
+<br>
+
+Board selection
+---
+* `cd FreeOSEK` (Move to the cloned location)
+* Run `./configure` to know the list of boards supported
+* `./configure qemu-versatilepb` to select QEMU board
+* Always do a `make clean` after selecting the board.
+<br>
+
+
+
+Building the FreeOSEK image
+---
+* `cd FreeOSEK` (Move to the cloned location)
+* `make` 
+* After a successfuld build, you should see following output files created in the current directory
   * osek-os.bin
   * osek-os.elf
   * osek-os.map
-
 <br>
 
 
-Configuring & (Re-)Generating OIL files and Source files
+Configuring FreeOSEK & (Re-)Generating OIL files and Source files
 ---
 * Open Windows command prompt and change directory to FreeOSEK (the cloned directory)
 * Run `python tools\osek-builder-gui.py` in Windows command prompt.
@@ -101,8 +112,9 @@ Configuring & (Re-)Generating OIL files and Source files
     * File -> "Save As", and save it with same or different file name.
     * Generate -> "Generate Source"
 * After the last step above, you should see new source files generated in path ./tools/src
-
+* Now, go to section "**Building the FreeOSEK image**" (above) to rebuild FreeOSEK.
 <br>
+
 
 Running FreeOSEK on QEMU (ARM926EJ-S)
 ----
