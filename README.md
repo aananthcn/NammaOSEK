@@ -28,6 +28,9 @@ Motivation to create an OS came from **Ashokkumar Narayanan** (one of my best bu
  * qemu-versatilepb
  * stm32f407vet6
 
+### Python based GUI
+![OSEK Builder](https://github.com/aananthcn/FreeOSEK/blob/main/doc/gui-taskview.png)
+
 <br>
 
 FreeOSEK High Level Architecture
