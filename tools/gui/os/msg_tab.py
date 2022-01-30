@@ -4,8 +4,8 @@ from tkinter import ttk
 
 
 class MessageTab:
-    n_msgs = 1
-    max_msgs = 1024*5
+    n_msgs = 0
+    max_msgs = 4*1024
     n_msgs_str = None
     msgs_str = []
     msgs = []
@@ -26,9 +26,11 @@ class MessageTab:
             self.msgs_str.insert(i, tk.StringVar())
             self.msgs_str[i].set(self.msgs[i])
 
+
     def __del__(self):
         del self.n_msgs_str
         del self.msgs_str[:]
+
 
     def update_msgs(self, mstr):
         self.n_msgs = int(mstr.get())
@@ -37,6 +39,7 @@ class MessageTab:
             if i >= self.HeaderObjs:
                 item.destroy()
         self.update()
+
 
     def draw(self, tab):
         tab.grid_rowconfigure(0, weight=1)
@@ -70,7 +73,7 @@ class MessageTab:
         label = tk.Label(self.mnf, text="No. of Messages:")
         label.grid(row=0, column=0, sticky="w")
         spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_msgs_str, command=lambda: self.update_msgs(self.n_msgs_str),
-                    values=tuple(range(1,self.max_msgs)))
+                    values=tuple(range(0,self.max_msgs)))
         self.n_msgs_str.set(self.n_msgs)
         spinb.grid(row=0, column=1, sticky="w")
 

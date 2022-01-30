@@ -61,6 +61,9 @@ class TaskTab:
 
     def __init__(self, tasks, amtab, rstab, mstab):
         self.sg_tasks = tasks
+        if not self.sg_tasks:
+            ntask = self.create_empty_task()
+            self.sg_tasks.append(ntask)
         self.n_tasks = len(self.sg_tasks)
         self.n_tasks_str = tk.StringVar()
         del self.tasks_str[:]
@@ -82,16 +85,16 @@ class TaskTab:
         task = {}
         
         # Use the last task's name and numbers to ease the edits made by user 
-        task["Task Name"] = self.sg_tasks[-1]["Task Name"]
-        task["PRIORITY"] = self.sg_tasks[-1]["PRIORITY"]
-        task["SCHEDULE"] = self.sg_tasks[-1]["SCHEDULE"] # Pre-emption (NON / FULL)
-        task["ACTIVATION"] = self.sg_tasks[-1]["ACTIVATION"]
+        task["Task Name"] = "Task_"
+        task["PRIORITY"] = "0"
+        task["SCHEDULE"] = "NON" # Pre-emption (NON / FULL)
+        task["ACTIVATION"] = "1"
         task["AUTOSTART"] = "FALSE"
         task["AUTOSTART_APPMODE"] = []
         task["RESOURCE"] = []
         task["EVENT"] = []
         task["MESSAGE"] = []
-        task["STACK_SIZE"] = self.sg_tasks[-1]["STACK_SIZE"]
+        task["STACK_SIZE"] = "128"
 
         return task
 

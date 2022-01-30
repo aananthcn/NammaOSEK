@@ -72,6 +72,9 @@ class AlarmTab:
 
     def __init__(self, alarms, tktab, amtab, crtab):
         self.sg_alarms = alarms
+        if not self.sg_alarms:
+            nalarm = self.create_empty_alarm()
+            self.sg_alarms.append(nalarm)
         self.n_alarms = len(self.sg_alarms)
         self.n_alarms_str = tk.StringVar()
         for i in range(self.n_alarms):
@@ -92,10 +95,10 @@ class AlarmTab:
         alarm = {}
         
         # Use the last alarm's name and numbers to ease the edits made by user 
-        alarm["Alarm Name"] = self.sg_alarms[-1]["Alarm Name"]
-        alarm["COUNTER"] = self.sg_alarms[-1]["COUNTER"]
-        alarm["Action-Type"] = self.sg_alarms[-1]["Action-Type"] # Pre-emption (NON / FULL)
-        alarm["arg1"] = self.sg_alarms[-1]["arg1"]
+        alarm["Alarm Name"] = "ALARM_"
+        alarm["COUNTER"] = "" # self.sg_alarms[-1]["COUNTER"]
+        alarm["Action-Type"] = "ACTIVATETASK" 
+        alarm["arg1"] = ""
         alarm["arg2"] = "FALSE"
         alarm["IsAutostart"] = "FALSE"
         alarm["ALARMTIME"] = "0"

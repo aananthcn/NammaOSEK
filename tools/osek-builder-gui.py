@@ -117,8 +117,17 @@ def show_os_config(view):
     MainWindow.bind("<<NotebookTabChanged>>", show_os_tab_switch)
     
 
+def new_file():
+    global RootView
+    global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
+
+    sg.sg_reset()
+    show_os_config(RootView)
+
+
+
 def open_file():
-    global OIL_FileName, AppTitle
+    global RootView, OIL_FileName, AppTitle
 
     init_dir = os.getcwd()
     if os.path.exists(os.getcwd()+"/tools/oil-files"):
@@ -175,6 +184,7 @@ def generate_oil_file():
 def add_menus(rv):
     menubar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
     file = tk.Menu(menubar, tearoff=0)
+    file.add_command(label="New", command=new_file)
     file.add_command(label="Open OIL file", command=open_file)
     file.add_command(label="Save As", command=save_oil_file)
     file.add_separator()

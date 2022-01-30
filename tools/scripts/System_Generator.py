@@ -300,13 +300,15 @@ def generate_code():
 
 
 def sg_reset():
-    global Counters, Alarms, Tasks, AppModes, ISRs
+    global Counters, Alarms, Tasks, AppModes, ISRs, OS_Cfgs, SrcFilePath
 
     del Counters[:]
     del Alarms[:]
     del Tasks[:]
     del AppModes[:]
     del ISRs[:]
+    OS_Cfgs = {}
+    SrcFilePath = None
 
 
 if __name__ == '__main__':

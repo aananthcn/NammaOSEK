@@ -51,6 +51,9 @@ class IsrTab:
 
     def __init__(self, isrs, rstab, mstab):
         self.sg_isrs = isrs
+        if not self.sg_isrs:
+            nisr = self.create_empty_isr()
+            self.sg_isrs.append(nisr)
         self.n_isrs = len(self.sg_isrs)
         self.n_isrs_str = tk.StringVar()
         del self.isrs_str[:]
@@ -71,9 +74,12 @@ class IsrTab:
         isr = {}
         
         # Use the last isr's name and numbers to ease the edits made by user 
-        isr["ISR Name"] = self.sg_isrs[-1]["ISR Name"]
-        isr["IRQn"] = int(self.sg_isrs[-1]["IRQn"]) + 1
-        isr["CATEGORY"] = self.sg_isrs[-1]["CATEGORY"] # Pre-emption (NON / FULL)
+        isr["ISR Name"] = "ISR_"
+        if not self.sg_isrs:
+            isr["IRQn"] = "1"
+        else:
+            isr["IRQn"] = int(self.sg_isrs[len(self.sg_isrs)-1]["IRQn"]) + 1
+        isr["CATEGORY"] = "1"
         isr["RESOURCE"] = []
         isr["MESSAGE"] = []
 

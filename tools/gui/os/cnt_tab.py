@@ -43,7 +43,11 @@ class CounterTab:
     def __init__(self, cntrs):
         self.N_Counters_str = tk.StringVar(value=self.N_Counters)
         self.Counters = cntrs
-        self.N_Counters = len(cntrs)
+        if not cntrs:
+            ctr = self.create_empty_counter()
+            self.Counters.append(ctr)
+
+        self.N_Counters = len(self.Counters)
         del self.Ctr_StrVar[:]
         for i in range(self.N_Counters):
             self.Ctr_StrVar.insert(i, CounterStr(self.Counters[i]['Counter Name'],
@@ -149,10 +153,11 @@ class CounterTab:
         counter = {}
         
         # Use the last counter's name and numbers to ease the edits made by user 
-        counter["Counter Name"] = self.Counters[-1]["Counter Name"]
-        counter["MINCYCLE"] = self.Counters[-1]["MINCYCLE"]
-        counter["MAXALLOWEDVALUE"] = self.Counters[-1]["MAXALLOWEDVALUE"]
-        counter["TICKSPERBASE"] = self.Counters[-1]["TICKSPERBASE"]
-        counter["TICKDURATION"] = self.Counters[-1]["TICKDURATION"]
+        counter["Counter Name"] = "COUNTER_"
+        counter["MINCYCLE"] = "1"
+        counter["MAXALLOWEDVALUE"] = "0xFFFFFFFF" 
+        counter["TICKSPERBASE"] = "1"
+        counter["TICKDURATION"] = "1000000"
+
 
         return counter

@@ -9,13 +9,17 @@ class OsTab:
 
     def __init__(self, oscfg, tasks):
         self.sg_oscfg = oscfg
+        if not oscfg:
+            self.create_empty_os_config()
         self.sg_tasks = tasks
         for i in range(self.N_StrVar):
             self.OS_StrVar.insert(i, tk.StringVar())
 
+
     def __del__(self):
         del self.OS_StrVar[:]
         self.sg_oscfg = None
+
 
     def draw(self, tab):
         # 1) CPU / SoC - Label + Edit-box
@@ -174,3 +178,22 @@ class OsTab:
         self.sg_oscfg["IRQ_STACK_SIZE"]        = self.OS_StrVar[12].get()
         self.sg_oscfg["OS_CTX_SAVE_SZ"]        = self.OS_StrVar[13].get()
         self.sg_oscfg["TASK_STACK_SIZE"]       = self.OS_StrVar[14].get()
+    
+    
+    def create_empty_os_config(self):
+        # Backup to system generator global variables
+        self.sg_oscfg["CPU"]                   = ""
+        self.sg_oscfg["OS"]                    = ""
+        self.sg_oscfg["STATUS"]                = "STANDARD"
+        self.sg_oscfg["STARTUPHOOK"]           = "FALSE"
+        self.sg_oscfg["ERRORHOOK"]             = "FALSE"
+        self.sg_oscfg["SHUTDOWNHOOK"]          = "FALSE"
+        self.sg_oscfg["PRETASKHOOK"]           = "FALSE"
+        self.sg_oscfg["POSTTASKHOOK"]          = "FALSE"
+        self.sg_oscfg["USEGETSERVICEID"]       = "FALSE"
+        self.sg_oscfg["USEPARAMETERACCESS"]    = "FALSE"
+        self.sg_oscfg["USERESSCHEDULER"]       = "FALSE"
+        self.sg_oscfg["OS_STACK_SIZE"]         = "512"
+        self.sg_oscfg["IRQ_STACK_SIZE"]        = "512"
+        self.sg_oscfg["OS_CTX_SAVE_SZ"]        = "128"
+        self.sg_oscfg["TASK_STACK_SIZE"]       = "0"

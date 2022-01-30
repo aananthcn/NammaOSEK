@@ -13,6 +13,8 @@ class AmTab:
     def __init__(self, appmodes):
         self.N_AppModes_str = tk.StringVar()
         self.AppModes = appmodes
+        if "OSDEFAULTAPPMODE" not in self.AppModes:
+            self.AppModes.insert(0, "OSDEFAULTAPPMODE")
         self.N_AppModes = len(appmodes)
         n_strvar = self.N_AppModes
         self.destroy_old_strvars()
