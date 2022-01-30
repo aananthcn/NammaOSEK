@@ -27,7 +27,7 @@ CPU cortex-m4 {
 			APPMODE = MANUFACT_MODE;
 			APPMODE = HW_TEST_MODE;
 		};
-		RESOURCE = mutex1;
+		RESOURCE = RES_MUTEX1;
 		MESSAGE = inter_task_message;
 		STACK_SIZE = 512;
 	};
@@ -59,7 +59,7 @@ CPU cortex-m4 {
 		SCHEDULE = NON;
 		ACTIVATION = 1;
 		AUTOSTART = FALSE;
-		RESOURCE = mutex1;
+		RESOURCE = RES_MUTEX1;
 		STACK_SIZE = 512;
 	};
 

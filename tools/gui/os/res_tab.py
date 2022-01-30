@@ -130,4 +130,9 @@ class ResourceTab:
                 for res in task["RESOURCE"]:
                     if res not in self.ress:
                         self.ress.append(res)
+
+        # OSEK spec mandates having RES_SCHEDULER as the default/1st resource.
+        if "RES_SCHEDULER" not in self.ress:
+            self.ress.insert(0, "RES_SCHEDULER")
+
         return tasks
