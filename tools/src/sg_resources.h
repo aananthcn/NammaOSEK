@@ -7,7 +7,7 @@
 #define RES(x)  RES_##x
 
 typedef enum {
-	RES_mutex1,
+	RES_RES_MUTEX1,
 	MAX_RESOURCE_ID
 } OsResourcesType;
 
@@ -22,7 +22,7 @@ typedef struct {
 extern const OsResMapType _OsResList[];
 
 
-DeclareResource(mutex1);
+DeclareResource(RES_MUTEX1);
 
 
 #endif

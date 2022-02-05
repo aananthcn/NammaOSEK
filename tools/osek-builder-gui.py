@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, os.getcwd()+"/tools/scripts")
 import scripts.System_Generator as sg
 import scripts.oil as oil
+import scripts.arxml.arxml as arxml
 
 import tkinter as tk
 from tkinter import messagebox
@@ -25,6 +26,8 @@ import gui.os.isr_tab as gui_ir_tab
 
 # Globals
 MainWindow = None
+MenuBar = None
+FileMenu = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
@@ -117,21 +120,23 @@ def show_os_config(view):
     MainWindow.bind("<<NotebookTabChanged>>", show_os_tab_switch)
     
 
+
 def new_file():
     global RootView
     global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
 
     sg.sg_reset()
     show_os_config(RootView)
+    FileMenu.entryconfig("Save As", state="normal")
 
 
 
-def open_file():
+def open_oil_file():
     global RootView, OIL_FileName, AppTitle
 
     init_dir = os.getcwd()
-    if os.path.exists(os.getcwd()+"/tools/oil-files"):
-        init_dir = os.getcwd()+"/tools/oil-files"
+    if os.path.exists(os.getcwd()+"/output/oil-files"):
+        init_dir = os.getcwd()+"/output/oil-files"
 
     OIL_FileName = filedialog.askopenfilename(initialdir=init_dir)
     if RootView != None:
@@ -140,13 +145,16 @@ def open_file():
     # Make System Generator to parse, so that we can use the content in GUI.
     sg.parse(OIL_FileName)
     show_os_config(RootView)
+    FileMenu.entryconfig("Export to ARXML", state="normal")
+    FileMenu.entryconfig("Save As", state="normal")
+
 
 
 def save_oil_file():
     global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
 
     file_exts = [('Oil Files', '*.oil')]
-    saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/tools/oil-files", filetypes = file_exts, defaultextension = file_exts)
+    saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/oil-files", filetypes = file_exts, defaultextension = file_exts)
     if saved_filename == None:
         messagebox.showinfo("OSEK Builder", "File to save is not done correctly, saving aborted!")
         return
@@ -176,34 +184,41 @@ def generate_oil_file():
 
 
 
+def arxml_export():
+    arxml_path = os.getcwd()+"/output/arxml"
+    arxml.export(arxml_path)
+
  
 ###############################################################################
 # Fuction: add_menus
 # args: rv - root view
 #    
 def add_menus(rv):
-    menubar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
-    file = tk.Menu(menubar, tearoff=0)
-    file.add_command(label="New", command=new_file)
-    file.add_command(label="Open OIL file", command=open_file)
-    file.add_command(label="Save As", command=save_oil_file)
-    file.add_separator()
-    file.add_command(label="Exit", command=rv.quit)
-    menubar.add_cascade(label="File", menu=file)
+    global MenuBar, FileMenu
+    MenuBar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
+    FileMenu = tk.Menu(MenuBar, tearoff=0)
+    FileMenu.add_command(label="New", command=new_file)
+    FileMenu.add_command(label="Open OIL File", command=open_oil_file)
+    FileMenu.add_command(label="Save As", command=save_oil_file, state="disabled")
+    FileMenu.add_separator()
+    FileMenu.add_command(label="Export to ARXML", command=arxml_export, state="disabled")
+    FileMenu.add_separator()
+    FileMenu.add_command(label="Exit", command=rv.quit)
+    MenuBar.add_cascade(label="File", menu=FileMenu)
 
-    view = tk.Menu(menubar, tearoff=0)
+    view = tk.Menu(MenuBar, tearoff=0)
     view.add_command(label="OS Config", command=lambda: show_os_config(rv))
-    menubar.add_cascade(label="View", menu=view)
+    MenuBar.add_cascade(label="View", menu=view)
 
-    gen = tk.Menu(menubar, tearoff=0)
+    gen = tk.Menu(MenuBar, tearoff=0)
     gen.add_command(label="Generate Source", command=generate_oil_file)
-    menubar.add_cascade(label="Generate", menu=gen)
+    MenuBar.add_cascade(label="Generate", menu=gen)
 
-    help = tk.Menu(menubar, tearoff=0)
+    help = tk.Menu(MenuBar, tearoff=0)
     help.add_command(label="About", command=about)
-    menubar.add_cascade(label="Help", menu=help)
+    MenuBar.add_cascade(label="Help", menu=help)
     
-    rv.config(menu=menubar)
+    rv.config(menu=MenuBar)
 
 
 

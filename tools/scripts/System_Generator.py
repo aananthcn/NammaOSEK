@@ -36,7 +36,7 @@ SrcFilePath = None
 
 # Functions
 def print_usage(prog):
-    print("Usage:\n\t python " + prog + " tools/oil-files/*.oil")
+    print("Usage:\n\t python " + prog + " output/oil-files/*.oil")
 
 
 
@@ -233,8 +233,8 @@ def parse(oilfile):
     print(Style.RESET_ALL, "\033[F")
     
     # Generate source in src folder under tools, else create it in current directory
-    if oilfile.split("/")[-2] == "oil-files" and oilfile.split("/")[-3] == "tools":
-        path = "/".join(oilfile.split("/")[0:-2]) + "/src"
+    if oilfile.split("/")[-2] == "oil-files" and oilfile.split("/")[-3] == "output":
+        path = "/".join(oilfile.split("/")[0:-3]) + "/tools/src"
     else:
         path = "/".join(oilfile.split("/")[0:-1]) + "/src"
     set_source_file_path(path)

@@ -159,7 +159,7 @@ def print_oil_item_type1(f, task, tkey, okey, indent):
 
 def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
     # open or create output file
-    path = "/".join(os.path.abspath(__file__).split("/")[0:-2]) + "/oil-files"
+    path = "/".join(os.path.abspath(__file__).split("/")[0:-3]) + "/output/oil-files"
     oil_file_name = OsData["os_name"]+"-"+OsData["cpu"]+".oil"
     full_filename = path+"/"+oil_file_name
     f = open(full_filename, "w")
