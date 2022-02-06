@@ -131,14 +131,18 @@ def new_file():
 
 
 
-def open_oil_file():
+def open_oil_file(fpath):
     global RootView, OIL_FileName, AppTitle
 
     init_dir = os.getcwd()
     if os.path.exists(os.getcwd()+"/output/oil-files"):
         init_dir = os.getcwd()+"/output/oil-files"
 
-    OIL_FileName = filedialog.askopenfilename(initialdir=init_dir)
+    if fpath == None:
+        OIL_FileName = filedialog.askopenfilename(initialdir=init_dir)
+    else:
+        OIL_FileName = fpath
+
     if RootView != None:
         RootView.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
 
@@ -198,7 +202,7 @@ def add_menus(rv):
     MenuBar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
     FileMenu = tk.Menu(MenuBar, tearoff=0)
     FileMenu.add_command(label="New", command=new_file)
-    FileMenu.add_command(label="Open OIL File", command=open_oil_file)
+    FileMenu.add_command(label="Open OIL File", command=lambda: open_oil_file(None))
     FileMenu.add_command(label="Save As", command=save_oil_file, state="disabled")
     FileMenu.add_separator()
     FileMenu.add_command(label="Export to ARXML", command=arxml_export, state="disabled")
@@ -225,9 +229,22 @@ def add_menus(rv):
 def textBox():
     print(textb.get())
 
-    
 
-def main():
+def init_view_setup(fpath, ftype):
+    print("filepath", fpath)
+    print("ftype", ftype)
+    if ftype == None or fpath == None:
+        return
+    elif ftype == "oil":
+        open_oil_file(fpath)
+    elif ftype == "arxml":
+        print("opening arxml is under constructions!")
+    else:
+        print("Unsupported filetype argument provided!")
+
+
+
+def main(fpath, ftype):
     global RootView, AppTitle
     
     # Create the main window
@@ -236,10 +253,30 @@ def main():
     add_menus(RootView)
     RootView.state('zoomed')
 
+    # setup init view
+    init_view_setup(fpath, ftype)
 
     # Run forever!
     RootView.mainloop()
 
 
+#
+# Arguments to osek-builder-gui.py if invoked from command-line
+#
+# -f: "file name with path to open"
+# -t: filetype ["oil", "arxml"]
+#
 if __name__ == '__main__':
-    main()
+    filepath = None
+    filetype = None
+
+    # collect the arguments if it is passed as arguments
+    if "-f" in sys.argv:
+        filepath = sys.argv[sys.argv.index("-f") + 1]
+        filepath = os.path.abspath(filepath)
+        filepath = filepath.replace(os.sep, '/')
+    if "-t" in sys.argv:
+        filetype = sys.argv[sys.argv.index("-t") + 1]
+    
+    # let us start the GUI
+    main(fpath=filepath, ftype=filetype)
