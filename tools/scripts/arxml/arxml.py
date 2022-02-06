@@ -2,6 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
+import scripts.System_Generator as sg
 
 
 def finalize_arxml_doc(file):
@@ -14,11 +15,37 @@ def finalize_arxml_doc(file):
       f.write(contents)
 
 
-def build_Ecuc_package(root):
+
+def export_appmodes_to_container(root):
+   for appmode in sg.AppModes:
+      ch_ctnr = ET.SubElement(root, "ECUC-CONTAINER-VALUE")
+      shortname = ET.SubElement(ch_ctnr, "SHORT-NAME")
+      shortname.text = appmode
+      def_ref = ET.SubElement(ch_ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
+      def_ref.text = "/AUTOSAR/EcucDefs/Os/OsAppMode"
+
+
+
+def build_ecuc_os_package(root, name):
    arpkg = ET.SubElement(root, "AR-PACKAGE")
    shortname = ET.SubElement(arpkg, "SHORT-NAME")
-   shortname.text = "Ecuc"
+   shortname.text = name
    elements = ET.SubElement(arpkg, "ELEMENTS")
+
+   # element 1 - the ECU config header for OS
+   mod_conf = ET.SubElement(elements, "ECUC-MODULE-CONFIGURATION-VALUES")
+   shortname = ET.SubElement(mod_conf, "SHORT-NAME")
+   shortname.text = "Os"
+   def_ref = ET.SubElement(mod_conf, "DEFINITION-REF", DEST="ECUC-MODULE-DEF")
+   def_ref.text = "/AUTOSAR/EcucDefs/Os"
+   ecu_def_edition = ET.SubElement(mod_conf, "ECUC-DEF-EDITION")
+   ecu_def_edition.text = "4.2.0"
+   impl_cfg_var = ET.SubElement(mod_conf, "IMPLEMENTATION-CONFIG-VARIANT")
+   impl_cfg_var.text = "VARIANT-PRE-COMPILE"
+
+   # export appmodes containers
+   containers = ET.SubElement(mod_conf, "CONTAINERS")
+   export_appmodes_to_container(containers)
 
 
 
@@ -30,12 +57,12 @@ def export(path):
    root = ET.Element("AUTOSAR")
    tree = ET.ElementTree(root)
    arpkgs = ET.SubElement(root, "AR-PACKAGES")
-   build_Ecuc_package(arpkgs)
+   build_ecuc_os_package(arpkgs, "ECUC_1")
 
-   print("export.py::export in "+ path)
-   ET.indent(tree, space="\t", level=0)
+   ET.indent(tree, space="  ", level=0)
    tree.write(outfile, encoding="utf-8", xml_declaration=True)
    finalize_arxml_doc(outfile)
+   print("Exported to " + outfile)
 
 
 

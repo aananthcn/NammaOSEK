@@ -231,8 +231,6 @@ def textBox():
 
 
 def init_view_setup(fpath, ftype):
-    print("filepath", fpath)
-    print("ftype", ftype)
     if ftype == None or fpath == None:
         return
     elif ftype == "oil":
