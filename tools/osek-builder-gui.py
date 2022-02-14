@@ -31,7 +31,7 @@ FileMenu = None
 OIL_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
-OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
+CurTab = OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
 
 
 # Functions
@@ -40,13 +40,29 @@ def about():
     messagebox.showinfo("OSEK Builder", "This tool is developed to replace the OSEK-Builder.xlsx and to set path for AUTOSAR development")
 
 
+
 def show_os_tab_switch(event):
-    global MainWindow, AlmTab, OsTab, TskTab
-    if MainWindow.tab(MainWindow.select(), "text").strip() == "Alarms":
-        AlmTab.update()
+    global MainWindow, CurTab, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab 
     if MainWindow.tab(MainWindow.select(), "text").strip() == "OS Configs":
-        TskTab.backup_data()  # take the lastest stack size updates from Task tab.
-        OsTab.update()
+        CurTab = OsTab
+        CurTab.backup_data()  # take the lastest stack size updates from Task tab.
+        CurTab.update()
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "AppModes":
+        CurTab = AmTab
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "Counters":
+        CurTab = CtrTab
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "Messages":
+        CurTab = MsgTab
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "Resources":
+        CurTab = ResTab
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "Tasks":
+        CurTab = TskTab
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "Alarms":
+        CurTab = AlmTab
+        CurTab.update()
+    if MainWindow.tab(MainWindow.select(), "text").strip() == "ISRs":
+        CurTab = IsrTab
+
 
     
 def show_os_config(view):
@@ -189,6 +205,9 @@ def generate_oil_file():
 
 
 def arxml_export():
+    global CurTab
+
+    CurTab.backup_data()
     arxml_path = os.getcwd()+"/output/arxml"
     arxml.export(arxml_path)
 
