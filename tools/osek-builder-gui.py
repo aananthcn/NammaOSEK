@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, os.getcwd()+"/tools/scripts")
 import scripts.System_Generator as sg
 import scripts.oil as oil
-import scripts.arxml.arxml as arxml
+import scripts.arxml.ecuc as ecuc
 
 import tkinter as tk
 from tkinter import messagebox
@@ -209,7 +209,7 @@ def arxml_export():
 
     CurTab.backup_data()
     arxml_path = os.getcwd()+"/output/arxml"
-    arxml.export(arxml_path)
+    ecuc.export(arxml_path)
 
  
 ###############################################################################

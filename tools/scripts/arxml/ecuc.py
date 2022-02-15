@@ -5,6 +5,7 @@ from datetime import datetime
 import scripts.System_Generator as sg
 
 
+
 def finalize_arxml_doc(file):
    with open(file, "r") as f:
       contents = f.readlines()
@@ -16,13 +17,20 @@ def finalize_arxml_doc(file):
 
 
 
+def insert_container(root, name, ref):
+   ctnr = ET.SubElement(root, "ECUC-CONTAINER-VALUE")
+   shortname = ET.SubElement(ctnr, "SHORT-NAME")
+   shortname.text = name
+   def_ref = ET.SubElement(ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
+   def_ref.text = ref
+   return ctnr
+
+
+
 def export_appmodes_to_container(root):
    for appmode in sg.AppModes:
-      am_ctnr = ET.SubElement(root, "ECUC-CONTAINER-VALUE")
-      shortname = ET.SubElement(am_ctnr, "SHORT-NAME")
-      shortname.text = appmode
-      def_ref = ET.SubElement(am_ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
-      def_ref.text = "/AUTOSAR/EcucDefs/Os/OsAppMode"
+      am_ctnr = insert_container(root, appmode, "/AUTOSAR/EcucDefs/Os/OsAppMode")
+
 
 
 def insert_osos_param(root, refname, type, subtype, value):
@@ -43,27 +51,13 @@ def insert_osos_param(root, refname, type, subtype, value):
    def_ref.text = value
 
 
-def export_osos_to_container(root):
-   osos_ctnr = ET.SubElement(root, "ECUC-CONTAINER-VALUE")
-   shortname = ET.SubElement(osos_ctnr, "SHORT-NAME")
-   shortname.text = "OsOs"
-   def_ref = ET.SubElement(osos_ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
-   def_ref.text = "/AUTOSAR/EcucDefs/Os/OsOs"
 
-   # Parameters
-   params = ET.SubElement(osos_ctnr, "PARAMETER-VALUES")
-   refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsStatus"
-   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["STATUS"])
-
+def insert_osos_to_subcontainer(root):
    # OsOs Sub-Containers
-   osos_subctnr = ET.SubElement(osos_ctnr, "SUB-CONTAINERS")
+   osos_subctnr = ET.SubElement(root, "SUB-CONTAINERS")
 
    # OS Hooks
-   oshooks_ctnr = ET.SubElement(osos_subctnr, "ECUC-CONTAINER-VALUE")
-   shortname = ET.SubElement(oshooks_ctnr, "SHORT-NAME")
-   shortname.text = "OsHooks"
-   def_ref = ET.SubElement(oshooks_ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
-   def_ref.text = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks"
+   oshooks_ctnr = insert_container(osos_subctnr, "OsHooks", "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks")
    # Parameters
    params = ET.SubElement(oshooks_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsErrorHook"
@@ -80,22 +74,14 @@ def export_osos_to_container(root):
    insert_osos_param(params, refname, "numer", "bool", "NOT YET SUPPORTED") # Todo: Please fix this.
 
    # OsHookStack
-   oshooksstack_ctnr = ET.SubElement(osos_subctnr, "ECUC-CONTAINER-VALUE")
-   shortname = ET.SubElement(oshooksstack_ctnr, "SHORT-NAME")
-   shortname.text = "OsHookStack"
-   def_ref = ET.SubElement(oshooksstack_ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
-   def_ref.text = "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack"
+   oshooksstack_ctnr = insert_container(osos_subctnr, "OsHookStack", "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack")
    # Parameters
    params = ET.SubElement(oshooksstack_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack/OsHookStackSize"
    insert_osos_param(params, refname, "numer", "int", sg.OS_Cfgs["OS_STACK_SIZE"])
 
    # FreeOsekParams
-   freeosek_ctnr = ET.SubElement(osos_subctnr, "ECUC-CONTAINER-VALUE")
-   shortname = ET.SubElement(freeosek_ctnr, "SHORT-NAME")
-   shortname.text = "FreeOsekParams"
-   def_ref = ET.SubElement(freeosek_ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
-   def_ref.text = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams"
+   freeosek_ctnr = insert_container(osos_subctnr, "FreeOsekParams", "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams")
    # Parameters
    params = ET.SubElement(freeosek_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/OsName"
@@ -111,6 +97,20 @@ def export_osos_to_container(root):
 
 
 
+def export_osos_to_container(root):
+   osos_ctnr = insert_container(root, "OsOs", "/AUTOSAR/EcucDefs/Os/OsOs")
+   # Parameters
+   params = ET.SubElement(osos_ctnr, "PARAMETER-VALUES")
+   refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsStatus"
+   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["STATUS"])
+   insert_osos_to_subcontainer(osos_ctnr)
+
+
+
+def export_events_to_container(root):
+   insert_container(root, "event", "/AUTOSAR/EcucDefs/Os/OsEvent")
+
+
 
 def build_ecuc_os_package(root, name):
    arpkg = ET.SubElement(root, "AR-PACKAGE")
@@ -119,11 +119,7 @@ def build_ecuc_os_package(root, name):
    elements = ET.SubElement(arpkg, "ELEMENTS")
 
    # element 1 - the ECU config header for OS
-   mod_conf = ET.SubElement(elements, "ECUC-MODULE-CONFIGURATION-VALUES")
-   shortname = ET.SubElement(mod_conf, "SHORT-NAME")
-   shortname.text = "Os"
-   def_ref = ET.SubElement(mod_conf, "DEFINITION-REF", DEST="ECUC-MODULE-DEF")
-   def_ref.text = "/AUTOSAR/EcucDefs/Os"
+   mod_conf = insert_container(elements, "Os", "/AUTOSAR/EcucDefs/Os")
    ecu_def_edition = ET.SubElement(mod_conf, "ECUC-DEF-EDITION")
    ecu_def_edition.text = "4.2.0"
    impl_cfg_var = ET.SubElement(mod_conf, "IMPLEMENTATION-CONFIG-VARIANT")
@@ -132,7 +128,8 @@ def build_ecuc_os_package(root, name):
    # export containers
    containers = ET.SubElement(mod_conf, "CONTAINERS")
    export_appmodes_to_container(containers)
-   export_osos_to_container(containers)
+   export_osos_to_container(containers) # sg.OS_Cfgs go in here
+   export_events_to_container(containers)
 
 
 
@@ -142,6 +139,9 @@ def export(path):
    outfile = path+"/output.arxml"
    
    root = ET.Element("AUTOSAR")
+   root.set("xmlns", "http://autosar.org/schema/r4.0")
+   root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+   root.set("xsi:schemaLocation", "http://autosar.org/schema/r4.0 autosar.xsd")
    tree = ET.ElementTree(root)
    arpkgs = ET.SubElement(root, "AR-PACKAGES")
    build_ecuc_os_package(arpkgs, "ECUC_1")
