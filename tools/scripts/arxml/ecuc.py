@@ -119,6 +119,24 @@ def export_events_to_container(root):
 
 
 
+def export_counters_to_container(root):
+   for cntr in sg.Counters:
+      ctnr = insert_container(root, cntr["Counter Name"], "/AUTOSAR/EcucDefs/Os/OsCounter")
+      # Parameters
+      params = ET.SubElement(ctnr, "PARAMETER-VALUES")
+      refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMaxAllowedValue"
+      insert_osos_param(params, refname, "numer", "int", cntr['MAXALLOWEDVALUE'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMinCycle"
+      insert_osos_param(params, refname, "numer", "int", cntr['MINCYCLE'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterTicksPerBase"
+      insert_osos_param(params, refname, "numer", "int", cntr['TICKSPERBASE'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsCounter/TICKDURATION_not_supported"
+      insert_osos_param(params, refname, "numer", "int", cntr['TICKDURATION'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterType"
+      insert_osos_param(params, refname, "text", "enum", "NOT SUPPORTED BY FREEOSEK YET")
+
+
+
 def build_ecuc_os_package(root, name):
    arpkg = ET.SubElement(root, "AR-PACKAGE")
    shortname = ET.SubElement(arpkg, "SHORT-NAME")
@@ -136,7 +154,8 @@ def build_ecuc_os_package(root, name):
    containers = ET.SubElement(mod_conf, "CONTAINERS")
    export_appmodes_to_container(containers)
    export_osos_to_container(containers) # sg.OS_Cfgs go in here
-   export_events_to_container(containers)
+   export_events_to_container(containers) # All events extracted from tasks go in here
+   export_counters_to_container(containers)
 
 
 
