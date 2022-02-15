@@ -172,9 +172,12 @@ def parse_counter(oil_lines, line_num):
             cntr[CntrParams[2]] = line.replace('=', ';').split(';')[1].strip()
         if CntrParams[3] in line:
             cntr[CntrParams[3]] = int(line.replace('=', ';').split(';')[1])
-        if CntrParams[4] in line:
-            cntr[CntrParams[4]] = int(line.replace('=', ';').split(';')[1])
+        if "TICKDURATION" in line:
+            cntr[CntrParams[2]] = int(line.replace('=', ';').split(';')[1]) # treat MAXALLOWEDVALUE as TICKDURATION
         line_num += 1
+    # following line is added as AUTOSAR spec doesn't support TICKDURATION, hence it is replaced with OsCounterType
+    if "OsCounterType" not in cntr:
+        cntr["OsCounterType"] = ""
     return line_num, cntr
 
 

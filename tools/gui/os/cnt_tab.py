@@ -7,16 +7,16 @@ class CounterStr:
     mincycle = None
     maxallowed = None
     ticksperbase = None
-    tick_duration = None
+    cntr_type = None
     comment = None
 
 
-    def __init__(self, nm, mi, ma, tb, td, cm):
+    def __init__(self, nm, mi, ma, tb, ty, cm):
         self.name = tk.StringVar(value=nm)
         self.mincycle = tk.StringVar(value=mi)
         self.maxallowed = tk.StringVar(value=ma)
         self.ticksperbase = tk.StringVar(value=tb)
-        self.tick_duration = tk.StringVar(value=td)
+        self.cntr_type = tk.StringVar(value=ty)
         self.comment = tk.StringVar(value=cm)
 
     def __del__(self):
@@ -24,7 +24,7 @@ class CounterStr:
         del self.mincycle
         del self.maxallowed
         del self.ticksperbase
-        del self.tick_duration
+        del self.cntr_type
         del self.comment
 
 
@@ -54,7 +54,7 @@ class CounterTab:
                 self.Counters[i]['MINCYCLE'],
                 self.Counters[i]['MAXALLOWEDVALUE'],
                 self.Counters[i]['TICKSPERBASE'],
-                self.Counters[i]['TICKDURATION'],
+                self.Counters[i]['OsCounterType'],
                 ""))
 
 
@@ -91,7 +91,7 @@ class CounterTab:
         label.grid(row=2, column=4, sticky="we")
         label = tk.Label(tab, text="TICKSPERBASE")
         label.grid(row=2, column=5, sticky="we")
-        label = tk.Label(tab, text="TICKDURATION (ns)")
+        label = tk.Label(tab, text="OsCounterType")
         label.grid(row=2, column=6, sticky="we")
         label = tk.Label(tab, text="Comments")
         label.grid(row=2, column=7, sticky="w")
@@ -131,9 +131,13 @@ class CounterTab:
             entry = tk.Entry(tab, width=15, textvariable=self.Ctr_StrVar[i].ticksperbase) # TICKSPERBASE
             self.Ctr_StrVar[i].ticksperbase.set(self.Counters[i]["TICKSPERBASE"])
             entry.grid(row=self.HeaderSize+i+1, column=5)
-            entry = tk.Entry(tab, width=20, textvariable=self.Ctr_StrVar[i].tick_duration) # TICKDURATION (ns)
-            self.Ctr_StrVar[i].tick_duration.set(self.Counters[i]["TICKDURATION"])
-            entry.grid(row=self.HeaderSize+i+1, column=6)
+
+            cmbsel = ttk.Combobox(tab, width=20, textvariable=self.Ctr_StrVar[i].cntr_type, state="readonly") # Hardware / Software
+            cmbsel['values'] = ("HARDWARE", "SOFTWARE")
+            self.Ctr_StrVar[i].cntr_type.set(self.Counters[i]["OsCounterType"])
+            cmbsel.current()
+            cmbsel.grid(row=self.HeaderSize+i+1, column=6)
+
             entry = tk.Entry(tab, width=40, textvariable=self.Ctr_StrVar[i].comment) # Comments
             self.Ctr_StrVar[i].comment.set("") # comments not yet supported!
             entry.grid(row=self.HeaderSize+i+1, column=7)
@@ -146,7 +150,7 @@ class CounterTab:
             self.Counters[i]["MINCYCLE"] = self.Ctr_StrVar[i].mincycle.get()
             self.Counters[i]["MAXALLOWEDVALUE"] = self.Ctr_StrVar[i].maxallowed.get()
             self.Counters[i]["TICKSPERBASE"] = self.Ctr_StrVar[i].ticksperbase.get()
-            self.Counters[i]["TICKDURATION"] = self.Ctr_StrVar[i].tick_duration.get()
+            self.Counters[i]["OsCounterType"] = self.Ctr_StrVar[i].cntr_type.get()
 
 
     def create_empty_counter(self):
@@ -157,7 +161,7 @@ class CounterTab:
         counter["MINCYCLE"] = "1"
         counter["MAXALLOWEDVALUE"] = "0xFFFFFFFF" 
         counter["TICKSPERBASE"] = "1"
-        counter["TICKDURATION"] = "1000000"
+        counter["OsCounterType"] = "HARDWARE"
 
 
         return counter

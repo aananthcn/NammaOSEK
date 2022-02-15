@@ -17,7 +17,7 @@ STSZ = 8
 
 # list of column titles in TASK tab of OSEX-Builder.xlsx
 CntrParams = ["Counter Name", "MINCYCLE", "MAXALLOWEDVALUE", "TICKSPERBASE",
-     "TICKDURATION"]
+     "OsCounterType"]
 CNME = 0
 
 # Column titles for Alarms

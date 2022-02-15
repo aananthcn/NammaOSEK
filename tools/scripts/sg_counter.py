@@ -8,7 +8,7 @@ from colorama import Fore, Back, Style
 C_Counter_Type = "\n\ntypedef struct {\n\
     AlarmBaseType alarm; /* contains OSEK specified attributes */ \n\
     TickType countval; /* continuos incrementing counter */ \n\
-    TickType tickduration; /* count in nano seconds */\n\
+    TickType maxallowedvalue; /* count in nano seconds */\n\
     char* name;\n\
 } OsCounterType;\n\n"
 
@@ -39,7 +39,7 @@ def generate_code(path, Counters):
         cf.write("\t\t.alarm.mincycle = "+ str(cntr[CntrParams[1]]) + ",\n")
         cf.write("\t\t.alarm.maxallowedvalue = "+ str(cntr[CntrParams[2]]) + ",\n")
         cf.write("\t\t.alarm.ticksperbase = "+ str(cntr[CntrParams[3]]) + ",\n")
-        cf.write("\t\t.tickduration = "+ str(cntr[CntrParams[4]]) + ",\n")
+        cf.write("\t\t.maxallowedvalue = "+ str(cntr[CntrParams[2]]) + ",\n")
         cf.write("\t\t.name = \""+ cntr[CntrParams[0]] + "\"\n")
         cf.write("\t}")
         if i+1 == len(Counters):
@@ -48,12 +48,12 @@ def generate_code(path, Counters):
             cf.write(",\n")
         
         # Find out if this Counter is optimal for OS Tick scheduling
-        if int(cntr[CntrParams[4]]) >= 1000000: #nano sec
+        if int(cntr[CntrParams[2]]) >= 1000000: #nano sec
             if os_counter_duration == -1:
-                os_counter_duration = cntr[CntrParams[4]]
+                os_counter_duration = cntr[CntrParams[2]]
                 os_counter_index = i
             elif int(cntr[CntrParams[4]]) < os_counter_duration: 
-                os_counter_duration = cntr[CntrParams[4]]
+                os_counter_duration = cntr[CntrParams[2]]
                 os_counter_index = i
 
     cf.write("};\n")

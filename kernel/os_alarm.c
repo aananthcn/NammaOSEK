@@ -85,7 +85,7 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 	}
 
 	ticks_futr = _AppAlarmCounters[AlarmID];
-	if (_OsCounters[counter_id].tickduration < ONE_MSEC_IN_NANO_SEC) {
+	if (_OsCounters[counter_id].maxallowedvalue < ONE_MSEC_IN_NANO_SEC) {
 		if (brd_get_usec_syscount(&ticks_curr)) {
 			pr_log("Error: brd_get_usec_syscount returns error\n");
 			return -1;
@@ -373,7 +373,7 @@ int OsHandleCounters(void) {
 
 	/* Increment user configured OSEK Counters */
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-		if (_OsCounters[i].tickduration < ONE_MSEC_IN_NANO_SEC ) {
+		if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_NANO_SEC ) {
 			delta = (TickType)(nsec_cnt - nsec_cnt_old);
 		}
 		else {

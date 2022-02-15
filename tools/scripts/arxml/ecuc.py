@@ -130,10 +130,8 @@ def export_counters_to_container(root):
       insert_osos_param(params, refname, "numer", "int", cntr['MINCYCLE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterTicksPerBase"
       insert_osos_param(params, refname, "numer", "int", cntr['TICKSPERBASE'])
-      refname = "/AUTOSAR/EcucDefs/Os/OsCounter/TICKDURATION_not_supported"
-      insert_osos_param(params, refname, "numer", "int", cntr['TICKDURATION'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterType"
-      insert_osos_param(params, refname, "text", "enum", "NOT SUPPORTED BY FREEOSEK YET")
+      insert_osos_param(params, refname, "text", "enum", cntr['OsCounterType'])
 
 
 

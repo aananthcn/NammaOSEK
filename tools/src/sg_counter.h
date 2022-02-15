@@ -6,7 +6,7 @@
 typedef struct {
     AlarmBaseType alarm; /* contains OSEK specified attributes */ 
     TickType countval; /* continuos incrementing counter */ 
-    TickType tickduration; /* count in nano seconds */
+    TickType maxallowedvalue; /* count in nano seconds */
     char* name;
 } OsCounterType;
 

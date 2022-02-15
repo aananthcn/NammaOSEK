@@ -82,7 +82,7 @@ def save_oil_file(filename):
         f.write(indent*"\t" +"MINCYCLE = " + str(cntr[CntrParams[1]]) + ";\n")
         f.write(indent*"\t" +"MAXALLOWEDVALUE = " + str(cntr[CntrParams[2]]) + ";\n")
         f.write(indent*"\t" +"TICKSPERBASE = " + str(cntr[CntrParams[3]]) + ";\n")
-        f.write(indent*"\t" +"TICKDURATION = " + str(cntr[CntrParams[4]]) + "; /* nsec */\n")
+        f.write(indent*"\t" +"TICKDURATION = " + str(cntr[CntrParams[2]]) + "; /* nsec */\n")
         # End of Counters
         indent -= 1
         f.write(indent*"\t" + "};\n\n")
@@ -226,7 +226,7 @@ def print_output(OsData, AppMode, TaskData, Counters, Alarms, ISRs):
         f.write(indent*"\t" +"MINCYCLE = " + str(cntr[CntrParams[1]]) + ";\n")
         f.write(indent*"\t" +"MAXALLOWEDVALUE = " + str(cntr[CntrParams[2]]) + ";\n")
         f.write(indent*"\t" +"TICKSPERBASE = " + str(cntr[CntrParams[3]]) + ";\n")
-        f.write(indent*"\t" +"TICKDURATION = " + str(cntr[CntrParams[4]]) + "; /* nsec */\n")
+        f.write(indent*"\t" +"TICKDURATION = " + str(cntr[CntrParams[2]]) + "; /* nsec */\n")
         # End of Counters
         indent -= 1
         f.write(indent*"\t" + "};\n")
