@@ -108,7 +108,14 @@ def export_osos_to_container(root):
 
 
 def export_events_to_container(root):
-   insert_container(root, "event", "/AUTOSAR/EcucDefs/Os/OsEvent")
+   Events = []
+   for task in sg.Tasks:
+      if "EVENT" in task:
+         for evt in task["EVENT"]:
+            if evt not in Events:
+               Events.append(evt)
+   for evt in Events:
+      insert_container(root, evt, "/AUTOSAR/EcucDefs/Os/OsEvent")
 
 
 
