@@ -5,6 +5,9 @@ from datetime import datetime
 import scripts.System_Generator as sg
 
 
+# Globals
+EcuName = None
+
 
 def finalize_arxml_doc(file):
    with open(file, "r") as f:
@@ -17,13 +20,23 @@ def finalize_arxml_doc(file):
 
 
 
-def insert_container(root, name, ref):
+def insert_container(root, name, dref):
    ctnr = ET.SubElement(root, "ECUC-CONTAINER-VALUE")
    shortname = ET.SubElement(ctnr, "SHORT-NAME")
    shortname.text = name
    def_ref = ET.SubElement(ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
-   def_ref.text = ref
+   def_ref.text = dref
    return ctnr
+
+
+
+def insert_reference(root, dref, vref):
+   rctnr = ET.SubElement(root, "ECUC-REFERENCE-VALUE")
+   def_ref = ET.SubElement(rctnr, "DEFINITION-REF", DEST="ECUC-REFERENCE-DEF")
+   def_ref.text = dref
+   val_ref = ET.SubElement(rctnr, "VALUE-REF", DEST="ECUC-CONTAINER-VALUE")
+   val_ref.text = vref
+   return rctnr
 
 
 
@@ -135,10 +148,57 @@ def export_counters_to_container(root):
 
 
 
+def insert_task_reference(root, task, os_obj, dref):
+   if os_obj in task:
+      for obj in task[os_obj]:
+         insert_reference(root, dref, obj)
+
+
+
+def export_tasks_to_container(root):
+   global EcuName
+
+   for task in sg.Tasks:
+      ctnr = insert_container(root, task["Task Name"], "/AUTOSAR/EcuDefs/Os/OsTask")
+      # Parameters
+      params = ET.SubElement(ctnr, "PARAMETER-VALUES")
+      refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskActivation"
+      insert_osos_param(params, refname, "numer", "int", task['ACTIVATION'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskPriority"
+      insert_osos_param(params, refname, "numer", "int", task['PRIORITY'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskStackSize"
+      insert_osos_param(params, refname, "numer", "int", task['STACK_SIZE'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskSchedule"
+      insert_osos_param(params, refname, "numer", "int", task['SCHEDULE'])
+
+      # References
+      references = ET.SubElement(ctnr, "REFERENCE-VALUES")
+      # Event References
+      dref = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskEventRef"
+      insert_task_reference(references, task, "EVENT", dref)
+      # Resource References
+      dref = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskResourceRef"
+      insert_task_reference(references, task, "RESOURCE", dref)
+
+      # Sub-Containers
+      if "AUTOSTART_APPMODE" in task:
+         sub_ctnr = ET.SubElement(ctnr, "SUB-CONTAINERS")
+         l2_ctnr = insert_container(sub_ctnr, "OsTaskAutostart", "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskAutostart")
+         # References
+         l2_refs = ET.SubElement(l2_ctnr, "REFERENCE-VALUES")
+         dref = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskAutostart/OsTaskAppModeRef"
+         for am in task["AUTOSTART_APPMODE"]:
+            insert_reference(l2_refs, dref, "/"+str(EcuName)+"/Os/"+str(am))
+
+
+
 def build_ecuc_os_package(root, name):
+   global EcuName
+
    arpkg = ET.SubElement(root, "AR-PACKAGE")
    shortname = ET.SubElement(arpkg, "SHORT-NAME")
    shortname.text = name
+   EcuName = name
    elements = ET.SubElement(arpkg, "ELEMENTS")
 
    # element 1 - the ECU config header for OS
@@ -154,6 +214,7 @@ def build_ecuc_os_package(root, name):
    export_osos_to_container(containers) # sg.OS_Cfgs go in here
    export_events_to_container(containers) # All events extracted from tasks go in here
    export_counters_to_container(containers)
+   export_tasks_to_container(containers)
 
 
 

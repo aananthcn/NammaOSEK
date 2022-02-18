@@ -177,7 +177,7 @@ def parse_counter(oil_lines, line_num):
         line_num += 1
     # following line is added as AUTOSAR spec doesn't support TICKDURATION, hence it is replaced with OsCounterType
     if "OsCounterType" not in cntr:
-        cntr["OsCounterType"] = ""
+        cntr["OsCounterType"] = "HARDWARE"
     return line_num, cntr
 
 
