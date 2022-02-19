@@ -5,6 +5,9 @@ from datetime import datetime
 import scripts.System_Generator as sg
 
 
+###############################################################################
+# Export ECUC
+
 # Globals
 EcuName = None
 
@@ -54,7 +57,7 @@ def export_appmodes_to_container(root):
 
 
 
-def insert_osos_param(root, refname, type, subtype, value):
+def insert_os_param(root, refname, type, subtype, value):
    if type == "text":
       param_blk = ET.SubElement(root, "ECUC-TEXTUAL-PARAM-VALUE")
    elif type == "numerical":
@@ -89,39 +92,39 @@ def insert_osos_to_subcontainer(root):
    # Parameters
    params = ET.SubElement(oshooks_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsErrorHook"
-   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["ERRORHOOK"])
+   insert_os_param(params, refname, "numerical", "bool", sg.OS_Cfgs["ERRORHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsPostTaskHook"
-   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["POSTTASKHOOK"])
+   insert_os_param(params, refname, "numerical", "bool", sg.OS_Cfgs["POSTTASKHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsPreTaskHook"
-   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["PRETASKHOOK"])
+   insert_os_param(params, refname, "numerical", "bool", sg.OS_Cfgs["PRETASKHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsShutdownHook"
-   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["SHUTDOWNHOOK"])
+   insert_os_param(params, refname, "numerical", "bool", sg.OS_Cfgs["SHUTDOWNHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsStartupHook"
-   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["STARTUPHOOK"])
+   insert_os_param(params, refname, "numerical", "bool", sg.OS_Cfgs["STARTUPHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsProtectionHook"
-   insert_osos_param(params, refname, "numerical", "bool", "NOT YET SUPPORTED") # Todo: Please fix this.
+   insert_os_param(params, refname, "numerical", "bool", "NOT YET SUPPORTED") # Todo: Please fix this.
 
    # OsHookStack
    oshooksstack_ctnr = insert_container(osos_subctnr, "OsHookStack", "conf", "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack")
    # Parameters
    params = ET.SubElement(oshooksstack_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack/OsHookStackSize"
-   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["OS_STACK_SIZE"])
+   insert_os_param(params, refname, "numerical", "int", sg.OS_Cfgs["OS_STACK_SIZE"])
 
    # FreeOsekParams
    freeosek_ctnr = insert_container(osos_subctnr, "FreeOsekParams", "conf", "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams")
    # Parameters
    params = ET.SubElement(freeosek_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/OsName"
-   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["OS"])
+   insert_os_param(params, refname, "text", "enum", sg.OS_Cfgs["OS"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/CpuName"
-   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["CPU"])
+   insert_os_param(params, refname, "text", "enum", sg.OS_Cfgs["CPU"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/IrqStackSize"
-   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["IRQ_STACK_SIZE"])
+   insert_os_param(params, refname, "numerical", "int", sg.OS_Cfgs["IRQ_STACK_SIZE"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/ContextSaveSize"
-   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["OS_CTX_SAVE_SZ"])
+   insert_os_param(params, refname, "numerical", "int", sg.OS_Cfgs["OS_CTX_SAVE_SZ"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/AppTasksSize"
-   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["TASK_STACK_SIZE"])
+   insert_os_param(params, refname, "numerical", "int", sg.OS_Cfgs["TASK_STACK_SIZE"])
 
 
 
@@ -132,7 +135,7 @@ def export_osos_to_container(root):
    # Parameters
    params = ET.SubElement(osos_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsStatus"
-   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["STATUS"])
+   insert_os_param(params, refname, "text", "enum", sg.OS_Cfgs["STATUS"])
    insert_osos_to_subcontainer(osos_ctnr)
 
 
@@ -161,13 +164,13 @@ def export_counters_to_container(root):
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMaxAllowedValue"
-      insert_osos_param(params, refname, "numerical", "int", cntr['MAXALLOWEDVALUE'])
+      insert_os_param(params, refname, "numerical", "int", cntr['MAXALLOWEDVALUE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMinCycle"
-      insert_osos_param(params, refname, "numerical", "int", cntr['MINCYCLE'])
+      insert_os_param(params, refname, "numerical", "int", cntr['MINCYCLE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterTicksPerBase"
-      insert_osos_param(params, refname, "numerical", "int", cntr['TICKSPERBASE'])
+      insert_os_param(params, refname, "numerical", "int", cntr['TICKSPERBASE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterType"
-      insert_osos_param(params, refname, "text", "enum", cntr['OsCounterType'])
+      insert_os_param(params, refname, "text", "enum", cntr['OsCounterType'])
 
 
 
@@ -198,7 +201,7 @@ def export_resources_to_container(root):
          params = ET.SubElement(ctnr, "PARAMETER-VALUES")
          # OsResource Parameters
          refname = "/AUTOSAR/EcucDefs/Os/OsResource/OsResourceProperty"
-         insert_osos_param(params, refname, "text", "enum", "STANDARD") #Todo: Fixme: INTERNAL & LINKED to be supported!!
+         insert_os_param(params, refname, "text", "enum", "STANDARD") #Todo: Fixme: INTERNAL & LINKED to be supported!!
 
 
 
@@ -213,13 +216,13 @@ def export_tasks_to_container(root):
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskActivation"
-      insert_osos_param(params, refname, "numerical", "int", task['ACTIVATION'])
+      insert_os_param(params, refname, "numerical", "int", task['ACTIVATION'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskPriority"
-      insert_osos_param(params, refname, "numerical", "int", task['PRIORITY'])
+      insert_os_param(params, refname, "numerical", "int", task['PRIORITY'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskStackSize"
-      insert_osos_param(params, refname, "numerical", "int", task['STACK_SIZE'])
+      insert_os_param(params, refname, "numerical", "int", task['STACK_SIZE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskSchedule"
-      insert_osos_param(params, refname, "text", "enum", task['SCHEDULE'])
+      insert_os_param(params, refname, "text", "enum", task['SCHEDULE'])
 
       # References
       references = ET.SubElement(ctnr, "REFERENCE-VALUES")
@@ -286,7 +289,7 @@ def export_alarms_to_container(root):
          params = ET.SubElement(l4_ctnr, "PARAMETER-VALUES")
          # Callback references
          refname = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmCallback/OsAlarmCallbackName"
-         insert_osos_param(params, refname, "text", "func", alm["arg1"])
+         insert_os_param(params, refname, "text", "func", alm["arg1"])
 
 
 
@@ -322,7 +325,7 @@ def build_ecuc_os_package(root, name):
 
 
 
-def export(path):
+def export_arxml(path):
    if not os.path.exists(path):
       os.makedirs(path)
    outfile = path+"/output.arxml"
