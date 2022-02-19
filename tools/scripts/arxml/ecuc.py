@@ -20,11 +20,16 @@ def finalize_arxml_doc(file):
 
 
 
-def insert_container(root, name, dref):
+def insert_container(root, name, type, dref):
    ctnr = ET.SubElement(root, "ECUC-CONTAINER-VALUE")
    shortname = ET.SubElement(ctnr, "SHORT-NAME")
    shortname.text = name
-   def_ref = ET.SubElement(ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
+   if type == "conf":
+      def_ref = ET.SubElement(ctnr, "DEFINITION-REF", DEST="ECUC-PARAM-CONF-CONTAINER-DEF")
+   elif type == "choice":
+      def_ref = ET.SubElement(ctnr, "DEFINITION-REF", DEST="ECUC-CHOICE-CONTAINER-DEF")
+   else:
+      def_ref = ET.SubElement(ctnr, "DEFINITION-REF", DEST="ERROR-INVALID_TYPE")
    def_ref.text = dref
    return ctnr
 
@@ -44,7 +49,7 @@ def export_appmodes_to_container(root):
    ci = len(list(root))
    for appmode in sg.AppModes:
       root.insert(ci, ET.Comment("OsAppMode"))
-      am_ctnr = insert_container(root, appmode, "/AUTOSAR/EcucDefs/Os/OsAppMode")
+      am_ctnr = insert_container(root, appmode, "conf", "/AUTOSAR/EcucDefs/Os/OsAppMode")
       ci += 2 # because we inserted 2 elements under root
 
 
@@ -73,31 +78,31 @@ def insert_osos_to_subcontainer(root):
    osos_subctnr = ET.SubElement(root, "SUB-CONTAINERS")
 
    # OS Hooks
-   oshooks_ctnr = insert_container(osos_subctnr, "OsHooks", "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks")
+   oshooks_ctnr = insert_container(osos_subctnr, "OsHooks", "conf", "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks")
    # Parameters
    params = ET.SubElement(oshooks_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsErrorHook"
-   insert_osos_param(params, refname, "numer", "bool", sg.OS_Cfgs["ERRORHOOK"])
+   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["ERRORHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsPostTaskHook"
-   insert_osos_param(params, refname, "numer", "bool", sg.OS_Cfgs["POSTTASKHOOK"])
+   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["POSTTASKHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsPreTaskHook"
-   insert_osos_param(params, refname, "numer", "bool", sg.OS_Cfgs["PRETASKHOOK"])
+   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["PRETASKHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsShutdownHook"
-   insert_osos_param(params, refname, "numer", "bool", sg.OS_Cfgs["SHUTDOWNHOOK"])
+   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["SHUTDOWNHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsStartupHook"
-   insert_osos_param(params, refname, "numer", "bool", sg.OS_Cfgs["STARTUPHOOK"])
+   insert_osos_param(params, refname, "numerical", "bool", sg.OS_Cfgs["STARTUPHOOK"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHooks/OsProtectionHook"
-   insert_osos_param(params, refname, "numer", "bool", "NOT YET SUPPORTED") # Todo: Please fix this.
+   insert_osos_param(params, refname, "numerical", "bool", "NOT YET SUPPORTED") # Todo: Please fix this.
 
    # OsHookStack
-   oshooksstack_ctnr = insert_container(osos_subctnr, "OsHookStack", "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack")
+   oshooksstack_ctnr = insert_container(osos_subctnr, "OsHookStack", "conf", "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack")
    # Parameters
    params = ET.SubElement(oshooksstack_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsHookStack/OsHookStackSize"
-   insert_osos_param(params, refname, "numer", "int", sg.OS_Cfgs["OS_STACK_SIZE"])
+   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["OS_STACK_SIZE"])
 
    # FreeOsekParams
-   freeosek_ctnr = insert_container(osos_subctnr, "FreeOsekParams", "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams")
+   freeosek_ctnr = insert_container(osos_subctnr, "FreeOsekParams", "conf", "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams")
    # Parameters
    params = ET.SubElement(freeosek_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/OsName"
@@ -105,18 +110,18 @@ def insert_osos_to_subcontainer(root):
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/CpuName"
    insert_osos_param(params, refname, "text", "text", sg.OS_Cfgs["CPU"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/IrqStackSize"
-   insert_osos_param(params, refname, "numer", "int", sg.OS_Cfgs["IRQ_STACK_SIZE"])
+   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["IRQ_STACK_SIZE"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/ContextSaveSize"
-   insert_osos_param(params, refname, "numer", "int", sg.OS_Cfgs["OS_CTX_SAVE_SZ"])
+   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["OS_CTX_SAVE_SZ"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/AppTasksSize"
-   insert_osos_param(params, refname, "numer", "int", sg.OS_Cfgs["TASK_STACK_SIZE"])
+   insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["TASK_STACK_SIZE"])
 
 
 
 def export_osos_to_container(root):
    ci = len(list(root))
    root.insert(ci, ET.Comment("OsOs"))
-   osos_ctnr = insert_container(root, "OsOs", "/AUTOSAR/EcucDefs/Os/OsOs")
+   osos_ctnr = insert_container(root, "OsOs", "conf", "/AUTOSAR/EcucDefs/Os/OsOs")
    # Parameters
    params = ET.SubElement(osos_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsStatus"
@@ -135,7 +140,7 @@ def export_events_to_container(root):
    ci = len(list(root))
    for evt in Events:
       root.insert(ci, ET.Comment("OsEvent"))
-      insert_container(root, evt, "/AUTOSAR/EcucDefs/Os/OsEvent")
+      insert_container(root, evt, "conf", "/AUTOSAR/EcucDefs/Os/OsEvent")
       ci += 2
 
 
@@ -144,16 +149,16 @@ def export_counters_to_container(root):
    ci = len(list(root))
    for cntr in sg.Counters:
       root.insert(ci, ET.Comment("OsCounter"))
-      ctnr = insert_container(root, cntr["Counter Name"], "/AUTOSAR/EcucDefs/Os/OsCounter")
+      ctnr = insert_container(root, cntr["Counter Name"], "conf", "/AUTOSAR/EcucDefs/Os/OsCounter")
       ci += 2
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMaxAllowedValue"
-      insert_osos_param(params, refname, "numer", "int", cntr['MAXALLOWEDVALUE'])
+      insert_osos_param(params, refname, "numerical", "int", cntr['MAXALLOWEDVALUE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMinCycle"
-      insert_osos_param(params, refname, "numer", "int", cntr['MINCYCLE'])
+      insert_osos_param(params, refname, "numerical", "int", cntr['MINCYCLE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterTicksPerBase"
-      insert_osos_param(params, refname, "numer", "int", cntr['TICKSPERBASE'])
+      insert_osos_param(params, refname, "numerical", "int", cntr['TICKSPERBASE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterType"
       insert_osos_param(params, refname, "text", "enum", cntr['OsCounterType'])
 
@@ -172,18 +177,18 @@ def export_tasks_to_container(root):
    ci = len(list(root))
    for task in sg.Tasks:
       root.insert(ci, ET.Comment("OsTask"))
-      ctnr = insert_container(root, task["Task Name"], "/AUTOSAR/EcuDefs/Os/OsTask")
+      ctnr = insert_container(root, task["Task Name"], "conf", "/AUTOSAR/EcuDefs/Os/OsTask")
       ci += 2
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskActivation"
-      insert_osos_param(params, refname, "numer", "int", task['ACTIVATION'])
+      insert_osos_param(params, refname, "numerical", "int", task['ACTIVATION'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskPriority"
-      insert_osos_param(params, refname, "numer", "int", task['PRIORITY'])
+      insert_osos_param(params, refname, "numerical", "int", task['PRIORITY'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskStackSize"
-      insert_osos_param(params, refname, "numer", "int", task['STACK_SIZE'])
+      insert_osos_param(params, refname, "numerical", "int", task['STACK_SIZE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskSchedule"
-      insert_osos_param(params, refname, "numer", "int", task['SCHEDULE'])
+      insert_osos_param(params, refname, "numerical", "int", task['SCHEDULE'])
 
       # References
       references = ET.SubElement(ctnr, "REFERENCE-VALUES")
@@ -197,12 +202,44 @@ def export_tasks_to_container(root):
       # Sub-Containers
       if "AUTOSTART_APPMODE" in task:
          sub_ctnr = ET.SubElement(ctnr, "SUB-CONTAINERS")
-         l2_ctnr = insert_container(sub_ctnr, "OsTaskAutostart", "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskAutostart")
+         l2_ctnr = insert_container(sub_ctnr, "OsTaskAutostart", "conf", "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskAutostart")
          # References
          l2_refs = ET.SubElement(l2_ctnr, "REFERENCE-VALUES")
          dref = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskAutostart/OsTaskAppModeRef"
          for am in task["AUTOSTART_APPMODE"]:
             insert_reference(l2_refs, dref, "/"+str(EcuName)+"/Os/"+str(am))
+
+
+
+def export_alarms_to_container(root):
+   global EcuName
+
+   ci = len(list(root)) # ci stands for comment index
+   for alm in sg.Alarms:
+      print(alm)
+      root.insert(ci, ET.Comment("OsAlarm"))
+      ctnr = insert_container(root, alm["Alarm Name"], "conf", "/AUTOSAR/EcuDefs/Os/OsAlarm")
+      ci += 2
+      # References
+      references = ET.SubElement(ctnr, "REFERENCE-VALUES")
+      # Counters references
+      dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmCounterRef"
+      insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["COUNTER"])
+      
+      # Sub-Containers
+      sub_ctnr = ET.SubElement(ctnr, "SUB-CONTAINERS")
+      l2_ctnr = insert_container(sub_ctnr, "OsAlarmAction", "choice", "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction")
+      # Container Level-3 for OsAlarmAction
+      l3_ctnr = ET.SubElement(l2_ctnr, "SUB-CONTAINERS")
+      if alm["Action-Type"] == "ACTIVATETASK":
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmActivateTask"
+         l4_ctnr = insert_container(l3_ctnr, "OsAlarmActivateTask", "conf", dref)
+         # References
+         references = ET.SubElement(l4_ctnr, "REFERENCE-VALUES")
+         # Task references
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmActivateTask/OsAlarmActivateTaskRef"
+         insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg1"])
+
 
 
 
@@ -233,6 +270,7 @@ def build_ecuc_os_package(root, name):
    export_events_to_container(containers) # All events extracted from tasks go in here
    export_counters_to_container(containers)
    export_tasks_to_container(containers)
+   export_alarms_to_container(containers)
 
 
 
