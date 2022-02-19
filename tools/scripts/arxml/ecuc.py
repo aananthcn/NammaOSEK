@@ -57,15 +57,22 @@ def export_appmodes_to_container(root):
 def insert_osos_param(root, refname, type, subtype, value):
    if type == "text":
       param_blk = ET.SubElement(root, "ECUC-TEXTUAL-PARAM-VALUE")
-   else:
+   elif type == "numerical":
       param_blk = ET.SubElement(root, "ECUC-NUMERICAL-PARAM-VALUE")
+   else:
+      param_blk = ET.SubElement(root, "ECUC-ERROR_UNDEFINED-PARAM-VALUE")
+
 
    if subtype == "bool":
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-BOOLEAN-PARAM-DEF")
    elif subtype == "int":
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-INTEGER-PARAM-DEF")
-   else:
+   elif subtype == "func":
+      def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-FUNCTION-NAME-DEF")
+   elif subtype == "text":
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-ENUMERATION-PARAM-DEF")
+   else:
+      def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-ERROR_UNDEFINED-PARAM-DEF")
    def_ref.text = refname
 
    def_ref = ET.SubElement(param_blk, "VALUE")
@@ -239,6 +246,24 @@ def export_alarms_to_container(root):
          # Task references
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmActivateTask/OsAlarmActivateTaskRef"
          insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg1"])
+      elif alm["Action-Type"] == "SETEVENT":
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmSetEvent"
+         l4_ctnr = insert_container(l3_ctnr, "OsAlarmSetEvent", "conf", dref)
+         # References
+         references = ET.SubElement(l4_ctnr, "REFERENCE-VALUES")
+         # Task & Event references
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmSetEvent/OsAlarmSetEventTaskRef"
+         insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg1"])
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmSetEvent/OsAlarmSetEventRef"
+         insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg2"])
+      elif alm["Action-Type"] == "ALARMCALLBACK":
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmCallback"
+         l4_ctnr = insert_container(l3_ctnr, "OsAlarmCallback", "conf", dref)
+         # Parameters
+         params = ET.SubElement(l4_ctnr, "PARAMETER-VALUES")
+         # Callback references
+         refname = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmCallback/OsAlarmCallbackName"
+         insert_osos_param(params, refname, "text", "func", alm["arg1"])
 
 
 
