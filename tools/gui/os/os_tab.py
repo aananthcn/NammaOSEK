@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 
 class OsTab:
-    N_StrVar = 15
     OS_StrVar = []
     sg_oscfg = None
     sg_tasks = None
@@ -12,7 +11,8 @@ class OsTab:
         if not oscfg:
             self.create_empty_os_config()
         self.sg_tasks = tasks
-        for i in range(self.N_StrVar):
+        ncfgs = len(self.sg_oscfg)
+        for i in range(ncfgs):
             self.OS_StrVar.insert(i, tk.StringVar())
 
 
@@ -90,62 +90,35 @@ class OsTab:
         cmbsel.current()
         cmbsel.grid(row=8, column=2)
 
-        # 9) USEGETSERVICEID - Label + Combo-box
-        label = tk.Label(tab, text="USEGETSERVICEID")
-        label.grid(row=9, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[8], state="readonly")
-        cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[8].set(self.sg_oscfg["USEGETSERVICEID"])
-        cmbsel.current()
-        cmbsel.grid(row=9, column=2)
-
-        # 10) USEPARAMETERACCESS - Label + Combo-box
-        label = tk.Label(tab, text="USEPARAMETERACCESS ")
-        label.grid(row=10, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[9], state="readonly")
-        cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[9].set(self.sg_oscfg["USEPARAMETERACCESS"])
-        cmbsel.current()
-        cmbsel.grid(row=10, column=2)
-
-        # 11) USERESSCHEDULER - Label + Combo-box
-        label = tk.Label(tab, text="USERESSCHEDULER")
-        label.grid(row=11, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[10], state="readonly")
-        cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[10].set(self.sg_oscfg["USERESSCHEDULER"])
-        cmbsel.current()
-        cmbsel.grid(row=11, column=2)
-
-        # 12) OS_STACK_SIZE - Label + Edit-box
+        # 9) OS_STACK_SIZE - Label + Edit-box
         label = tk.Label(tab, text="OS STACK SIZE")
+        label.grid(row=9, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[8])
+        self.OS_StrVar[8].set(self.sg_oscfg["OS_STACK_SIZE"])
+        textb.grid(row=9, column=2)
+        
+        # 10) IRQ_STACK_SIZE - Label + Edit-box
+        label = tk.Label(tab, text="IRQ STACK SIZE")
+        label.grid(row=10, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[9])
+        self.OS_StrVar[9].set(self.sg_oscfg["IRQ_STACK_SIZE"])
+        textb.grid(row=10, column=2)
+        
+        # 11) OS_CTX_SAVE_SZ - Label + Edit-box
+        label = tk.Label(tab, text="CONTEXT SAVE SIZE FOR TASKS ")
+        label.grid(row=11, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[10])
+        self.OS_StrVar[10].set(self.sg_oscfg["OS_CTX_SAVE_SZ"])
+        textb.grid(row=11, column=2)
+
+        # 12) TASK_STACK_SIZE - Label + Edit-box
+        label = tk.Label(tab, text="TASK STACK SIZE (Total)")
         label.grid(row=12, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[11])
-        self.OS_StrVar[11].set(self.sg_oscfg["OS_STACK_SIZE"])
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[11], state="readonly")
+        self.OS_StrVar[11].set(self.sg_oscfg["TASK_STACK_SIZE"])
         textb.grid(row=12, column=2)
         
-        # 13) IRQ_STACK_SIZE - Label + Edit-box
-        label = tk.Label(tab, text="IRQ STACK SIZE")
-        label.grid(row=13, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[12])
-        self.OS_StrVar[12].set(self.sg_oscfg["IRQ_STACK_SIZE"])
-        textb.grid(row=13, column=2)
-        
-        # 14) OS_CTX_SAVE_SZ - Label + Edit-box
-        label = tk.Label(tab, text="CONTEXT SAVE SIZE FOR TASKS ")
-        label.grid(row=14, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[13])
-        self.OS_StrVar[13].set(self.sg_oscfg["OS_CTX_SAVE_SZ"])
-        textb.grid(row=14, column=2)
-
-        # 15) TASK_STACK_SIZE - Label + Edit-box
-        label = tk.Label(tab, text="TASK STACK SIZE (Total)")
-        label.grid(row=15, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[14], state="readonly")
-        self.OS_StrVar[14].set(self.sg_oscfg["TASK_STACK_SIZE"])
-        textb.grid(row=15, column=2)
-        
-        # 16) Update TASK_STACK_SIZE Button
+        # 12) Update TASK_STACK_SIZE Button
         select = tk.Button(tab, width=6, text="Update", command=self.update)
         select.grid(row=15, column=3)
 
@@ -171,13 +144,10 @@ class OsTab:
         self.sg_oscfg["SHUTDOWNHOOK"]          = self.OS_StrVar[5].get()
         self.sg_oscfg["PRETASKHOOK"]           = self.OS_StrVar[6].get()
         self.sg_oscfg["POSTTASKHOOK"]          = self.OS_StrVar[7].get()
-        self.sg_oscfg["USEGETSERVICEID"]       = self.OS_StrVar[8].get()
-        self.sg_oscfg["USEPARAMETERACCESS"]    = self.OS_StrVar[9].get()
-        self.sg_oscfg["USERESSCHEDULER"]       = self.OS_StrVar[10].get()
-        self.sg_oscfg["OS_STACK_SIZE"]         = self.OS_StrVar[11].get()
-        self.sg_oscfg["IRQ_STACK_SIZE"]        = self.OS_StrVar[12].get()
-        self.sg_oscfg["OS_CTX_SAVE_SZ"]        = self.OS_StrVar[13].get()
-        self.sg_oscfg["TASK_STACK_SIZE"]       = self.OS_StrVar[14].get()
+        self.sg_oscfg["OS_STACK_SIZE"]         = self.OS_StrVar[8].get()
+        self.sg_oscfg["IRQ_STACK_SIZE"]        = self.OS_StrVar[9].get()
+        self.sg_oscfg["OS_CTX_SAVE_SZ"]        = self.OS_StrVar[10].get()
+        self.sg_oscfg["TASK_STACK_SIZE"]       = self.OS_StrVar[11].get()
     
     
     def create_empty_os_config(self):
@@ -190,9 +160,6 @@ class OsTab:
         self.sg_oscfg["SHUTDOWNHOOK"]          = "FALSE"
         self.sg_oscfg["PRETASKHOOK"]           = "FALSE"
         self.sg_oscfg["POSTTASKHOOK"]          = "FALSE"
-        self.sg_oscfg["USEGETSERVICEID"]       = "FALSE"
-        self.sg_oscfg["USEPARAMETERACCESS"]    = "FALSE"
-        self.sg_oscfg["USERESSCHEDULER"]       = "FALSE"
         self.sg_oscfg["OS_STACK_SIZE"]         = "512"
         self.sg_oscfg["IRQ_STACK_SIZE"]        = "512"
         self.sg_oscfg["OS_CTX_SAVE_SZ"]        = "128"

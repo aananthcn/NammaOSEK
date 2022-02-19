@@ -41,8 +41,11 @@ def insert_reference(root, dref, vref):
 
 
 def export_appmodes_to_container(root):
+   ci = len(list(root))
    for appmode in sg.AppModes:
+      root.insert(ci, ET.Comment("OsAppMode"))
       am_ctnr = insert_container(root, appmode, "/AUTOSAR/EcucDefs/Os/OsAppMode")
+      ci += 2 # because we inserted 2 elements under root
 
 
 
@@ -111,6 +114,8 @@ def insert_osos_to_subcontainer(root):
 
 
 def export_osos_to_container(root):
+   ci = len(list(root))
+   root.insert(ci, ET.Comment("OsOs"))
    osos_ctnr = insert_container(root, "OsOs", "/AUTOSAR/EcucDefs/Os/OsOs")
    # Parameters
    params = ET.SubElement(osos_ctnr, "PARAMETER-VALUES")
@@ -127,14 +132,20 @@ def export_events_to_container(root):
          for evt in task["EVENT"]:
             if evt not in Events:
                Events.append(evt)
+   ci = len(list(root))
    for evt in Events:
+      root.insert(ci, ET.Comment("OsEvent"))
       insert_container(root, evt, "/AUTOSAR/EcucDefs/Os/OsEvent")
+      ci += 2
 
 
 
 def export_counters_to_container(root):
+   ci = len(list(root))
    for cntr in sg.Counters:
+      root.insert(ci, ET.Comment("OsCounter"))
       ctnr = insert_container(root, cntr["Counter Name"], "/AUTOSAR/EcucDefs/Os/OsCounter")
+      ci += 2
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsCounter/OsCounterMaxAllowedValue"
@@ -158,8 +169,11 @@ def insert_task_reference(root, task, os_obj, dref):
 def export_tasks_to_container(root):
    global EcuName
 
+   ci = len(list(root))
    for task in sg.Tasks:
+      root.insert(ci, ET.Comment("OsTask"))
       ctnr = insert_container(root, task["Task Name"], "/AUTOSAR/EcuDefs/Os/OsTask")
+      ci += 2
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskActivation"
