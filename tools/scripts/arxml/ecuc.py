@@ -69,7 +69,7 @@ def insert_osos_param(root, refname, type, subtype, value):
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-INTEGER-PARAM-DEF")
    elif subtype == "func":
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-FUNCTION-NAME-DEF")
-   elif subtype == "text":
+   elif subtype == "enum":
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-ENUMERATION-PARAM-DEF")
    else:
       def_ref = ET.SubElement(param_blk, "DEFINITION-REF", DEST="ECUC-ERROR_UNDEFINED-PARAM-DEF")
@@ -113,9 +113,9 @@ def insert_osos_to_subcontainer(root):
    # Parameters
    params = ET.SubElement(freeosek_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/OsName"
-   insert_osos_param(params, refname, "text", "text", sg.OS_Cfgs["OS"])
+   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["OS"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/CpuName"
-   insert_osos_param(params, refname, "text", "text", sg.OS_Cfgs["CPU"])
+   insert_osos_param(params, refname, "text", "enum", sg.OS_Cfgs["CPU"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/IrqStackSize"
    insert_osos_param(params, refname, "numerical", "int", sg.OS_Cfgs["IRQ_STACK_SIZE"])
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/FreeOsekParams/ContextSaveSize"
@@ -174,7 +174,31 @@ def export_counters_to_container(root):
 def insert_task_reference(root, task, os_obj, dref):
    if os_obj in task:
       for obj in task[os_obj]:
-         insert_reference(root, dref, obj)
+         insert_reference(root, dref, "/"+str(EcuName)+"/Os/"+str(obj))
+
+
+
+def export_resources_to_container(root):
+   global EcuName
+   resources = []
+
+   for task in sg.Tasks:
+      if "RESOURCE" in task:
+         for res in task["RESOURCE"]:
+            if res not in resources:
+               resources.append(res)
+   
+   if len(resources) > 0:
+      ci = len(list(root)) # ci stands for comment index
+      for res in resources:
+         root.insert(ci, ET.Comment("OsResource"))
+         ctnr = insert_container(root, res, "conf", "/AUTOSAR/EcucDefs/Os/OsResource")
+         ci += 2
+         # Parameters
+         params = ET.SubElement(ctnr, "PARAMETER-VALUES")
+         # OsResource Parameters
+         refname = "/AUTOSAR/EcucDefs/Os/OsResource/OsResourceProperty"
+         insert_osos_param(params, refname, "text", "enum", "STANDARD") #Todo: Fixme: INTERNAL & LINKED to be supported!!
 
 
 
@@ -195,7 +219,7 @@ def export_tasks_to_container(root):
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskStackSize"
       insert_osos_param(params, refname, "numerical", "int", task['STACK_SIZE'])
       refname = "/AUTOSAR/EcucDefs/Os/OsTask/OsTaskSchedule"
-      insert_osos_param(params, refname, "numerical", "int", task['SCHEDULE'])
+      insert_osos_param(params, refname, "text", "enum", task['SCHEDULE'])
 
       # References
       references = ET.SubElement(ctnr, "REFERENCE-VALUES")
@@ -223,7 +247,6 @@ def export_alarms_to_container(root):
 
    ci = len(list(root)) # ci stands for comment index
    for alm in sg.Alarms:
-      print(alm)
       root.insert(ci, ET.Comment("OsAlarm"))
       ctnr = insert_container(root, alm["Alarm Name"], "conf", "/AUTOSAR/EcuDefs/Os/OsAlarm")
       ci += 2
@@ -267,7 +290,6 @@ def export_alarms_to_container(root):
 
 
 
-
 def build_ecuc_os_package(root, name):
    global EcuName
 
@@ -294,6 +316,7 @@ def build_ecuc_os_package(root, name):
    export_osos_to_container(containers) # sg.OS_Cfgs go in here
    export_events_to_container(containers) # All events extracted from tasks go in here
    export_counters_to_container(containers)
+   export_resources_to_container(containers)
    export_tasks_to_container(containers)
    export_alarms_to_container(containers)
 
