@@ -215,14 +215,18 @@ def build_ecuc_os_package(root, name):
    EcuName = name
    elements = ET.SubElement(arpkg, "ELEMENTS")
 
-   # element 1 - the ECU config header for OS
-   mod_conf = insert_container(elements, "Os", "/AUTOSAR/EcucDefs/Os")
+   # Create the Os Module Configuration Element
+   mod_conf = ET.SubElement(elements, "ECUC-MODULE-CONFIGURATION-VALUES")
+   shortname = ET.SubElement(mod_conf, "SHORT-NAME")
+   shortname.text = "Os"
+   def_ref = ET.SubElement(mod_conf, "DEFINITION-REF", DEST="ECUC-MODULE-DEF")
+   def_ref.text = "/AUTOSAR/EcucDefs/Os"
    ecu_def_edition = ET.SubElement(mod_conf, "ECUC-DEF-EDITION")
    ecu_def_edition.text = "4.2.0"
    impl_cfg_var = ET.SubElement(mod_conf, "IMPLEMENTATION-CONFIG-VARIANT")
    impl_cfg_var.text = "VARIANT-PRE-COMPILE"
 
-   # export containers
+   # Create CONTAINER element and export Os objects.
    containers = ET.SubElement(mod_conf, "CONTAINERS")
    export_appmodes_to_container(containers)
    export_osos_to_container(containers) # sg.OS_Cfgs go in here
