@@ -325,10 +325,10 @@ def build_ecuc_os_package(root, name):
 
 
 
-def export_arxml(path):
+def export_arxml(filepath):
+   path = "/".join(filepath.split("/")[0:-1])
    if not os.path.exists(path):
       os.makedirs(path)
-   outfile = path+"/output.arxml"
    
    root = ET.Element("AUTOSAR")
    root.set("xmlns", "http://autosar.org/schema/r4.0")
@@ -339,9 +339,9 @@ def export_arxml(path):
    build_ecuc_os_package(arpkgs, "ECUC_1")
 
    ET.indent(tree, space="\t", level=0)
-   tree.write(outfile, encoding="utf-8", xml_declaration=True)
-   finalize_arxml_doc(outfile)
-   print("Exported to " + outfile)
+   tree.write(filepath, encoding="utf-8", xml_declaration=True)
+   finalize_arxml_doc(filepath)
+   print("Exported to " + filepath)
 
 
 

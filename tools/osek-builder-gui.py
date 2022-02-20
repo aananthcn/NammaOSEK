@@ -30,6 +30,7 @@ MainWindow = None
 MenuBar = None
 FileMenu = None
 OIL_FileName = None
+ArXml_FileName = None
 AppTitle = "OSEK Builder"
 RootView = None
 CurTab = OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
@@ -144,7 +145,8 @@ def new_file():
 
     sg.sg_reset()
     show_os_config(RootView)
-    FileMenu.entryconfig("Save As", state="normal")
+    FileMenu.entryconfig("Export to OIL", state="normal")
+    FileMenu.entryconfig("Export to ARXML", state="normal")
 
 
 
@@ -167,7 +169,7 @@ def open_oil_file(fpath):
     sg.parse(OIL_FileName)
     show_os_config(RootView)
     FileMenu.entryconfig("Export to ARXML", state="normal")
-    FileMenu.entryconfig("Save As", state="normal")
+    FileMenu.entryconfig("Export to OIL", state="normal")
 
 
 
@@ -197,7 +199,7 @@ def save_oil_file():
     oil.save_oil_file(saved_filename.name)
 
 
-def generate_oil_file():
+def generate_code():
     if 0 == sg.generate_code():
         messagebox.showinfo("OSEK Builder", "Code Generated Successfully!")
     else:
@@ -208,11 +210,41 @@ def generate_oil_file():
 def arxml_export():
     global CurTab
 
-    CurTab.backup_data()
-    arxml_path = os.getcwd()+"/output/arxml"
-    e_ecuc.export_arxml(arxml_path)
+    file_exts = [('ARXML Files', '*.arxml')]
+    saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
+    if saved_filename == None:
+        messagebox.showinfo("OSEK Builder", "File to save is not done correctly, saving aborted!")
+        return
 
- 
+    RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
+    CurTab.backup_data()
+    e_ecuc.export_arxml(saved_filename.name)
+
+
+
+def open_arxml_file(fpath):
+    global RootView, ArXml_FileName, AppTitle
+
+    init_dir = os.getcwd()
+    if os.path.exists(os.getcwd()+"/output/arxml"):
+        init_dir = os.getcwd()+"/output/arxml"
+
+    if fpath == None:
+        ArXml_FileName = filedialog.askopenfilename(initialdir=init_dir)
+    else:
+        ArXml_FileName = fpath
+
+    if RootView != None:
+        RootView.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
+
+    # Import/Parse ARXML file, so that we can use the content in GUI.
+    i_ecuc.import_arxml(ArXml_FileName)
+    show_os_config(RootView)
+    FileMenu.entryconfig("Export to ARXML", state="normal")
+    FileMenu.entryconfig("Export to OIL", state="normal")
+
+
+
 ###############################################################################
 # Fuction: add_menus
 # args: rv - root view
@@ -223,8 +255,9 @@ def add_menus(rv):
     FileMenu = tk.Menu(MenuBar, tearoff=0)
     FileMenu.add_command(label="New", command=new_file)
     FileMenu.add_command(label="Open OIL File", command=lambda: open_oil_file(None))
-    FileMenu.add_command(label="Save As", command=save_oil_file, state="disabled")
+    FileMenu.add_command(label="Open ARXML File", command=lambda: open_arxml_file(None))
     FileMenu.add_separator()
+    FileMenu.add_command(label="Export to OIL", command=save_oil_file, state="disabled")
     FileMenu.add_command(label="Export to ARXML", command=arxml_export, state="disabled")
     FileMenu.add_separator()
     FileMenu.add_command(label="Exit", command=rv.quit)
@@ -235,7 +268,7 @@ def add_menus(rv):
     MenuBar.add_cascade(label="View", menu=view)
 
     gen = tk.Menu(MenuBar, tearoff=0)
-    gen.add_command(label="Generate Source", command=generate_oil_file)
+    gen.add_command(label="Generate Source", command=generate_code)
     MenuBar.add_cascade(label="Generate", menu=gen)
 
     help = tk.Menu(MenuBar, tearoff=0)
@@ -256,7 +289,7 @@ def init_view_setup(fpath, ftype):
     elif ftype == "oil":
         open_oil_file(fpath)
     elif ftype == "arxml":
-        print("opening arxml is under constructions!")
+        open_arxml_file(fpath)
     else:
         print("Unsupported filetype argument provided!")
 
