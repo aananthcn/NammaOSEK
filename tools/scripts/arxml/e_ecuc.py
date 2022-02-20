@@ -131,7 +131,7 @@ def insert_osos_to_subcontainer(root):
 def export_osos_to_container(root):
    ci = len(list(root))
    root.insert(ci, ET.Comment("OsOs"))
-   osos_ctnr = insert_container(root, "OsOs", "conf", "/AUTOSAR/EcucDefs/Os/OsOs")
+   osos_ctnr = insert_container(root, "OsOs", "conf", "/AUTOSAR/EcucDefs/Os/OsOS")
    # Parameters
    params = ET.SubElement(osos_ctnr, "PARAMETER-VALUES")
    refname = "/AUTOSAR/EcucDefs/Os/OsOS/OsStatus"
@@ -336,7 +336,7 @@ def export_arxml(filepath):
    root.set("xsi:schemaLocation", "http://autosar.org/schema/r4.0 autosar.xsd")
    tree = ET.ElementTree(root)
    arpkgs = ET.SubElement(root, "AR-PACKAGES")
-   build_ecuc_os_package(arpkgs, "ECUC_1")
+   build_ecuc_os_package(arpkgs, "Ecuc")
 
    ET.indent(tree, space="\t", level=0)
    tree.write(filepath, encoding="utf-8", xml_declaration=True)

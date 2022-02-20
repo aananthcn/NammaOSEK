@@ -2,17 +2,19 @@ import tkinter as tk
 from tkinter import ttk
 
 class OsTab:
+    N_StrVar = 13
     OS_StrVar = []
     sg_oscfg = None
     sg_tasks = None
+    stack_idx = 0
 
     def __init__(self, oscfg, tasks):
         self.sg_oscfg = oscfg
         if not oscfg:
             self.create_empty_os_config()
         self.sg_tasks = tasks
-        ncfgs = len(self.sg_oscfg)
-        for i in range(ncfgs):
+        self.stack_idx = self.N_StrVar - 1
+        for i in range(self.N_StrVar):
             self.OS_StrVar.insert(i, tk.StringVar())
 
 
@@ -23,115 +25,178 @@ class OsTab:
 
     def draw(self, tab):
         # 1) CPU / SoC - Label + Edit-box
+        row = 1
         label = tk.Label(tab, text="CPU / SoC name")
-        label.grid(row=1, column=1, sticky="w")
-        textb = tk.Entry(tab,text="Entry", width=30, textvariable=self.OS_StrVar[0])
-        self.OS_StrVar[0].set(self.sg_oscfg["CPU"])
-        textb.grid(row=1, column=2)
+        label.grid(row=row, column=1, sticky="w")
+        textb = tk.Entry(tab,text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
+        if "CPU" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["CPU"])
+        else:
+            print("Error: OS_Cfg does't have key: CPU")
+        textb.grid(row=row, column=2)
     
         # 2) OS Name - Label + Edit-box
+        row = 2
         label = tk.Label(tab, text="Image Name")
-        label.grid(row=2, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[1])
-        self.OS_StrVar[1].set(self.sg_oscfg["OS"])
-        textb.grid(row=2, column=2)
+        label.grid(row=row, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
+        if "OS" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["OS"])
+        else:
+            print("Error: OS_Cfg does't have key: OS")
+        textb.grid(row=row, column=2)
     
         # 3) OSEK Standard - Label + Combo-box
+        row = 3
         label = tk.Label(tab, text="OSEK Standard")
-        label.grid(row=3, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[2], state="readonly")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
         cmbsel['values'] = ("STANDARD", "EXTENDED")
-        self.OS_StrVar[2].set(self.sg_oscfg["STATUS"])
+        if "STATUS" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["STATUS"])
+        else:
+            print("Error: OS_Cfg does't have key: STATUS")
         cmbsel.current()
-        cmbsel.grid(row=3, column=2)
+        cmbsel.grid(row=row, column=2)
 
         # 4) STARTUPHOOK - Label + Combo-box
+        row = 4
         label = tk.Label(tab, text="STARTUPHOOK")
-        label.grid(row=4, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[3], state="readonly")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
         cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[3].set(self.sg_oscfg["STARTUPHOOK"])
+        if "STARTUPHOOK" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["STARTUPHOOK"])
+        else:
+            print("Error: OS_Cfg does't have key: STARTUPHOOK")
         cmbsel.current()
-        cmbsel.grid(row=4, column=2)
+        cmbsel.grid(row=row, column=2)
     
         # 5) ERRORHOOK - Label + Combo-box
+        row = 5
         label = tk.Label(tab, text="ERRORHOOK")
-        label.grid(row=5, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[4], state="readonly")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
         cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[4].set(self.sg_oscfg["ERRORHOOK"])
+        if "ERRORHOOK" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["ERRORHOOK"])
+        else:
+            print("Error: OS_Cfg does't have key: ERRORHOOK")
         cmbsel.current()
-        cmbsel.grid(row=5, column=2)
+        cmbsel.grid(row=row, column=2)
 
         # 6) SHUTDOWNHOOK - Label + Combo-box
+        row = 6
         label = tk.Label(tab, text="SHUTDOWNHOOK")
-        label.grid(row=6, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[5], state="readonly")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
         cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[5].set(self.sg_oscfg["SHUTDOWNHOOK"])
+        if "SHUTDOWNHOOK" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["SHUTDOWNHOOK"])
+        else:
+            print("Error: OS_Cfg does't have key: SHUTDOWNHOOK")
         cmbsel.current()
-        cmbsel.grid(row=6, column=2)
+        cmbsel.grid(row=row, column=2)
 
         # 7) PRETASKHOOK - Label + Combo-box
+        row = 7
         label = tk.Label(tab, text="PRETASKHOOK")
-        label.grid(row=7, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[6], state="readonly")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
         cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[6].set(self.sg_oscfg["PRETASKHOOK"])
+        if "PRETASKHOOK" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["PRETASKHOOK"])
+        else:
+            print("Error: OS_Cfg does't have key: PRETASKHOOK")
         cmbsel.current()
-        cmbsel.grid(row=7, column=2)
+        cmbsel.grid(row=row, column=2)
 
         # 8) POSTTASKHOOK - Label + Combo-box
+        row = 8
         label = tk.Label(tab, text="POSTTASKHOOK")
-        label.grid(row=8, column=1, sticky="w")
-        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[7], state="readonly")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
         cmbsel['values'] = ("FALSE", "TRUE")
-        self.OS_StrVar[7].set(self.sg_oscfg["POSTTASKHOOK"])
+        if "POSTTASKHOOK" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["POSTTASKHOOK"])
+        else:
+            print("Error: OS_Cfg does't have key: POSTTASKHOOK")
         cmbsel.current()
-        cmbsel.grid(row=8, column=2)
+        cmbsel.grid(row=row, column=2)
 
-        # 9) OS_STACK_SIZE - Label + Edit-box
+        # 9) OsProtectionHook - Label + Combo-box
+        row = 9
+        label = tk.Label(tab, text="OsProtectionHook")
+        label.grid(row=row, column=1, sticky="w")
+        cmbsel = ttk.Combobox(tab, width=27, textvariable=self.OS_StrVar[row-1], state="readonly")
+        cmbsel['values'] = ("FALSE", "TRUE")
+        if "OsProtectionHook" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["OsProtectionHook"])
+        else:
+            print("Error: OS_Cfg does't have key: OsProtectionHook")
+        cmbsel.current()
+        cmbsel.grid(row=row, column=2)
+
+        # 10) OS_STACK_SIZE - Label + Edit-box
+        row = 10
         label = tk.Label(tab, text="OS STACK SIZE")
-        label.grid(row=9, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[8])
-        self.OS_StrVar[8].set(self.sg_oscfg["OS_STACK_SIZE"])
-        textb.grid(row=9, column=2)
+        label.grid(row=row, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
+        if "OS_STACK_SIZE" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["OS_STACK_SIZE"])
+        else:
+            print("Error: OS_Cfg does't have key: OS_STACK_SIZE")
+        textb.grid(row=row, column=2)
         
-        # 10) IRQ_STACK_SIZE - Label + Edit-box
+        # 11) IRQ_STACK_SIZE - Label + Edit-box
+        row = 11
         label = tk.Label(tab, text="IRQ STACK SIZE")
-        label.grid(row=10, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[9])
-        self.OS_StrVar[9].set(self.sg_oscfg["IRQ_STACK_SIZE"])
-        textb.grid(row=10, column=2)
+        label.grid(row=row, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
+        if "IRQ_STACK_SIZE" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["IRQ_STACK_SIZE"])
+        else:
+            print("Error: OS_Cfg does't have key: IRQ_STACK_SIZE")
+        textb.grid(row=row, column=2)
         
-        # 11) OS_CTX_SAVE_SZ - Label + Edit-box
-        label = tk.Label(tab, text="CONTEXT SAVE SIZE FOR TASKS ")
-        label.grid(row=11, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[10])
-        self.OS_StrVar[10].set(self.sg_oscfg["OS_CTX_SAVE_SZ"])
-        textb.grid(row=11, column=2)
+        # 12) OS_CTX_SAVE_SZ - Label + Edit-box
+        row = 12
+        label = tk.Label(tab, text="CONTEXT SAVE SIZE FOR TASKS", width=30, anchor="w")
+        label.grid(row=row, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
+        if "OS_CTX_SAVE_SZ" in self.sg_oscfg:
+            self.OS_StrVar[row-1].set(self.sg_oscfg["OS_CTX_SAVE_SZ"])
+        else:
+            print("Error: OS_Cfg does't have key: OS_CTX_SAVE_SZ")
+        textb.grid(row=row, column=2)
 
-        # 12) TASK_STACK_SIZE - Label + Edit-box
+        # 13) TASK_STACK_SIZE - Label + Edit-box
+        row = 13
         label = tk.Label(tab, text="TASK STACK SIZE (Total)")
-        label.grid(row=12, column=1, sticky="w")
-        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[11], state="readonly")
-        self.OS_StrVar[11].set(self.sg_oscfg["TASK_STACK_SIZE"])
-        textb.grid(row=12, column=2)
-        
-        # 12) Update TASK_STACK_SIZE Button
+        label.grid(row=row, column=1, sticky="w")
+        textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[self.stack_idx], state="readonly")
+        if "TASK_STACK_SIZE" in self.sg_oscfg:
+            self.OS_StrVar[self.stack_idx].set(self.sg_oscfg["TASK_STACK_SIZE"])
+        else:
+            print("Error: OS_Cfg does't have key: TASK_STACK_SIZE")
+        textb.grid(row=row, column=2)
         select = tk.Button(tab, width=6, text="Update", command=self.update)
-        select.grid(row=15, column=3)
+        select.grid(row=row, column=3)
 
 
     def update(self):
         self.backup_data()
         # Recalculate parameters and update
         task_stack_size = 0
-        n_tasks = len(self.sg_tasks)
         for tsk in self.sg_tasks:
-            task_stack_size += (int(self.sg_oscfg["OS_CTX_SAVE_SZ"]) + int(tsk["STACK_SIZE"]))
+            try:
+                task_stack_size += int(self.sg_oscfg["OS_CTX_SAVE_SZ"])
+                task_stack_size += int(tsk["STACK_SIZE"])
+            except:
+                print("Error: stack size computation input validation error!")
         
-        self.OS_StrVar[14].set(task_stack_size)
+        if self.stack_idx > 0:
+            self.OS_StrVar[self.stack_idx].set(task_stack_size)
 
 
     def backup_data(self):
@@ -151,7 +216,6 @@ class OsTab:
     
     
     def create_empty_os_config(self):
-        # Backup to system generator global variables
         self.sg_oscfg["CPU"]                   = ""
         self.sg_oscfg["OS"]                    = ""
         self.sg_oscfg["STATUS"]                = "STANDARD"
