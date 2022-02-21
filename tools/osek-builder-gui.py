@@ -6,8 +6,8 @@ import sys
 sys.path.insert(0, os.getcwd()+"/tools/scripts")
 import scripts.System_Generator as sg
 import scripts.oil as oil
-import scripts.arxml.e_ecuc as e_ecuc
-import scripts.arxml.i_ecuc as i_ecuc
+import scripts.arxml.main as arxml
+
 
 import tkinter as tk
 from tkinter import messagebox
@@ -218,7 +218,7 @@ def arxml_export():
 
     RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
     CurTab.backup_data()
-    e_ecuc.export_arxml(saved_filename.name)
+    arxml.export_arxml(saved_filename.name)
 
 
 
@@ -238,7 +238,7 @@ def open_arxml_file(fpath):
         RootView.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
 
     # Import/Parse ARXML file, so that we can use the content in GUI.
-    i_ecuc.import_arxml(ArXml_FileName)
+    arxml.import_arxml(ArXml_FileName)
     show_os_config(RootView)
     FileMenu.entryconfig("Export to ARXML", state="normal")
     FileMenu.entryconfig("Export to OIL", state="normal")
