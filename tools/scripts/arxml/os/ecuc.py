@@ -96,6 +96,13 @@ def parse_oscfg(ctnr):
 
 
 
+def parse_appmodes(ctnr):
+   for elem in list(ctnr):
+      if lib.get_tag(elem) == "SHORT-NAME":
+         sg.AppModes.append(elem.text)
+
+
+
 def parse_arxml(filepath):
    tree = ET.parse(filepath)
    root = tree.getroot()
@@ -105,8 +112,7 @@ def parse_arxml(filepath):
       if dref == "/AUTOSAR/EcucDefs/Os/OsOS":
          parse_oscfg(cv)
       if dref == "/AUTOSAR/EcucDefs/Os/OsAppMode":
-         tag, val = lib.get_param(cv)
-         print(tag)
+         parse_appmodes(cv)
 
 
 
