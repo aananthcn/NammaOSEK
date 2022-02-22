@@ -31,7 +31,7 @@ MenuBar = None
 FileMenu = None
 OIL_FileName = None
 ArXml_FileName = None
-AppTitle = "OSEK Builder"
+AppTitle = "FreeOSEK-AUTOSAR Builder"
 RootView = None
 CurTab = OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
 

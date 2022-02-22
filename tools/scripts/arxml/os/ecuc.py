@@ -103,6 +103,32 @@ def parse_appmodes(ctnr):
 
 
 
+def parse_counters(ctnr):
+   iter_per_cntr = 2
+   cntr = {}
+   for elem in list(ctnr):
+      if lib.get_tag(elem) == "SHORT-NAME":
+         iter_per_cntr -= 1
+         cntr["Counter Name"] = elem.text
+      if lib.get_tag(elem) == "PARAMETER-VALUES":
+         iter_per_cntr -= 1
+         plist = lib.get_param_list(ctnr)
+         for lst in plist:
+            if lst["tag"] == "OsCounterMaxAllowedValue":
+               cntr["MAXALLOWEDVALUE"] = lst["val"]
+            if lst["tag"] == "OsCounterMinCycle":
+               cntr["MINCYCLE"] = lst["val"]
+            if lst["tag"] == "OsCounterTicksPerBase":
+               cntr["TICKSPERBASE"] = lst["val"]
+            if lst["tag"] == "OsCounterType":
+               cntr["OsCounterType"] = lst["val"]
+      if iter_per_cntr == 0:
+         sg.Counters.append(cntr)
+         iter_per_cntr = 2
+         cntr = {}
+
+
+
 def parse_arxml(filepath):
    tree = ET.parse(filepath)
    root = tree.getroot()
@@ -113,6 +139,8 @@ def parse_arxml(filepath):
          parse_oscfg(cv)
       if dref == "/AUTOSAR/EcucDefs/Os/OsAppMode":
          parse_appmodes(cv)
+      if dref == "/AUTOSAR/EcucDefs/Os/OsCounter":
+         parse_counters(cv)
 
 
 
