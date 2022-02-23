@@ -94,14 +94,13 @@ def get_tag(elem):
 
 
 def get_param(elem):
-   tag = None
-   value = None
+   tag = val = None
    for item in list(elem):
       if get_tag(item) == "DEFINITION-REF":
          tag = str(item.text).split("/")[-1]
       if get_tag(item) == "VALUE":
-         value = item.text
-   return tag, value
+         val = item.text
+   return tag, val
 
 
 
@@ -127,3 +126,17 @@ def get_dref_from_container(ctnr):
    return dref
 
 
+
+def get_dref_list(ctnr):
+   plist = []
+   tag = val = None
+   for elem in list(ctnr):
+      if get_tag(elem) == "ECUC-REFERENCE-VALUE":
+         for ref in list(elem):
+            if get_tag(ref) == "DEFINITION-REF":
+               tag = str(ref.text).split("/")[-1]
+            if get_tag(ref) == "VALUE-REF":
+               val = str(ref.text).split("/")[-1]
+         item = { "tag":tag, "val":val }
+         plist.append(item)
+   return plist

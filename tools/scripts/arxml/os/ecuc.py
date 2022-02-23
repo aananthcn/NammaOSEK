@@ -96,14 +96,14 @@ def parse_oscfg(ctnr):
 
 
 
-def parse_appmodes(ctnr):
+def parse_appmode(ctnr):
    for elem in list(ctnr):
       if lib.get_tag(elem) == "SHORT-NAME":
          sg.AppModes.append(elem.text)
 
 
 
-def parse_counters(ctnr):
+def parse_counter(ctnr):
    iter_per_cntr = 2
    cntr = {}
    for elem in list(ctnr):
@@ -129,6 +129,63 @@ def parse_counters(ctnr):
 
 
 
+
+def insert_in_task(task, key, val):
+   try:
+         task[key].append(val)
+   except KeyError:
+         task[key] = []
+         task[key].append(val)
+
+
+def parse_task(ctnr):
+   iter_per_cntr = len(list(ctnr)) - 1
+   task = {}
+   autostart = False
+   for elem in list(ctnr):
+      if lib.get_tag(elem) == "SHORT-NAME":
+         iter_per_cntr -= 1
+         task["Task Name"] = elem.text
+      if lib.get_tag(elem) == "PARAMETER-VALUES":
+         iter_per_cntr -= 1
+         plist = lib.get_param_list(ctnr)
+         for lst in plist:
+            if lst["tag"] == "OsTaskActivation":
+               task["ACTIVATION"] = lst["val"]
+            if lst["tag"] == "OsTaskPriority":
+               task["PRIORITY"] = lst["val"]
+            if lst["tag"] == "OsTaskStackSize":
+               task["STACK_SIZE"] = lst["val"]
+            if lst["tag"] == "OsTaskSchedule":
+               task["SCHEDULE"] = lst["val"]
+      if lib.get_tag(elem) == "REFERENCE-VALUES":
+         iter_per_cntr -= 1
+         plist = lib.get_dref_list(elem)
+         for lst in plist:
+            if lst["tag"] == "OsTaskResourceRef":
+               insert_in_task(task, "RESOURCE", lst["val"])
+            if lst["tag"] == "OsTaskEventRef":
+               insert_in_task(task, "EVENT", lst["val"])
+      if lib.get_tag(elem) == "SUB-CONTAINERS":
+         iter_per_cntr -= 1
+         for l2c in list(elem):
+            if lib.get_tag(l2c) == "ECUC-CONTAINER-VALUE":
+               for item in list(l2c):
+                  if lib.get_tag(item) == "REFERENCE-VALUES":
+                     plist = lib.get_dref_list(item)
+                     for lst in plist:
+                        if lst["tag"] == "OsTaskAppModeRef":
+                           insert_in_task(task, "AUTOSTART_APPMODE", lst["val"])
+                           task["AUTOSTART"] = "TRUE"
+                           autostart = True
+      if iter_per_cntr == 0:
+         if autostart == False:
+            task["AUTOSTART"] = "FALSE"
+         sg.Tasks.append(task)
+         iter_per_cntr = len(list(ctnr)) - 1
+         task = {}
+
+
 def parse_arxml(filepath):
    tree = ET.parse(filepath)
    root = tree.getroot()
@@ -137,10 +194,14 @@ def parse_arxml(filepath):
       dref = lib.get_dref_from_container(cv)
       if dref == "/AUTOSAR/EcucDefs/Os/OsOS":
          parse_oscfg(cv)
-      if dref == "/AUTOSAR/EcucDefs/Os/OsAppMode":
-         parse_appmodes(cv)
-      if dref == "/AUTOSAR/EcucDefs/Os/OsCounter":
-         parse_counters(cv)
+      elif dref == "/AUTOSAR/EcucDefs/Os/OsAppMode":
+         parse_appmode(cv)
+      elif dref == "/AUTOSAR/EcucDefs/Os/OsCounter":
+         parse_counter(cv)
+      elif dref == "/AUTOSAR/EcucDefs/Os/OsTask":
+         parse_task(cv)
+      # else:
+      #    print(dref)
 
 
 

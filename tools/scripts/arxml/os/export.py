@@ -149,7 +149,7 @@ def export_tasks_to_container(root):
    ci = len(list(root))
    for task in sg.Tasks:
       root.insert(ci, ET.Comment("OsTask"))
-      ctnr = lib.insert_container(root, task["Task Name"], "conf", "/AUTOSAR/EcuDefs/Os/OsTask")
+      ctnr = lib.insert_container(root, task["Task Name"], "conf", "/AUTOSAR/EcucDefs/Os/OsTask")
       ci += 2
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
@@ -189,7 +189,7 @@ def export_alarms_to_container(root):
    ci = len(list(root)) # ci stands for comment index
    for alm in sg.Alarms:
       root.insert(ci, ET.Comment("OsAlarm"))
-      ctnr = lib.insert_container(root, alm["Alarm Name"], "conf", "/AUTOSAR/EcuDefs/Os/OsAlarm")
+      ctnr = lib.insert_container(root, alm["Alarm Name"], "conf", "/AUTOSAR/EcucDefs/Os/OsAlarm")
       ci += 2
       # References
       references = ET.SubElement(ctnr, "REFERENCE-VALUES")

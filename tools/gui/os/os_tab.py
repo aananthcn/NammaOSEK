@@ -142,10 +142,10 @@ class OsTab:
         label = tk.Label(tab, text="OS STACK SIZE")
         label.grid(row=row, column=1, sticky="w")
         textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
-        if "OS_STACK_SIZE" in self.sg_oscfg:
-            self.OS_StrVar[row-1].set(self.sg_oscfg["OS_STACK_SIZE"])
-        else:
+        if "OS_STACK_SIZE" not in self.sg_oscfg:
             print("Error: OS_Cfg does't have key: OS_STACK_SIZE")
+            self.sg_oscfg["OS_STACK_SIZE"] = 512
+        self.OS_StrVar[row-1].set(self.sg_oscfg["OS_STACK_SIZE"])
         textb.grid(row=row, column=2)
         
         # 11) IRQ_STACK_SIZE - Label + Edit-box
@@ -153,10 +153,10 @@ class OsTab:
         label = tk.Label(tab, text="IRQ STACK SIZE")
         label.grid(row=row, column=1, sticky="w")
         textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
-        if "IRQ_STACK_SIZE" in self.sg_oscfg:
-            self.OS_StrVar[row-1].set(self.sg_oscfg["IRQ_STACK_SIZE"])
-        else:
+        if "IRQ_STACK_SIZE" not in self.sg_oscfg:
             print("Error: OS_Cfg does't have key: IRQ_STACK_SIZE")
+            self.sg_oscfg["IRQ_STACK_SIZE"] = 512
+        self.OS_StrVar[row-1].set(self.sg_oscfg["IRQ_STACK_SIZE"])
         textb.grid(row=row, column=2)
         
         # 12) OS_CTX_SAVE_SZ - Label + Edit-box
@@ -164,21 +164,22 @@ class OsTab:
         label = tk.Label(tab, text="CONTEXT SAVE SIZE FOR TASKS", width=30, anchor="w")
         label.grid(row=row, column=1, sticky="w")
         textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[row-1])
-        if "OS_CTX_SAVE_SZ" in self.sg_oscfg:
-            self.OS_StrVar[row-1].set(self.sg_oscfg["OS_CTX_SAVE_SZ"])
-        else:
+        if "OS_CTX_SAVE_SZ" not in self.sg_oscfg:
             print("Error: OS_Cfg does't have key: OS_CTX_SAVE_SZ")
+            self.sg_oscfg["OS_CTX_SAVE_SZ"] = 512
+        self.OS_StrVar[row-1].set(self.sg_oscfg["OS_CTX_SAVE_SZ"])
         textb.grid(row=row, column=2)
 
         # 13) TASK_STACK_SIZE - Label + Edit-box
         row = 13
+        self.stack_idx = row - 1
         label = tk.Label(tab, text="TASK STACK SIZE (Total)")
         label.grid(row=row, column=1, sticky="w")
         textb = tk.Entry(tab, text="Entry", width=30, textvariable=self.OS_StrVar[self.stack_idx], state="readonly")
-        if "TASK_STACK_SIZE" in self.sg_oscfg:
-            self.OS_StrVar[self.stack_idx].set(self.sg_oscfg["TASK_STACK_SIZE"])
-        else:
+        if "TASK_STACK_SIZE" not in self.sg_oscfg:
             print("Error: OS_Cfg does't have key: TASK_STACK_SIZE")
+            self.sg_oscfg["TASK_STACK_SIZE"] = 0
+        self.OS_StrVar[self.stack_idx].set(self.sg_oscfg["TASK_STACK_SIZE"])
         textb.grid(row=row, column=2)
         select = tk.Button(tab, width=6, text="Update", command=self.update)
         select.grid(row=row, column=3)
@@ -209,10 +210,11 @@ class OsTab:
         self.sg_oscfg["SHUTDOWNHOOK"]          = self.OS_StrVar[5].get()
         self.sg_oscfg["PRETASKHOOK"]           = self.OS_StrVar[6].get()
         self.sg_oscfg["POSTTASKHOOK"]          = self.OS_StrVar[7].get()
-        self.sg_oscfg["OS_STACK_SIZE"]         = self.OS_StrVar[8].get()
-        self.sg_oscfg["IRQ_STACK_SIZE"]        = self.OS_StrVar[9].get()
-        self.sg_oscfg["OS_CTX_SAVE_SZ"]        = self.OS_StrVar[10].get()
-        self.sg_oscfg["TASK_STACK_SIZE"]       = self.OS_StrVar[11].get()
+        self.sg_oscfg["OsProtectionHook"]      = self.OS_StrVar[8].get()
+        self.sg_oscfg["OS_STACK_SIZE"]         = self.OS_StrVar[9].get()
+        self.sg_oscfg["IRQ_STACK_SIZE"]        = self.OS_StrVar[10].get()
+        self.sg_oscfg["OS_CTX_SAVE_SZ"]        = self.OS_StrVar[11].get()
+        self.sg_oscfg["TASK_STACK_SIZE"]       = self.OS_StrVar[12].get()
     
     
     def create_empty_os_config(self):
