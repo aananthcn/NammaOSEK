@@ -139,15 +139,15 @@ def insert_in_task(task, key, val):
 
 
 def parse_task(ctnr):
-   iter_per_cntr = len(list(ctnr)) - 1
+   iter_per_task = len(list(ctnr)) - 1
    task = {}
    autostart = False
    for elem in list(ctnr):
       if lib.get_tag(elem) == "SHORT-NAME":
-         iter_per_cntr -= 1
+         iter_per_task -= 1
          task["Task Name"] = elem.text
-      if lib.get_tag(elem) == "PARAMETER-VALUES":
-         iter_per_cntr -= 1
+      elif lib.get_tag(elem) == "PARAMETER-VALUES":
+         iter_per_task -= 1
          plist = lib.get_param_list(ctnr)
          for lst in plist:
             if lst["tag"] == "OsTaskActivation":
@@ -158,16 +158,16 @@ def parse_task(ctnr):
                task["STACK_SIZE"] = lst["val"]
             if lst["tag"] == "OsTaskSchedule":
                task["SCHEDULE"] = lst["val"]
-      if lib.get_tag(elem) == "REFERENCE-VALUES":
-         iter_per_cntr -= 1
+      elif lib.get_tag(elem) == "REFERENCE-VALUES":
+         iter_per_task -= 1
          plist = lib.get_dref_list(elem)
          for lst in plist:
             if lst["tag"] == "OsTaskResourceRef":
                insert_in_task(task, "RESOURCE", lst["val"])
             if lst["tag"] == "OsTaskEventRef":
                insert_in_task(task, "EVENT", lst["val"])
-      if lib.get_tag(elem) == "SUB-CONTAINERS":
-         iter_per_cntr -= 1
+      elif lib.get_tag(elem) == "SUB-CONTAINERS":
+         iter_per_task -= 1
          for l2c in list(elem):
             if lib.get_tag(l2c) == "ECUC-CONTAINER-VALUE":
                for item in list(l2c):
@@ -178,12 +178,59 @@ def parse_task(ctnr):
                            insert_in_task(task, "AUTOSTART_APPMODE", lst["val"])
                            task["AUTOSTART"] = "TRUE"
                            autostart = True
-      if iter_per_cntr == 0:
+      if iter_per_task == 0:
          if autostart == False:
             task["AUTOSTART"] = "FALSE"
          sg.Tasks.append(task)
-         iter_per_cntr = len(list(ctnr)) - 1
+         iter_per_task = len(list(ctnr)) - 1
          task = {}
+
+
+
+def parse_alarm_action(ctnr, alarm):
+   for item in list(ctnr):
+      if lib.get_tag(item) == "SUB-CONTAINERS":
+         for l3c in list(item):
+            if lib.get_tag(l3c) == "ECUC-CONTAINER-VALUE":
+               for elem in list(l3c):
+                  if lib.get_tag(elem) == "SHORT-NAME":
+                     alarm["Action-Type"] = elem.text
+                  if lib.get_tag(elem) == "REFERENCE-VALUES":
+                     plist = lib.get_dref_list(elem)
+                     for lst in plist:
+                        if lst["tag"] == "OsAlarmActivateTaskRef" or lst["tag"] == "OsAlarmSetEventTaskRef":
+                           alarm["arg1"] = lst["val"]
+                        if lst["tag"] == "OsAlarmSetEventRef":
+                           alarm["arg2"] = lst["val"]
+                  if lib.get_tag(elem) == "PARAMETER-VALUES":
+                     plist = lib.get_param_list(l3c)
+                     print(plist)
+                     for lst in plist:
+                        if lst["tag"] == "OsAlarmCallbackName":
+                           alarm["arg1"] = lst["val"]
+
+
+
+def parse_alarm(ctnr):
+   alarm = {}
+   for elem in list(ctnr):
+      if lib.get_tag(elem) == "SHORT-NAME":
+         alarm["Alarm Name"] = elem.text
+      elif lib.get_tag(elem) == "REFERENCE-VALUES":
+         plist = lib.get_dref_list(elem)
+         for lst in plist:
+            if lst["tag"] == "OsAlarmCounterRef":
+               alarm["COUNTER"] = lst["val"]
+      elif lib.get_tag(elem) == "SUB-CONTAINERS":
+         for l2c in list(elem):
+            if lib.get_tag(l2c) == "ECUC-CONTAINER-VALUE":
+               parse_alarm_action(l2c, alarm)
+      else:
+         print(lib.get_tag(elem))
+
+   # sg.Alarms.append(alarm)
+   print(alarm)
+
 
 
 def parse_arxml(filepath):
@@ -200,6 +247,8 @@ def parse_arxml(filepath):
          parse_counter(cv)
       elif dref == "/AUTOSAR/EcucDefs/Os/OsTask":
          parse_task(cv)
+      elif dref == "/AUTOSAR/EcucDefs/Os/OsAlarm":
+         parse_alarm(cv)
       # else:
       #    print(dref)
 
