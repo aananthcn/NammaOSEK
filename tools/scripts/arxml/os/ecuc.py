@@ -198,21 +198,44 @@ def parse_alarm_action(ctnr, alarm):
                   if lib.get_tag(elem) == "REFERENCE-VALUES":
                      plist = lib.get_dref_list(elem)
                      for lst in plist:
-                        if lst["tag"] == "OsAlarmActivateTaskRef" or lst["tag"] == "OsAlarmSetEventTaskRef":
+                        if lst["tag"] == "OsAlarmActivateTaskRef":
+                           alarm["arg1"] = lst["val"]
+                        if lst["tag"] == "OsAlarmSetEventTaskRef":
+                           alarm["arg1"] = lst["val"]
+                        if lst["tag"] == "OsAlarmIncrementCounterRef":
                            alarm["arg1"] = lst["val"]
                         if lst["tag"] == "OsAlarmSetEventRef":
                            alarm["arg2"] = lst["val"]
                   if lib.get_tag(elem) == "PARAMETER-VALUES":
                      plist = lib.get_param_list(l3c)
-                     print(plist)
                      for lst in plist:
                         if lst["tag"] == "OsAlarmCallbackName":
                            alarm["arg1"] = lst["val"]
 
 
 
+def parse_alarm_autostart(ctnr, alarm):
+   for item in list(ctnr):
+      if lib.get_tag(item) == "PARAMETER-VALUES":
+         plist = lib.get_param_list(ctnr)
+         for lst in plist:
+            if lst["tag"] == "OsAlarmAlarmTime":
+               alarm["ALARMTIME"] = lst["val"]
+            if lst["tag"] == "OsAlarmCycleTime":
+               alarm["CYCLETIME"] = lst["val"]
+            if lst["tag"] == "OsAlarmAutostartType":
+               alarm["OsAlarmAutostartType"] = lst["val"]
+      if lib.get_tag(item) == "REFERENCE-VALUES":
+         plist = lib.get_dref_list(item)
+         for lst in plist:
+            if lst["tag"] == "OsAlarmAppModeRef":
+               alarm["APPMODE[]"].append(lst["val"])
+
+
+
 def parse_alarm(ctnr):
    alarm = {}
+   alarm["IsAutostart"] = "FALSE"
    for elem in list(ctnr):
       if lib.get_tag(elem) == "SHORT-NAME":
          alarm["Alarm Name"] = elem.text
@@ -224,12 +247,15 @@ def parse_alarm(ctnr):
       elif lib.get_tag(elem) == "SUB-CONTAINERS":
          for l2c in list(elem):
             if lib.get_tag(l2c) == "ECUC-CONTAINER-VALUE":
-               parse_alarm_action(l2c, alarm)
-      else:
-         print(lib.get_tag(elem))
+               for item in list(l2c):
+                  if lib.get_tag(item) == "SHORT-NAME" and item.text == "OsAlarmAction":
+                     parse_alarm_action(l2c, alarm)
+                  elif lib.get_tag(item) == "SHORT-NAME" and item.text == "OsAlarmAutostart":
+                     alarm["IsAutostart"] = "TRUE"
+                     alarm["APPMODE[]"] = []
+                     parse_alarm_autostart(l2c, alarm)
 
-   # sg.Alarms.append(alarm)
-   print(alarm)
+   sg.Alarms.append(alarm)
 
 
 
