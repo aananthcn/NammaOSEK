@@ -199,8 +199,9 @@ def export_alarms_to_container(root):
       
       # Sub-Containers
       sub_ctnr = ET.SubElement(ctnr, "SUB-CONTAINERS")
-      l2_ctnr = lib.insert_container(sub_ctnr, "OsAlarmAction", "choice", "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction")
+
       # Container Level-3 for OsAlarmAction
+      l2_ctnr = lib.insert_container(sub_ctnr, "OsAlarmAction", "choice", "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction")
       l3_ctnr = ET.SubElement(l2_ctnr, "SUB-CONTAINERS")
       if alm["Action-Type"] == "ACTIVATETASK":
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmActivateTask"
@@ -228,6 +229,25 @@ def export_alarms_to_container(root):
          # Callback references
          refname = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmCallback/OsAlarmCallbackName"
          lib.insert_param(params, refname, "text", "func", alm["arg1"])
+
+      # Container Level-3 for OsAlarmAutoStart
+      if alm["IsAutostart"] == "TRUE":
+         l2_ctnr = lib.insert_container(sub_ctnr, "OsAlarmAutostart", "conf", "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAutostart")
+         # Parameters
+         params = ET.SubElement(l2_ctnr, "PARAMETER-VALUES")
+         refname = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAutostart/OsAlarmAlarmTime"
+         lib.insert_param(params, refname, "numerical", "int", alm["ALARMTIME"])
+         refname = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAutostart/OsAlarmCycleTime"
+         lib.insert_param(params, refname, "numerical", "int", alm["CYCLETIME"])
+         refname = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAutostart/OsAlarmAutostartType"
+         lib.insert_param(params, refname, "numerical", "int", "NOT YET SUPPORTED") # Todo: add support for this in UI
+      if "APPMODE[]" in alm:
+         # References
+         references = ET.SubElement(l2_ctnr, "REFERENCE-VALUES")
+         dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAutostart/OsAlarmAppModeRef"
+         for am in alm["APPMODE[]"]:
+            lib.insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+am)
+
 
 
 
