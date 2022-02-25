@@ -259,6 +259,26 @@ def parse_alarm(ctnr):
 
 
 
+def parse_isr(ctnr):
+   isr = {}
+   for elem in list(ctnr):
+      if lib.get_tag(elem) == "SHORT-NAME":
+         isr["ISR Name"] = elem.text
+      elif lib.get_tag(elem) == "PARAMETER-VALUES":
+         plist = lib.get_param_list(ctnr)
+         for lst in plist:
+            if lst["tag"] == "OsIsrInterruptNumber":
+               isr["IRQn"] = lst["val"]
+            if lst["tag"] == "OsIsrInterruptPriority":
+               isr["OsIsrInterruptPriority"] = lst["val"]
+            if lst["tag"] == "OsIsrCategory":
+               isr["CATEGORY"] = lst["val"]
+            if lst["tag"] == "OsIsrStackSize":
+               isr["OsIsrStackSize"] = lst["val"]
+   sg.ISRs.append(isr)
+
+
+
 def parse_arxml(filepath):
    tree = ET.parse(filepath)
    root = tree.getroot()
@@ -275,6 +295,8 @@ def parse_arxml(filepath):
          parse_task(cv)
       elif dref == "/AUTOSAR/EcucDefs/Os/OsAlarm":
          parse_alarm(cv)
+      elif dref == "/AUTOSAR/EcucDefs/Os/OsIsr":
+         parse_isr(cv)
       # else:
       #    print(dref)
 

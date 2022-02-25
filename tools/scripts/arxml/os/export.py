@@ -250,6 +250,24 @@ def export_alarms_to_container(root):
 
 
 
+def export_isrs_to_container(root):
+   ci = len(list(root))
+   for isr in sg.ISRs:
+      root.insert(ci, ET.Comment("OsIsr"))
+      ctnr = lib.insert_container(root, isr["ISR Name"], "conf", "/AUTOSAR/EcucDefs/Os/OsIsr")
+      ci += 2
+      # Parameters
+      params = ET.SubElement(ctnr, "PARAMETER-VALUES")
+      refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrInterruptNumber"
+      lib.insert_param(params, refname, "numerical", "int", isr['IRQn'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrInterruptPriority"
+      lib.insert_param(params, refname, "numerical", "int", isr['OsIsrInterruptPriority'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrCategory"
+      lib.insert_param(params, refname, "numerical", "int", isr['CATEGORY'])
+      refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrStackSize"
+      lib.insert_param(params, refname, "numerical", "int", isr['OsIsrStackSize'])
+
+
 
 def build_ecuc_os_package(root, name):
    global EcuName
@@ -280,5 +298,6 @@ def build_ecuc_os_package(root, name):
    export_resources_to_container(containers)
    export_tasks_to_container(containers)
    export_alarms_to_container(containers)
+   export_isrs_to_container(containers)
 
 

@@ -9,6 +9,7 @@ class IsrStr:
     name = None
     irqn = None
     category = None
+    priority = None
     n_resources = None
     n_messages = None
 
@@ -17,6 +18,7 @@ class IsrStr:
         self.name = tk.StringVar()
         self.irqn = tk.StringVar()
         self.category = tk.StringVar()
+        self.priority = tk.StringVar()
         self.n_resources = 0
         self.n_messages = 0
 
@@ -24,17 +26,18 @@ class IsrStr:
         del self.name
         del self.irqn
         del self.category
+        del self.priority
 
 
 class IsrTab:
-    n_isrs = 1
+    n_isrs = 0
     max_isrs = 1024
     n_isrs_str = None
     isrs_str = []
     resources = []
-    messages = []
+    # messages = []
     sg_isrs = None
-    HeaderObjs = 12 #Objects / widgets that are part of the header and shouldn't be destroyed
+    HeaderObjs = 10 #Objects / widgets that are part of the header and shouldn't be destroyed
     HeaderSize = 3
     prf = None  # Parent Frame
     cvf = None  # Canvas Frame
@@ -51,9 +54,9 @@ class IsrTab:
 
     def __init__(self, isrs, rstab, mstab):
         self.sg_isrs = isrs
-        if not self.sg_isrs:
-            nisr = self.create_empty_isr()
-            self.sg_isrs.append(nisr)
+        # if not self.sg_isrs:
+        #     nisr = self.create_empty_isr()
+        #     self.sg_isrs.append(nisr)
         self.n_isrs = len(self.sg_isrs)
         self.n_isrs_str = tk.StringVar()
         del self.isrs_str[:]
@@ -81,7 +84,8 @@ class IsrTab:
             isr["IRQn"] = int(self.sg_isrs[len(self.sg_isrs)-1]["IRQn"]) + 1
         isr["CATEGORY"] = "1"
         isr["RESOURCE"] = []
-        isr["MESSAGE"] = []
+        # isr["MESSAGE"] = []
+        isr["OsIsrInterruptPriority"] = 0
 
         return isr
 
@@ -118,7 +122,7 @@ class IsrTab:
         label = tk.Label(self.mnf, text="No. of Tasks:")
         label.grid(row=0, column=0, sticky="w")
         spinb = tk.Spinbox(self.mnf, width=10, textvariable=self.n_isrs_str, command=lambda : self.update(),
-                    values=tuple(range(1,self.max_isrs+1)))
+                    values=tuple(range(0,self.max_isrs+1)))
         self.n_isrs_str.set(self.n_isrs)
         spinb.grid(row=0, column=1, sticky="w")
 
@@ -140,10 +144,12 @@ class IsrTab:
         label.grid(row=2, column=2, sticky="we")
         label = tk.Label(self.mnf, text="CATEGORY")
         label.grid(row=2, column=3, sticky="we")
-        label = tk.Label(self.mnf, text="RESOURCE(S)")
+        label = tk.Label(self.mnf, text="PRIORITY")
         label.grid(row=2, column=4, sticky="we")
-        label = tk.Label(self.mnf, text="MESSAGE(s)")
+        label = tk.Label(self.mnf, text="RESOURCE(S)")
         label.grid(row=2, column=5, sticky="we")
+        # label = tk.Label(self.mnf, text="MESSAGE(s)")
+        # label.grid(row=2, column=7, sticky="we")
 
         self.update()
 
@@ -192,19 +198,24 @@ class IsrTab:
             cmbsel.current()
             cmbsel.grid(row=self.HeaderSize+i, column=3)
 
+            # PRIORITY
+            entry = tk.Entry(self.mnf, width=10, textvariable=self.isrs_str[i].priority, justify='center')
+            self.isrs_str[i].priority.set(self.sg_isrs[i]["OsIsrInterruptPriority"])
+            entry.grid(row=self.HeaderSize+i, column=4)
+
             # RESOURCE[]
             if "RESOURCE" in self.sg_isrs[i]:
                 self.isrs_str[i].n_resources = len(self.sg_isrs[i]["RESOURCE"])
             text = "Resources["+str(self.isrs_str[i].n_resources)+"]"
             select = tk.Button(self.mnf, width=12, text=text, command=lambda id = i: self.select_resources(id))
-            select.grid(row=self.HeaderSize+i, column=4)
-
-            # MESSAGE[]
-            if "MESSAGE" in self.sg_isrs[i]:
-                self.isrs_str[i].n_messages = len(self.sg_isrs[i]["MESSAGE"])
-            text = "Messages["+str(self.isrs_str[i].n_messages)+"]"
-            select = tk.Button(self.mnf, width=12, text=text, command=lambda id = i: self.select_messages(id))
             select.grid(row=self.HeaderSize+i, column=5)
+
+            # # MESSAGE[]
+            # if "MESSAGE" in self.sg_isrs[i]:
+            #     self.isrs_str[i].n_messages = len(self.sg_isrs[i]["MESSAGE"])
+            # text = "Messages["+str(self.isrs_str[i].n_messages)+"]"
+            # select = tk.Button(self.mnf, width=12, text=text, command=lambda id = i: self.select_messages(id))
+            # select.grid(row=self.HeaderSize+i, column=7)
             
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
@@ -219,6 +230,8 @@ class IsrTab:
                 self.sg_isrs[i]["IRQn"] = self.isrs_str[i].irqn.get()
             if len(self.isrs_str[i].category.get()):
                 self.sg_isrs[i]["CATEGORY"] = self.isrs_str[i].category.get()
+            if len(self.isrs_str[i].priority.get()):
+                self.sg_isrs[i]["OsIsrInterruptPriority"] = self.isrs_str[i].priority.get()
 
 
     def on_resource_dialog_close(self, isr_id):
@@ -262,44 +275,44 @@ class IsrTab:
         self.active_widget.pack()
 
 
-    def on_message_dialog_close(self, isr_id):
-        # remove old selections
-        if "MESSAGE" in self.sg_isrs[isr_id]:
-            del self.sg_isrs[isr_id]["MESSAGE"][:]
-        else:
-            self.sg_isrs[isr_id]["MESSAGE"] = []
+    # def on_message_dialog_close(self, isr_id):
+    #     # remove old selections
+    #     if "MESSAGE" in self.sg_isrs[isr_id]:
+    #         del self.sg_isrs[isr_id]["MESSAGE"][:]
+    #     else:
+    #         self.sg_isrs[isr_id]["MESSAGE"] = []
 
-        # update new selections
-        if len(self.active_widget.curselection()):
-            for i in self.active_widget.curselection():
-                self.sg_isrs[isr_id]["MESSAGE"].append(self.active_widget.get(i))
+    #     # update new selections
+    #     if len(self.active_widget.curselection()):
+    #         for i in self.active_widget.curselection():
+    #             self.sg_isrs[isr_id]["MESSAGE"].append(self.active_widget.get(i))
         
-        # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
-        self.active_widget.destroy()
-        del self.active_widget
-        self.active_dialog.destroy()
-        del self.active_dialog
+    #     # dialog elements are no longer needed, destroy them. Else, new dialogs will not open!
+    #     self.active_widget.destroy()
+    #     del self.active_widget
+    #     self.active_dialog.destroy()
+    #     del self.active_dialog
 
-        # refresh screen
-        self.update()
+    #     # refresh screen
+    #     self.update()
 
 
-    def select_messages(self, id):
-        if self.active_dialog != None:
-            return
+    # def select_messages(self, id):
+    #     if self.active_dialog != None:
+    #         return
 
-        # function to create dialog window
-        self.active_dialog = tk.Toplevel() # create an instance of toplevel
-        self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_message_dialog_close(id))
+    #     # function to create dialog window
+    #     self.active_dialog = tk.Toplevel() # create an instance of toplevel
+    #     self.active_dialog.protocol("WM_DELETE_WINDOW", lambda : self.on_message_dialog_close(id))
 
-        # show all app modes
-        self.active_widget = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
-        for i, obj in enumerate(self.mstab.msgs_str):
-            msg = obj.get()
-            self.active_widget.insert(i, msg)
-            if "MESSAGE" in self.sg_isrs[id]:
-                if msg in self.sg_isrs[id]["MESSAGE"]:
-                    self.active_widget.selection_set(i)
-        self.active_widget.pack()
+    #     # show all app modes
+    #     self.active_widget = tk.Listbox(self.active_dialog, selectmode=tk.MULTIPLE, width=40, height=15)
+    #     for i, obj in enumerate(self.mstab.msgs_str):
+    #         msg = obj.get()
+    #         self.active_widget.insert(i, msg)
+    #         if "MESSAGE" in self.sg_isrs[id]:
+    #             if msg in self.sg_isrs[id]["MESSAGE"]:
+    #                 self.active_widget.selection_set(i)
+    #     self.active_widget.pack()
 
 

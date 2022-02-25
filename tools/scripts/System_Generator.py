@@ -207,6 +207,9 @@ def parse_isr(oil_lines, line_num):
  
         line_num += 1
 
+    if "OsIsrInterruptPriority" not in isrs:
+        isrs["OsIsrInterruptPriority"] = '0'
+
     return line_num, isrs
 
 
