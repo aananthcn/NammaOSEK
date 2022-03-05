@@ -4,7 +4,6 @@
 /* Register definitions for versatilepb board */
 
 #include <ostypes.h>
-#include <stm32f407vet6/board.h>
 
 
 /* Interrupt Controller */

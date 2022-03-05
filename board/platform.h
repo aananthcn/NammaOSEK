@@ -1,9 +1,6 @@
 #ifndef FREEOSEK_BOARDS_H
 #define FREEOSEK_BOARDS_H
 
-
-#define QEMU_VERSATILE_PB	(1)
-#define STM32F407VET6		(2)
-
+#include <rp2040.h>
 
 #endif

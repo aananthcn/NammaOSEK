@@ -5,6 +5,7 @@ print_usage()
   printf "usage: ./configure <board-name>\n"
   printf "Supported boards:\n  1) stm32f407vet6\n"
   printf "  2) qemu-versatilepb\n"
+  printf "  3) rp2040\n"
   printf "\n"
 }
 
@@ -36,6 +37,10 @@ else
   echo "Board '$target' is supported!"
 fi
 
+# add board specific include files in platform.h
+INCLUDE_BOARD_H="#include <$target.h>"
+sed -i "/#include /c $INCLUDE_BOARD_H" board/platform.h
+
 echo "CWD := $(pwd)" > ./Makefile
 echo "include ${board_path}/${target}.mk" >> ./Makefile
 echo "include ./tools/src/sg-objs.mk" >> ./Makefile
@@ -48,6 +53,11 @@ fi
 
 # stm32f407vet6 specifics
 if [ "$target" == "stm32f407vet6" ]; then
+  echo "include ./arch/cortex-m4/cortex-m4.mk" >> ./Makefile
+fi
+
+# RapberryPi Pico specifics
+if [ "$target" == "rp2040" ]; then
   echo "include ./arch/cortex-m4/cortex-m4.mk" >> ./Makefile
 fi
 

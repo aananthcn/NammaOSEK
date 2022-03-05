@@ -6,10 +6,6 @@
 #include <board.h>
 
 
-#if BOARD == STM32F407VET6
-#include "stm32f407vet6.h"
-#endif
-
 
 #define GETEVENT_TEST
 //#define GET_RELEASE_RESOURCE_TEST
@@ -109,14 +105,14 @@ TASK(Task_A) {
 	EnableAllInterrupts();
 #endif
 
-#if BOARD == STM32F407VET6
+#ifdef BOARD_STM32F407VET6
 	// Test code - turn on/off LED D2 & D3 on the board
 	GPIOA_MODER |= ((1 << 14) | (1 << 12)); // LED - PA7, PA6: GPIO mode
 #endif
 
 	if (toggle_bit) {
 		toggle_bit = false;
-#if BOARD == STM32F407VET6
+#ifdef BOARD_STM32F407VET6
 		GPIOA_ODR |= 0x40;
 #endif
 		SetEvent(1, 0x101);
@@ -131,7 +127,7 @@ TASK(Task_A) {
 	}
 	else {
 		toggle_bit = true;
-#if BOARD == STM32F407VET6
+#ifdef BOARD_STM32F407VET6
 		GPIOA_ODR &= ~(0x40);
 #endif
 		#ifdef GET_RELEASE_RESOURCE_TEST
@@ -168,13 +164,13 @@ TASK(Task_B) {
 	static bool toggle_bit;
 	if (toggle_bit) {
 		toggle_bit = false;
-#if BOARD == STM32F407VET6
+#ifdef BOARD_STM32F407VET6
 		GPIOA_ODR |= 0x80;
 #endif
 	}
 	else {
 		toggle_bit = true;
-#if BOARD == STM32F407VET6
+#ifdef BOARD_STM32F407VET6
 		GPIOA_ODR &= ~(0x80);
 #endif
 	}
