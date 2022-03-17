@@ -46,6 +46,7 @@ def about():
 def show_os_tab_switch(event):
     global MainWindow, CurTab, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab 
     if MainWindow.tab(MainWindow.select(), "text").strip() == "OS Configs":
+        TskTab.backup_data()
         CurTab = OsTab
         CurTab.backup_data()  # take the lastest stack size updates from Task tab.
         CurTab.update()
