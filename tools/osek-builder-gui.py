@@ -302,7 +302,7 @@ def main(fpath, ftype):
     RootView = tk.Tk()
     RootView.title(AppTitle + " [uninitialized]")
     add_menus(RootView)
-    RootView.state('zoomed')
+    RootView.attributes('-zoomed', True)
 
     # setup init view
     init_view_setup(fpath, ftype)
