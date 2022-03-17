@@ -326,6 +326,9 @@ if __name__ == '__main__':
         filepath = sys.argv[sys.argv.index("-f") + 1]
         filepath = os.path.abspath(filepath)
         filepath = filepath.replace(os.sep, '/')
+        # set source code generation path
+        srcpath = filepath.split("FreeOSEK")[0]+"FreeOSEK/tools/src"
+        sg.set_source_file_path(srcpath)
     if "-t" in sys.argv:
         filetype = sys.argv[sys.argv.index("-t") + 1]
     

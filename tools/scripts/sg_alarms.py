@@ -16,9 +16,12 @@ C_AlarmAction_Type = "\n\ntypedef enum {\n\
 
 
 AAT_PyList = {
-    "ACTIVATETASK" : "AAT_ACTIVATETASK",
-    "SETEVENT" : "AAT_SETEVENT",
-    "ALARMCALLBACK" : "AAT_ALARMCALLBACK"
+    "OsAlarmActivateTask" : "AAT_ACTIVATETASK", # AUTOSAR
+    "ACTIVATETASK" : "AAT_ACTIVATETASK",        # OSEK
+    "OsAlarmSetEvent" : "AAT_SETEVENT",         # AUTOSAR
+    "SETEVENT" : "AAT_SETEVENT",                # OSEK
+    "OsAlarmCallback" : "AAT_ALARMCALLBACK",    # AUTOSAR
+    "ALARMCALLBACK" : "AAT_ALARMCALLBACK"       # OSEK
 }
 
 
@@ -60,7 +63,7 @@ def get_counter_id(Counters, cntrName):
 def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
     aat_arg1 = str(alarm[AlarmParams[AAT1]]).replace('"','')
 
-    if aat == "ACTIVATETASK":
+    if aat == "ACTIVATETASK" or aat == "OsAlarmActivateTask":
         if AlarmParams[AAT1] in alarm:
             cf.write("\t\t.aat_arg1 = (intptr_t) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
@@ -70,7 +73,7 @@ def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
         # for ACTIVATETASK type, arg2 is not required
         cf.write("\t\t.aat_arg2 = (intptr_t)NULL,\n")
 
-    elif aat == "SETEVENT":
+    elif aat == "SETEVENT" or aat == "OsAlarmSetEvent":
         if AlarmParams[AAT1] in alarm:
             cf.write("\t\t.aat_arg1 = (intptr_t) "+get_task_id(Tasks, aat_arg1)+",\n")
         else:
@@ -81,7 +84,7 @@ def alarm_action_type_args(aat, alarm, cf, hf, Tasks):
             print(Fore.RED+"Error: Event to trigger for alarm: "+alarm[AlarmParams[ANME]]+" not configured!\n")
             cf.write("\t\t.aat_arg2 = (intptr_t)NULL,\n")
 
-    elif aat == "ALARMCALLBACK":
+    elif aat == "ALARMCALLBACK" or aat == "OsAlarmCallback":
         if AlarmParams[AAT1] in alarm:
             cf.write("\t\t.aat_arg1 = (intptr_t)"+aat_arg1+",\n")
         else:

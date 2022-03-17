@@ -207,8 +207,11 @@ def parse_isr(oil_lines, line_num):
  
         line_num += 1
 
+    # Add ARXML elements to OIL file extracts
     if "OsIsrInterruptPriority" not in isrs:
         isrs["OsIsrInterruptPriority"] = '0'
+    if "OsIsrStackSize" not in isrs:
+        isrs["OsIsrStackSize"] = 0
 
     return line_num, isrs
 
@@ -314,7 +317,7 @@ def sg_reset():
     del AppModes[:]
     del ISRs[:]
     OS_Cfgs = {}
-    SrcFilePath = None
+    set_source_file_path(None)
 
 
 if __name__ == '__main__':

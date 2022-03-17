@@ -96,12 +96,12 @@ def save_oil_file(filename):
         # Start of Actions
         f.write(indent*"\t"+ "ACTION = " + alrm[AlarmParams[2]] + " {\n")
         indent += 1
-        if alrm[AlarmParams[2]] == "ACTIVATETASK":
+        if alrm[AlarmParams[2]] == "ACTIVATETASK" or alrm[AlarmParams[2]] == "OsAlarmActivateTask":
 	        f.write(indent*"\t" +"TASK = " + str(alrm[AlarmParams[3]]) + ";\n")
-        if alrm[AlarmParams[2]] == "SETEVENT":
+        if alrm[AlarmParams[2]] == "SETEVENT" or alrm[AlarmParams[2]] == "OsAlarmSetEvent":
 	        f.write(indent*"\t" +"TASK = " + str(alrm[AlarmParams[3]]) + ";\n")
 	        f.write(indent*"\t" +"EVENT = " + str(alrm[AlarmParams[4]]) + ";\n")
-        if alrm[AlarmParams[2]] == "ALARMCALLBACK":
+        if alrm[AlarmParams[2]] == "ALARMCALLBACK" or alrm[AlarmParams[2]] == "OsAlarmCallback":
 	        f.write(indent*"\t" +"ALARMCALLBACKNAME = " + str(alrm[AlarmParams[3]]) + ";\n")
         # End of Actions
         indent -= 1

@@ -203,7 +203,7 @@ def export_alarms_to_container(root):
       # Container Level-3 for OsAlarmAction
       l2_ctnr = lib.insert_container(sub_ctnr, "OsAlarmAction", "choice", "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction")
       l3_ctnr = ET.SubElement(l2_ctnr, "SUB-CONTAINERS")
-      if alm["Action-Type"] == "ACTIVATETASK":
+      if alm["Action-Type"] == "ACTIVATETASK" or alm["Action-Type"] == "OsAlarmActivateTask":
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmActivateTask"
          l4_ctnr = lib.insert_container(l3_ctnr, "OsAlarmActivateTask", "conf", dref)
          # References
@@ -211,7 +211,7 @@ def export_alarms_to_container(root):
          # Task references
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmActivateTask/OsAlarmActivateTaskRef"
          lib.insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg1"])
-      elif alm["Action-Type"] == "SETEVENT":
+      elif alm["Action-Type"] == "SETEVENT" or alm["Action-Type"] == "OsAlarmSetEvent":
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmSetEvent"
          l4_ctnr = lib.insert_container(l3_ctnr, "OsAlarmSetEvent", "conf", dref)
          # References
@@ -221,7 +221,7 @@ def export_alarms_to_container(root):
          lib.insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg1"])
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmSetEvent/OsAlarmSetEventRef"
          lib.insert_reference(references, dref, "/"+str(EcuName)+"/Os/"+alm["arg2"])
-      elif alm["Action-Type"] == "ALARMCALLBACK":
+      elif alm["Action-Type"] == "ALARMCALLBACK" or alm["Action-Type"] == "OsAlarmCallback":
          dref = "/AUTOSAR/EcucDefs/Os/OsAlarm/OsAlarmAction/OsAlarmCallback"
          l4_ctnr = lib.insert_container(l3_ctnr, "OsAlarmCallback", "conf", dref)
          # Parameters
@@ -259,13 +259,28 @@ def export_isrs_to_container(root):
       # Parameters
       params = ET.SubElement(ctnr, "PARAMETER-VALUES")
       refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrInterruptNumber"
-      lib.insert_param(params, refname, "numerical", "int", isr['IRQn'])
+      if 'IRQn' in isr:
+         lib.insert_param(params, refname, "numerical", "int", isr['IRQn'])
+      else:
+         lib.insert_param(params, refname, "numerical", "int", "99")
+
       refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrInterruptPriority"
-      lib.insert_param(params, refname, "numerical", "int", isr['OsIsrInterruptPriority'])
+      if 'OsIsrInterruptPriority' in isr:
+         lib.insert_param(params, refname, "numerical", "int", isr['OsIsrInterruptPriority'])
+      else:
+         lib.insert_param(params, refname, "numerical", "int", '0')
+
       refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrCategory"
-      lib.insert_param(params, refname, "numerical", "int", isr['CATEGORY'])
+      if 'CATEGORY' in isr:
+         lib.insert_param(params, refname, "numerical", "int", isr['CATEGORY'])
+      else:
+         lib.insert_param(params, refname, "numerical", "int", "2")
+
       refname = "/AUTOSAR/EcucDefs/Os/OsIsr/OsIsrStackSize"
-      lib.insert_param(params, refname, "numerical", "int", isr['OsIsrStackSize'])
+      if 'OsIsrStackSize' in isr:
+         lib.insert_param(params, refname, "numerical", "int", isr['OsIsrStackSize'])
+      else:
+         lib.insert_param(params, refname, "numerical", "int", "128")
 
 
 

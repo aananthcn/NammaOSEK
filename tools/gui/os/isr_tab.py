@@ -11,7 +11,7 @@ class IsrStr:
     category = None
     priority = None
     n_resources = None
-    n_messages = None
+    stack_size = None
 
     def __init__(self, id):
         self.id = id
@@ -20,13 +20,14 @@ class IsrStr:
         self.category = tk.StringVar()
         self.priority = tk.StringVar()
         self.n_resources = 0
-        self.n_messages = 0
+        self.stack_size = tk.StringVar()
 
     def __del__(self):
         del self.name
         del self.irqn
         del self.category
         del self.priority
+        del self.stack_size
 
 
 class IsrTab:
@@ -35,7 +36,6 @@ class IsrTab:
     n_isrs_str = None
     isrs_str = []
     resources = []
-    # messages = []
     sg_isrs = None
     HeaderObjs = 10 #Objects / widgets that are part of the header and shouldn't be destroyed
     HeaderSize = 3
@@ -84,8 +84,8 @@ class IsrTab:
             isr["IRQn"] = int(self.sg_isrs[len(self.sg_isrs)-1]["IRQn"]) + 1
         isr["CATEGORY"] = "1"
         isr["RESOURCE"] = []
-        # isr["MESSAGE"] = []
-        isr["OsIsrInterruptPriority"] = 0
+        isr["OsIsrInterruptPriority"] = "0"
+        isr["OsIsrStackSize"] = 0
 
         return isr
 
@@ -148,8 +148,8 @@ class IsrTab:
         label.grid(row=2, column=4, sticky="we")
         label = tk.Label(self.mnf, text="RESOURCE(S)")
         label.grid(row=2, column=5, sticky="we")
-        # label = tk.Label(self.mnf, text="MESSAGE(s)")
-        # label.grid(row=2, column=7, sticky="we")
+        label = tk.Label(self.mnf, text="STACK SIZE")
+        label.grid(row=2, column=6, sticky="we")
 
         self.update()
 
@@ -210,12 +210,10 @@ class IsrTab:
             select = tk.Button(self.mnf, width=12, text=text, command=lambda id = i: self.select_resources(id))
             select.grid(row=self.HeaderSize+i, column=5)
 
-            # # MESSAGE[]
-            # if "MESSAGE" in self.sg_isrs[i]:
-            #     self.isrs_str[i].n_messages = len(self.sg_isrs[i]["MESSAGE"])
-            # text = "Messages["+str(self.isrs_str[i].n_messages)+"]"
-            # select = tk.Button(self.mnf, width=12, text=text, command=lambda id = i: self.select_messages(id))
-            # select.grid(row=self.HeaderSize+i, column=7)
+            # PRIORITY
+            entry = tk.Entry(self.mnf, width=10, textvariable=self.isrs_str[i].stack_size, justify='center')
+            self.isrs_str[i].stack_size.set(self.sg_isrs[i]["OsIsrStackSize"])
+            entry.grid(row=self.HeaderSize+i, column=6)
             
         # Set the self.cv scrolling region
         self.cv.config(scrollregion=self.cv.bbox("all"))
