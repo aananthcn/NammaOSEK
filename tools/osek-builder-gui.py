@@ -24,27 +24,40 @@ import gui.os.alm_tab as gui_al_tab
 import gui.os.isr_tab as gui_ir_tab
 
 
-
+###############################################################################
 # Globals
+###############################################################################
+# GUI stuffs
+ToolName = "AUTOSAR Builder"
+AppTitle = "FreeOSEK's "+ ToolName
 MainWindow = None
 MenuBar = None
 FileMenu = None
-OIL_FileName = None
-ArXml_FileName = None
-AppTitle = "FreeOSEK-AUTOSAR Builder"
-RootView = None
 CurTab = OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
 
+# I/O stuffs
+OIL_FileName = None
+ArXml_FileName = None
+RootView = None
 
+# Tool Management Stuffs
+ToolState = "reset"
+
+
+
+###############################################################################
 # Functions
-
+###############################################################################
 def about():
-    messagebox.showinfo("OSEK Builder", "This tool is developed to replace the OSEK-Builder.xlsx and to set path for AUTOSAR development")
+    messagebox.showinfo(ToolName, "This tool is developed to replace the OSEK-Builder.xlsx and to set path for AUTOSAR development")
 
 
 
 def show_os_tab_switch(event):
     global MainWindow, CurTab, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab 
+    if ToolState == "reset":
+        return
+
     if MainWindow.tab(MainWindow.select(), "text").strip() == "OS Configs":
         TskTab.backup_data()
         CurTab = OsTab
@@ -146,8 +159,10 @@ def new_file():
 
     sg.sg_reset()
     show_os_config(RootView)
-    FileMenu.entryconfig("Export to OIL", state="normal")
-    FileMenu.entryconfig("Export to ARXML", state="normal")
+    # FileMenu.entryconfig("Export to OIL", state="normal")
+    FileMenu.entryconfig("Save", state="normal")
+    # FileMenu.entryconfig("Export to ARXML", state="normal")
+    ToolState = "init"
 
 
 
@@ -159,7 +174,12 @@ def open_oil_file(fpath):
         init_dir = os.getcwd()+"/output/oil-files"
 
     if fpath == None:
-        OIL_FileName = filedialog.askopenfilename(initialdir=init_dir)
+        filename = filedialog.askopenfilename(initialdir=init_dir)
+        if type(filename) is not tuple and len(filename) > 5:
+            OIL_FileName = filename
+        else:
+            print("Info: no or many OIL file is chosen, hence open_oil_file() returning without processing!")
+            return
     else:
         OIL_FileName = fpath
 
@@ -169,21 +189,21 @@ def open_oil_file(fpath):
     # Make System Generator to parse, so that we can use the content in GUI.
     sg.parse(OIL_FileName)
     show_os_config(RootView)
-    FileMenu.entryconfig("Export to ARXML", state="normal")
-    FileMenu.entryconfig("Export to OIL", state="normal")
+    FileMenu.entryconfig("Save", state="normal")
+    # FileMenu.entryconfig("Export to OIL", state="normal")
+    ToolState = "init"
 
 
 
-def save_oil_file():
+def save_project():
     global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
+    global OIL_FileName, ArXml_FileName
 
-    file_exts = [('Oil Files', '*.oil')]
-    saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/oil-files", filetypes = file_exts, defaultextension = file_exts)
-    if saved_filename == None:
-        messagebox.showinfo("OSEK Builder", "File to save is not done correctly, saving aborted!")
-        return
-
-    RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
+    # file_exts = [('Oil Files', '*.oil')]
+    #saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
+    #if saved_filename == None:
+    #    messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
+    #    return
 
     # Do the stack memory calculation before save
     OsTab.update()
@@ -197,14 +217,38 @@ def save_oil_file():
     TskTab.backup_data()
     AlmTab.backup_data()
     IsrTab.backup_data()
-    oil.save_oil_file(saved_filename.name)
+
+    # Export if the input file OIL file.
+    if OIL_FileName != None:
+        file_exts = [('ARXML Files', '*.arxml')]
+        saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
+        if saved_filename == None:
+            messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
+            return
+        ArXml_FileName = saved_filename.name
+        print("Info: Exporting "+OIL_FileName+" to "+ArXml_FileName+" ...")
+        OIL_FileName = None
+
+    # Save if the input file is ARXML
+    elif ArXml_FileName != None:
+        print("Info: Exporting data to "+ArXml_FileName+" ...")
+    
+    # Warn if both file variables are not set
+    else:
+        messagebox.showinfo(ToolName, "Invalid input (project) file. Can't save project!")
+        return
+
+
+    # Export and File name clean up
+    arxml.export_arxml(ArXml_FileName)
+    RootView.title(AppTitle + " [" + ArXml_FileName.split("/")[-1] +"]")
 
 
 def generate_code():
     if 0 == sg.generate_code():
-        messagebox.showinfo("OSEK Builder", "Code Generated Successfully!")
+        messagebox.showinfo(ToolName, "Code Generated Successfully!")
     else:
-        messagebox.showinfo("OSEK Builder", "Code Generation Failed!")
+        messagebox.showinfo(ToolName, "Code Generation Failed!")
 
 
 
@@ -214,7 +258,7 @@ def arxml_export():
     file_exts = [('ARXML Files', '*.arxml')]
     saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
     if saved_filename == None:
-        messagebox.showinfo("OSEK Builder", "File to save is not done correctly, saving aborted!")
+        messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
         return
 
     RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
@@ -231,7 +275,12 @@ def open_arxml_file(fpath):
         init_dir = os.getcwd()+"/output/arxml"
 
     if fpath == None:
-        ArXml_FileName = filedialog.askopenfilename(initialdir=init_dir)
+        filename = filedialog.askopenfilename(initialdir=init_dir)
+        if type(filename) is not tuple and len(filename) > 5:
+            ArXml_FileName = filename
+        else:
+            print("Info: no or many ARXML file is chosen, hence open_arxml_file() returning without processing!")
+            return
     else:
         ArXml_FileName = fpath
 
@@ -239,10 +288,16 @@ def open_arxml_file(fpath):
         RootView.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
 
     # Import/Parse ARXML file, so that we can use the content in GUI.
-    arxml.import_arxml(ArXml_FileName)
+    imp_status = arxml.import_arxml(ArXml_FileName)
     show_os_config(RootView)
-    FileMenu.entryconfig("Export to ARXML", state="normal")
-    FileMenu.entryconfig("Export to OIL", state="normal")
+    if imp_status != 0:
+        messagebox.showinfo(ToolName, "Input file contains errors, hence opening as new file!")
+        new_file()
+    else:
+        #FileMenu.entryconfig("Export to ARXML", state="normal")
+        FileMenu.entryconfig("Save", state="normal")
+        #FileMenu.entryconfig("Export to OIL", state="normal")
+    ToolState = "init"
 
 
 
@@ -255,11 +310,11 @@ def add_menus(rv):
     MenuBar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
     FileMenu = tk.Menu(MenuBar, tearoff=0)
     FileMenu.add_command(label="New", command=new_file)
-    FileMenu.add_command(label="Open OIL File", command=lambda: open_oil_file(None))
-    FileMenu.add_command(label="Open ARXML File", command=lambda: open_arxml_file(None))
+    FileMenu.add_command(label="Import OIL File", command=lambda: open_oil_file(None))
+    FileMenu.add_command(label="Import ARXML File", command=lambda: open_arxml_file(None))
     FileMenu.add_separator()
-    FileMenu.add_command(label="Export to OIL", command=save_oil_file, state="disabled")
-    FileMenu.add_command(label="Export to ARXML", command=arxml_export, state="disabled")
+    FileMenu.add_command(label="Save", command=save_project, state="disabled")
+    FileMenu.add_command(label="Save As", command=arxml_export)
     FileMenu.add_separator()
     FileMenu.add_command(label="Exit", command=rv.quit)
     MenuBar.add_cascade(label="File", menu=FileMenu)

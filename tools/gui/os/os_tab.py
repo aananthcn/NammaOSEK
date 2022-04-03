@@ -133,7 +133,7 @@ class OsTab:
         if "OsProtectionHook" in self.sg_oscfg:
             self.OS_StrVar[row-1].set(self.sg_oscfg["OsProtectionHook"])
         else:
-            print("Error: OS_Cfg does't have key: OsProtectionHook")
+            print("Warn: OS_Cfg does't have key: OsProtectionHook")
         cmbsel.current()
         cmbsel.grid(row=row, column=2)
 
