@@ -33,15 +33,12 @@ AppTitle = "FreeOSEK's "+ ToolName
 MainWindow = None
 MenuBar = None
 FileMenu = None
-CurTab = OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
+OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
 
 # I/O stuffs
 OIL_FileName = None
 ArXml_FileName = None
 RootView = None
-
-# Tool Management Stuffs
-ToolState = "reset"
 
 
 
@@ -54,30 +51,30 @@ def about():
 
 
 def show_os_tab_switch(event):
-    global MainWindow, CurTab, OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab 
-    if ToolState == "reset":
-        return
+    global MainWindow
+    global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab 
 
+    current_tab = None #this variable can be used for debugging!
     if MainWindow.tab(MainWindow.select(), "text").strip() == "OS Configs":
         TskTab.backup_data()
-        CurTab = OsTab
-        CurTab.backup_data()  # take the lastest stack size updates from Task tab.
-        CurTab.update()
+        OsTab.backup_data()  # take the lastest stack size updates from Task tab.
+        OsTab.update()
+        current_tab = OsTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "AppModes":
-        CurTab = AmTab
+        current_tab = AmTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "Counters":
-        CurTab = CtrTab
+        current_tab = CtrTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "Messages":
-        CurTab = MsgTab
+        current_tab = MsgTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "Resources":
-        CurTab = ResTab
+        current_tab = ResTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "Tasks":
-        CurTab = TskTab
+        current_tab = TskTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "Alarms":
-        CurTab = AlmTab
-        CurTab.update()
+        AlmTab.update()
+        current_tab = AlmTab
     if MainWindow.tab(MainWindow.select(), "text").strip() == "ISRs":
-        CurTab = IsrTab
+        current_tab = IsrTab
 
 
     
@@ -108,44 +105,39 @@ def show_os_config(view):
     MainWindow.add(al_tab, text ='  Alarms  ')
     MainWindow.add(ir_tab, text ='   ISRs   ')
     MainWindow.pack(expand = 1, fill ="both")
-    
-    if OsTab != None:
-        del OsTab
+
+    # destroy old GUI objects
+    del OsTab
+    del AmTab
+    del CtrTab
+    del MsgTab
+    del ResTab
+    del TskTab
+    del AlmTab
+    del IsrTab
+
+    # create new GUI objects
     OsTab = gui_os_tab.OsTab(sg.OS_Cfgs, sg.Tasks)
     OsTab.draw(os_tab)
 
-    if AmTab != None:
-        del AmTab
     AmTab = gui_am_tab.AmTab(sg.AppModes)
     AmTab.draw(am_tab)
     
-    if CtrTab != None:
-        del CtrTab
     CtrTab = gui_cr_tab.CounterTab(sg.Counters)
     CtrTab.draw(cr_tab)
 
-    if MsgTab != None:
-        del MsgTab
     MsgTab = gui_ms_tab.MessageTab(sg.Tasks)
     MsgTab.draw(ms_tab)
 
-    if ResTab != None:
-        del ResTab
     ResTab = gui_rs_tab.ResourceTab(sg.Tasks)
     ResTab.draw(rs_tab)
 
-    if TskTab != None:
-        del TskTab
     TskTab = gui_tk_tab.TaskTab(sg.Tasks, AmTab, ResTab, MsgTab)
     TskTab.draw(tk_tab)
     
-    if AlmTab != None:
-        del AlmTab
     AlmTab = gui_al_tab.AlarmTab(sg.Alarms, TskTab, AmTab, CtrTab)
     AlmTab.draw(al_tab)
 
-    if IsrTab != None:
-        del IsrTab
     IsrTab = gui_ir_tab.IsrTab(sg.ISRs, ResTab, MsgTab)
     IsrTab.draw(ir_tab)
 
@@ -159,10 +151,7 @@ def new_file():
 
     sg.sg_reset()
     show_os_config(RootView)
-    # FileMenu.entryconfig("Export to OIL", state="normal")
     FileMenu.entryconfig("Save", state="normal")
-    # FileMenu.entryconfig("Export to ARXML", state="normal")
-    ToolState = "init"
 
 
 
@@ -187,11 +176,10 @@ def open_oil_file(fpath):
         RootView.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
 
     # Make System Generator to parse, so that we can use the content in GUI.
+    sg.sg_reset()
     sg.parse(OIL_FileName)
     show_os_config(RootView)
     FileMenu.entryconfig("Save", state="normal")
-    # FileMenu.entryconfig("Export to OIL", state="normal")
-    ToolState = "init"
 
 
 def backup_gui_before_save():
@@ -213,12 +201,6 @@ def backup_gui_before_save():
 def save_project():
     global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
     global OIL_FileName, ArXml_FileName
-
-    # file_exts = [('Oil Files', '*.oil')]
-    #saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
-    #if saved_filename == None:
-    #    messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
-    #    return
 
     backup_gui_before_save()
 
@@ -258,8 +240,6 @@ def generate_code():
 
 
 def save_as_arxml():
-    global CurTab
-
     file_exts = [('ARXML Files', '*.arxml')]
     saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
     if saved_filename == None:
@@ -293,16 +273,14 @@ def open_arxml_file(fpath):
         RootView.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
 
     # Import/Parse ARXML file, so that we can use the content in GUI.
+    sg.sg_reset()
     imp_status = arxml.import_arxml(ArXml_FileName)
     show_os_config(RootView)
     if imp_status != 0:
         messagebox.showinfo(ToolName, "Input file contains errors, hence opening as new file!")
         new_file()
     else:
-        #FileMenu.entryconfig("Export to ARXML", state="normal")
         FileMenu.entryconfig("Save", state="normal")
-        #FileMenu.entryconfig("Export to OIL", state="normal")
-    ToolState = "init"
 
 
 

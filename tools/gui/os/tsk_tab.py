@@ -66,7 +66,6 @@ class TaskTab:
             self.sg_tasks.append(ntask)
         self.n_tasks = len(self.sg_tasks)
         self.n_tasks_str = tk.StringVar()
-        del self.tasks_str[:]
         for i in range(self.n_tasks):
             self.tasks_str.insert(i, TaskStr(i))
         
@@ -257,6 +256,7 @@ class TaskTab:
 
     def backup_data(self):
         n_tasks_str = len(self.tasks_str)
+        # print("tsk_tab.py: backup_data called! || n_tasks_str = "+ str(n_tasks_str))
         for i in range(n_tasks_str):
             if len(self.tasks_str[i].name.get()):
                 self.sg_tasks[i]["Task Name"] = self.tasks_str[i].name.get()
@@ -275,6 +275,7 @@ class TaskTab:
                 self.sg_tasks[i]["AUTOSTART"] = "FALSE"
             if len(self.tasks_str[i].stack_sz.get()):
                 self.sg_tasks[i]["STACK_SIZE"] = self.tasks_str[i].stack_sz.get()
+                # print(self.sg_tasks[i]["STACK_SIZE"])
 
 
     def on_autostart_dialog_close(self, task_id):
