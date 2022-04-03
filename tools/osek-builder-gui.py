@@ -194,17 +194,7 @@ def open_oil_file(fpath):
     ToolState = "init"
 
 
-
-def save_project():
-    global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
-    global OIL_FileName, ArXml_FileName
-
-    # file_exts = [('Oil Files', '*.oil')]
-    #saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
-    #if saved_filename == None:
-    #    messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
-    #    return
-
+def backup_gui_before_save():
     # Do the stack memory calculation before save
     OsTab.update()
 
@@ -217,6 +207,20 @@ def save_project():
     TskTab.backup_data()
     AlmTab.backup_data()
     IsrTab.backup_data()
+
+
+
+def save_project():
+    global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
+    global OIL_FileName, ArXml_FileName
+
+    # file_exts = [('Oil Files', '*.oil')]
+    #saved_filename = filedialog.asksaveasfile(initialdir=os.getcwd()+"/output/arxml", filetypes = file_exts, defaultextension = file_exts)
+    #if saved_filename == None:
+    #    messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
+    #    return
+
+    backup_gui_before_save()
 
     # Export if the input file OIL file.
     if OIL_FileName != None:
@@ -231,7 +235,7 @@ def save_project():
 
     # Save if the input file is ARXML
     elif ArXml_FileName != None:
-        print("Info: Exporting data to "+ArXml_FileName+" ...")
+        print("Info: Saving configs to "+ArXml_FileName+" ...")
     
     # Warn if both file variables are not set
     else:
@@ -244,6 +248,7 @@ def save_project():
     RootView.title(AppTitle + " [" + ArXml_FileName.split("/")[-1] +"]")
 
 
+
 def generate_code():
     if 0 == sg.generate_code():
         messagebox.showinfo(ToolName, "Code Generated Successfully!")
@@ -252,7 +257,7 @@ def generate_code():
 
 
 
-def arxml_export():
+def save_as_arxml():
     global CurTab
 
     file_exts = [('ARXML Files', '*.arxml')]
@@ -262,7 +267,7 @@ def arxml_export():
         return
 
     RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
-    CurTab.backup_data()
+    backup_gui_before_save()
     arxml.export_arxml(saved_filename.name)
 
 
@@ -314,7 +319,7 @@ def add_menus(rv):
     FileMenu.add_command(label="Import ARXML File", command=lambda: open_arxml_file(None))
     FileMenu.add_separator()
     FileMenu.add_command(label="Save", command=save_project, state="disabled")
-    FileMenu.add_command(label="Save As", command=arxml_export)
+    FileMenu.add_command(label="Save As", command=save_as_arxml)
     FileMenu.add_separator()
     FileMenu.add_command(label="Exit", command=rv.quit)
     MenuBar.add_cascade(label="File", menu=FileMenu)

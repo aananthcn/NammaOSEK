@@ -31,7 +31,7 @@ def export_arxml(filepath):
    ET.indent(tree, space="\t", level=0)
    tree.write(filepath, encoding="utf-8", xml_declaration=True)
    lib.finalize_arxml_doc(filepath)
-   print("Info: Exported to " + filepath)
+   print("Info: Configs are saved to " + filepath)
 
 
 
