@@ -7,7 +7,11 @@ ARCH = arm32
 BOARD_NAME=qemu-versatilepb
 
 CC_VERS := $(shell ${CC} -dumpfullversion)
+ifeq ($(OS),Windows_NT)
+LIB_GCC_A_PATH=${MINGW_ROOT}/lib/gcc/arm-none-eabi/${CC_VERS}
+else
 LIB_GCC_A_PATH=/usr/lib/gcc/arm-none-eabi/${CC_VERS}
+endif
 
 INCDIRS  := -I ${CWD}/include \
             -I ${CWD}/include/arch/aarch32/ \

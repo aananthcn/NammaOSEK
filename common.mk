@@ -14,17 +14,32 @@ CMN_OBJS := \
 
 
 $(info compiling Common source files)
+ifeq ($(OS),Windows_NT)
+	MINGW_BUILD = TRUE
+else
+	MINGW_BUILD = FALSE
+endif	 
 
 OBJS	:= $(CMN_OBJS) $(BRD_OBJS) $(ARCH_OBJS) $(LIBOBJS) $(SG_OBJS) $(APP_OBJS)
 
 .PHONY: all
+.DEFAULT_GOAL := all
+
+build_check:
+	@if [ ${MINGW_BUILD} = TRUE ]; then\
+		if [ -z "${MINGW_ROOT}" ]; then\
+			printf "\nError: MINGW_ROOT is not defined! Please define it as a environmental variable!";\
+			printf "\n[Hint: MINGW_ROOT should point to MSYS2 installation path (D:\msys64\mingw64)]\n";\
+			exit 1;\
+		fi;\
+	fi
 
 ${TARGET}: ${OBJS}
 	@echo LINKING OBJECTS...
 	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) -Map=${TARGET}.map
 	$(OBJCOPY) -O binary ${TARGET}.elf ${TARGET}.bin
 
-all: ${TARGET}
+all: build_check ${TARGET}
 
 info:
 	@echo make can be run with var ARCH=${ARCH}
