@@ -7,7 +7,11 @@ ARCH = arm32
 BOARD_NAME=rp2040
 
 CC_VERS := $(shell ${CC} -dumpfullversion)
+ifeq ($(OS),Windows_NT)
+LIB_GCC_A_PATH=${MINGW_ROOT}/lib/gcc/arm-none-eabi/${CC_VERS}
+else
 LIB_GCC_A_PATH=/usr/lib/gcc/arm-none-eabi/${CC_VERS}
+endif
 
 INCDIRS  := -I ${CWD}/include \
             -I ${CWD}/include/arch/aarch32/ \
@@ -20,7 +24,7 @@ INCDIRS  := -I ${CWD}/include \
 
 LDFLAGS  += -nostdlib -g -L${LIB_GCC_A_PATH} -lgcc
 CFLAGS   += -Werror ${INCDIRS} -g
-ASFLAGS  += ${INCDIRS} -g
+ASFLAGS  += ${INCDIRS} -g 
 
 $(info compiling ${BOARD_NAME} board specific files)
 CFLAGS  += -mthumb -mthumb-interwork -march=armv6-m -mcpu=cortex-m0plus
@@ -46,7 +50,8 @@ LIBOBJS	:= \
 	lib/libc-minimal/stdout/printf.o
 	
 
-BRD_OBJS	:= \
+BRD_OBJS := \
+	${CWD}/board/rp2040/boot_stage2.o \
 	${CWD}/board/rp2040/board.o \
 	${CWD}/board/rp2040/vector_handlers.o \
 	${CWD}/board/rp2040/vectors.o \

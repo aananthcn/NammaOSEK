@@ -39,12 +39,15 @@ ${TARGET}: ${OBJS}
 	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) -Map=${TARGET}.map
 	$(OBJCOPY) -O binary ${TARGET}.elf ${TARGET}.bin
 
+
 all: build_check ${TARGET}
+
 
 info:
 	@echo make can be run with var ARCH=${ARCH}
 	@echo By default ARCH=arm64
 
+
 clean:
 	rm -f ${OBJS}
-	rm -f ${TARGET}.bin ${TARGET}.elf
+	rm -f ${TARGET}.bin ${TARGET}.elf ${TARGET}.map

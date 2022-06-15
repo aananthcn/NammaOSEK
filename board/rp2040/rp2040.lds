@@ -7,7 +7,8 @@ INCLUDE tools/src/sg_stack.lds
 
 
 /* Flash Memory: 2 MB */
-ROM_START    = 0x10000000;
+BOOT_STG2	 = 0x10000000;
+ROM_START    = 0x10000100;
 ROM_SIZE     = 0x00200000;
 
 /* RAM Memory: 256kB + 4kB + 4kB = 264kB */
@@ -15,14 +16,18 @@ RAM_START    = 0x20000000;
 RAM_SIZE     = 0x00042000;
 
 
-ENTRY(_vectors_start)
+ENTRY(_boot_stage2_start)
 SECTIONS
 {
-    /* LOAD ADDRESS - The -kernel option (to qemu) loads a binary file inside
-    the system memory starting at address ROM_START */
-    . = ROM_START;
-
-    /* CODE SEGMENTS -- place vectors.o first! */
+	/* Stage 2 Booloader for Raspbery Pi Pico (RP2040) */
+	. = BOOT_STG2;
+    .text : {
+        _boot_stage2_start = .;
+        board/rp2040/boot_stage2.o
+        _boot_stage2_end = .;
+    }
+	
+    /* Other CODE SEGMENTS -- place vectors.o first?? */
     .text : {
         _vectors_start = .;
         board/rp2040/vectors.o

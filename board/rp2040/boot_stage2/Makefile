@@ -5,7 +5,7 @@ AS=${COMPILER}as
 OBJCOPY=${COMPILER}objcopy
 
 TARGET = boot_stage2
-CWD=${PWD}
+CWD=$(shell pwd)
 
 LDFILE	:= ${CWD}/boot_stage2.lds
 LDFLAGS  += -nostdlib -g -m armelf -T ${LDFILE}
@@ -47,6 +47,8 @@ ${TARGET}: ${OBJS}
 	@echo LINKING OBJECTS...
 	$(LD) $^ -o ${TARGET}.elf $(LDFLAGS) -Map=${TARGET}.map
 	$(OBJCOPY) -O binary ${TARGET}.elf ${TARGET}.bin
+	python3 ${CWD}/pad_checksum -s 0xffffffff ${TARGET}.bin ../${TARGET}.s
+
 
 all: build_check ${TARGET}
 
