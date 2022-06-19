@@ -9,3 +9,4 @@
 __pycache__
 *.map
 *.uf2
+.vscode

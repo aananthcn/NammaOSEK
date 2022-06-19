@@ -5,57 +5,76 @@
 
 INCLUDE tools/src/sg_stack.lds
 
+MEMORY
+{
+    FLASH(rx)       : ORIGIN = 0x10000000, LENGTH = 2048k
+    RAM(rwx)        : ORIGIN =  0x20000000, LENGTH = 256k
+    SCRATCH_X(rwx)  : ORIGIN = 0x20040000, LENGTH = 4k
+    SCRATCH_Y(rwx)  : ORIGIN = 0x20041000, LENGTH = 4k
+}
 
 /* Flash Memory: 2 MB */
-BOOT_STG2	 = 0x10000000;
+/*
+BOOT_STG2     = 0x10000000;
 ROM_START    = 0x10000100;
 ROM_SIZE     = 0x00200000;
-
+*/
 /* RAM Memory: 256kB + 4kB + 4kB = 264kB */
+/*
 RAM_START    = 0x20000000;
 RAM_SIZE     = 0x00042000;
+*/
 
-
-ENTRY(_boot_stage2_start)
+ENTRY(_Reset_handler)
 SECTIONS
 {
-	/* Stage 2 Booloader for Raspbery Pi Pico (RP2040) */
-	. = BOOT_STG2;
-    .text : {
+    /* Stage 2 Booloader for Raspbery Pi Pico (RP2040) */
+    .boot2 : {
         _boot_stage2_start = .;
-        board/rp2040/boot_stage2.o
+        KEEP (*(.boot2))
         _boot_stage2_end = .;
-    }
-	
+    } > FLASH
+
+    ASSERT(_boot_stage2_end - _boot_stage2_start == 256,
+        "ERROR: Pico second stage bootloader must be 256 bytes in size")
+
     /* Other CODE SEGMENTS -- place vectors.o first?? */
     .text : {
         _vectors_start = .;
-        board/rp2040/vectors.o
+        KEEP (*(.vectors))
         _vectors_end = .;
         *(.text .rodata)
-    }
+    } > FLASH
 
     /*
      * Arm stack unwinding.
      * If removed may cause random crashes.
      */
+    .ARM.extab :
+    {
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+    } > FLASH
+    
+    __exidx_start = .;
     .ARM.exidx :
     {
-        __exidx_start = .;
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        __exidx_end = .;
-    }
+    } > FLASH
+    __exidx_end = .;
 
     _init_data_rom = .;
 
-    . = RAM_START;
+    .ram_vector_table (COPY): {
+        *(.ram_vector_table)
+    } > RAM
+
     /* INITIALIZED DATA SEGMENT(s) */
     .data : AT (_init_data_rom)
     { 
         _data_start = .;
         *(.data) 
         _data_end = .;
-    }
+    } > RAM 
     _data_size = _data_end - _data_start;
 
     /* UNINITIALIZED DATA SEGMENT(s) */
@@ -64,7 +83,7 @@ SECTIONS
         _bss_start = .;
         *(.bss COMMON)
         _bss_end = .;
-    }
+    } > RAM
     _bss_size = _bss_end - _bss_start;
 
     . = ALIGN(8);
