@@ -7,9 +7,9 @@ BOARD_NAME=rp2040
 
 CC_VERS := $(shell ${CC} -dumpfullversion)
 ifeq ($(OS),Windows_NT)
-LIB_GCC_A_PATH=${MINGW_ROOT}/lib/gcc/arm-none-eabi/${CC_VERS}
+LIB_GCC_A_PATH=${MINGW_ROOT}/lib/gcc/arm-none-eabi/${CC_VERS}/thumb/v6-m/nofp/
 else
-LIB_GCC_A_PATH=/usr/lib/gcc/arm-none-eabi/${CC_VERS}
+LIB_GCC_A_PATH=/usr/lib/gcc/arm-none-eabi/${CC_VERS}/thumb/v6-m/nofp/
 endif
 
 INCDIRS  := -I ${CWD}/include \
