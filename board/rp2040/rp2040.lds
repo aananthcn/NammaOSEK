@@ -43,7 +43,10 @@ SECTIONS
         _vectors_start = .;
         KEEP (*(.vectors))
         _vectors_end = .;
-        *(.text .rodata)
+        . = ALIGN(4);
+        *(.text)
+        . = ALIGN(4);
+        *(.rodata)
     } > FLASH
 
     /*

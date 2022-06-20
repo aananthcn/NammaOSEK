@@ -3,7 +3,6 @@ CC=${COMPILER}gcc
 LD=${COMPILER}ld
 AS=${COMPILER}as
 OBJCOPY=${COMPILER}objcopy
-ARCH = arm32
 BOARD_NAME=rp2040
 
 CC_VERS := $(shell ${CC} -dumpfullversion)
@@ -28,9 +27,9 @@ ASFLAGS  += ${INCDIRS} -g
 
 $(info compiling ${BOARD_NAME} board specific files)
 CFLAGS  += -mthumb -mthumb-interwork -march=armv6-m -mcpu=cortex-m0plus
-CFLAGS  += -mthumb -mthumb-interwork -march=armv6-m -mcpu=cortex-m0plus
 LDFILE	:= ${CWD}/board/${BOARD_NAME}/${BOARD_NAME}.lds
-LDFLAGS += -m armelf -T ${LDFILE}
+#LDFLAGS += -m armelf -T ${LDFILE}
+LDFLAGS += -mthumb -mthumb-interwork -marmelf  -T ${LDFILE}
 
 
 STDLIBOBJS	:= \

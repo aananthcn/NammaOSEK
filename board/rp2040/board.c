@@ -14,8 +14,10 @@
 
 /* Serial console functions */
 int console_fputc(const int c) {
+#if 0
         while((USART1_SR & 0x40) == 0); // wait until TC = 1
         USART1_DR = (unsigned int) (c & 0xFF);
+#endif
         return c;
 }
 
