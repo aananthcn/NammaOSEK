@@ -9,6 +9,6 @@ $(info compiling arch/arm source files)
 
 
 ARCH_OBJS	:= \
-	${CWD}/arch/arm/lowlevel.o \
-	${CWD}/arch/arm/interrupt.o
+	${CWD}/arch/arm/cortex-m0/lowlevel.o \
+	${CWD}/arch/arm/cortex-m0/interrupt.o
 

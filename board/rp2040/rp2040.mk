@@ -17,9 +17,6 @@ INCDIRS  := -I ${CWD}/include \
 	    -I ${CWD}/board/${BOARD_NAME} \
 	    -I ${CWD}/lib/include
 	    
-#	    -I ${CWD}/include/arch/aarch32/cortex_m/ \
-#	    -I ${CWD}/include/arch/aarch32/cortex_m/cmsis/ \
-#
 
 LDFLAGS  += -nostdlib -g -L${LIB_GCC_A_PATH} -lgcc
 CFLAGS   += -Werror ${INCDIRS} -g
@@ -28,7 +25,6 @@ ASFLAGS  += ${INCDIRS} -g
 $(info compiling ${BOARD_NAME} board specific files)
 CFLAGS  += -mthumb -mthumb-interwork -march=armv6-m -mcpu=cortex-m0plus
 LDFILE	:= ${CWD}/board/${BOARD_NAME}/${BOARD_NAME}.lds
-#LDFLAGS += -m armelf -T ${LDFILE}
 LDFLAGS += -mthumb -mthumb-interwork -marmelf  -T ${LDFILE}
 
 

@@ -1,7 +1,9 @@
-.text
-.cpu cortex-m4
 .syntax unified
+.cpu cortex-m0plus
 .thumb
+.align 2
+
+.text
  
 .global _set_interrupt_bits
 .global _clear_interrupt_bits
@@ -40,7 +42,7 @@ Description: This function sets the FIRQ and IRQ bits as passed as arguments.
              values to be passed at 6th and 7th bit position respectively.
 /*/
  _set_interrupt_bits:
-        and r0, r0, #0xC0       @ clear bits other than 6th and 7th
+        movs r0, #0xC0       @ clear bits other than 6th and 7th
         //mrs r1, cpsr
         //orr r0, r1, r0
         //msr cpsr, r0
@@ -58,7 +60,7 @@ Description: This function clears the FIRQ and IRQ bits as passed as arguments.
              values to be passed at 6th and 7th bit position respectively.
 /*/
  _clear_interrupt_bits:
-        and r0, r0, #0xC0       @ clear bits other than 6th and 7th
+        movs r0, #0xC0       @ clear bits other than 6th and 7th
         //mrs r2, cpsr
         //bic r1, r2, #0xC0       @ clear bits other than 6th and 7th
         //orr r0, r1, r0
