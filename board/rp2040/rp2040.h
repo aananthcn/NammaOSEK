@@ -5,6 +5,8 @@
 
 #include <ostypes.h>
 
+#define DISABLE_INTERRUPT	(0x00000000)
+#define ENABLE_INTERRUPT	(0x00000000)
 
 #define SIO_BASE                0xd0000000
 #define PPB_BASE                0xe0000000

@@ -50,6 +50,7 @@ BRD_OBJS := \
 	${CWD}/board/rp2040/board.o \
 	${CWD}/board/rp2040/vector_handlers.o \
 	${CWD}/board/rp2040/vectors.o \
+	${CWD}/board/rp2040/interrupt.o \
 	${CWD}/board/rp2040/startup.o \
 	${CWD}/board/rp2040/bootrom.o 
 

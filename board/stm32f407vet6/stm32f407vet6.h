@@ -12,6 +12,9 @@
 #define VIC_IRQSTATUS   (*((volatile u32 *)(VIC_BASE_ADDR + 0x000)))
 #define VIC_INTENABLE   (*((volatile u32 *)(VIC_BASE_ADDR + 0x010)))
 
+#define DISABLE_INTERRUPT	(0xC0)
+#define ENABLE_INTERRUPT	(0)
+
 /* ISR shift numbers */
 #define ISR_SN_TIMER01  (4)
 #define ISR_SN_TIMER23  (5)

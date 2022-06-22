@@ -1,13 +1,11 @@
 #include <stdio.h>
 
-
+#include <platform.h>
 #include <os_api.h>
 
 
 u32 _OsIsrBitsSaved;
 
-#define DISABLE_INTERRUPT	(0xC0)
-#define ENABLE_INTERRUPT	(0)
 
 
 /*/

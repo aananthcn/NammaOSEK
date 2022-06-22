@@ -5,67 +5,90 @@
 
 .text
  
-.global _set_interrupt_bits
-.global _clear_interrupt_bits
+.global __set_interrupt_bits
+.global __clear_interrupt_bits
 
 
 /*/
-ARM Current Program Status Register (CPSR)
----------------------------------------------------------------------------------------------
-Bits      | Name    | Function
----------------------------------------------------------------------------------------------
-[31]      | N       | Negative condition code flag
-[30]      | Z       | Zero condition code flag
-[29]      | C       | Carry condition code flag
-[28]      | V       | Overflow condition code flag
-[27]      | Q       | Cumulative saturation bit
-[26:25]   | IT[1:0] | If-Then execution state bits for the Thumb IT (If-Then) instruction
-[24]      | J       | Jazelle bit
-[19:16]   | GE      | Greater than or Equal flags
-[15:10]   | IT[7:2] | If-Then execution state bits for the Thumb IT (If-Then) instruction
-[9]       | E       | Endianness execution state bit: 0 - Little-endian, 1 - Big-endian
-[8]       | A       | Asynchronous abort mask bit
-[7]       | I       | IRQ mask bit (Disables IRQ interrupts when it is set.)
-[6]       | F       | FIRQ mask bit (Disables FIQ interrupts when it is set.)
-[5]       | T       | Thumb execution state bit
-[4:0]     | M       | Mode field
----------------------------------------------------------------------------------------------
+Interrupt Control State Register, ICSR
+Note: ARMv6 doesn't support Co-Processor 
+----------------------------------------------------------------------------------------------
+Bits      | Name        | Function
+----------------------------------------------------------------------------------------------
+[31]      | NMIPENDSET  | 0 - do not activate NMI exception (also we can read back its status)
+[30:29]   | Reserved    | 
+[28]      | PENDSVSET   | 1 - Set pending PendSV interrupt. (also we can read back its status)
+[27]      | PENDSVCLR   | 1 - Clear pending PendSV.
+[26]      | PENDSTSET   | 1 - Set pending SysTick.
+[25]      | PENDSTCLR   | 1 - Clear pending SysTick.
+[24]      | Reserved    | 
+[23]      | ISRPREEMPT  | 1 - Will service a pending exception. (Read Only)
+[22]      | ISRPENDING  | 1 - Interrupt is pending. (Read Only)
+[21]      | Reserved    | 
+[20:12]   | VECTPENDING | 
+[11:9]    | Reserved    | 
+[8:0]     | VECTACTIVE  | 
+----------------------------------------------------------------------------------------------
+
+IRQ 	Interrupt Source
+0 	TIMER_IRQ_0
+1 	TIMER_IRQ_1
+2 	TIMER_IRQ_2
+3 	TIMER_IRQ_3
+4 	PWM_IRQ_WRAP
+5 	USBCTRL_IRQ
+6 	XIP_IRQ
+7 	PIO0_IRQ_0
+8 	PIO0_IRQ_1
+9 	PIO1_IRQ_0
+10 	PIO1_IRQ_1
+11 	DMA_IRQ_0
+12 	DMA_IRQ_1
+13 	IO_IRQ_BANK0
+14 	IO_IRQ_QSPI
+15 	SIO_IRQ_PROC0
+16 	SIO_IRQ_PROC1
+17 	CLOCKS_IRQ
+18 	SPI0_IRQ
+19 	SPI1_IRQ
+20 	UART0_IRQ
+21 	UART1_IRQ
+22 	ADC0_IRQ_FIFO
+23 	I2C0_IRQ
+24 	I2C1_IRQ
+25 	RTC_IRQ 
+
 /*/
 
 
 /*/
 Function Name: _set_interrupt_bits
-Arguments: arg1 = 32 bit integer with FIRQ|IRQ bits set or cleared.
+Arguments: arg1 (R0) = isr_bits, arg2 (R1) = addr
 Returns: previous CPSR register value.
 Description: This function sets the FIRQ and IRQ bits as passed as arguments.
              The users should noted that this function expects FIRQ and IRQ
              values to be passed at 6th and 7th bit position respectively.
 /*/
- _set_interrupt_bits:
-        movs r0, #0xC0       @ clear bits other than 6th and 7th
-        //mrs r1, cpsr
-        //orr r0, r1, r0
-        //msr cpsr, r0
-        //mov r0, r1
+ __set_interrupt_bits:
+        ldr r2, [r1]
+        orrs r2, r2, r0
+        str r2, [r1] 
         mov pc, lr
 
 
 
 /*/
 Function Name: _clear_interrupt_bits
-Arguments: arg1 = 32 bit integer with FIRQ|IRQ bits set or cleared.
+Arguments: arg1 (R0) = isr_bits, arg2 (R1) = addr
 Returns: previous CPSR register value.
 Description: This function clears the FIRQ and IRQ bits as passed as arguments.
              The users should noted that this function expects FIRQ and IRQ
              values to be passed at 6th and 7th bit position respectively.
 /*/
- _clear_interrupt_bits:
-        movs r0, #0xC0       @ clear bits other than 6th and 7th
-        //mrs r2, cpsr
-        //bic r1, r2, #0xC0       @ clear bits other than 6th and 7th
-        //orr r0, r1, r0
-        //msr cpsr, r0
-        //mov r0, r2
+ __clear_interrupt_bits:
+        ldr r2, [r1]
+        bics r2, r2, r0  @ r2 = r2 & (!r0)
+        str r2, [r1] 
         mov pc, lr
 
 .end
