@@ -5,11 +5,17 @@
 
 #include <ostypes.h>
 
-#define DISABLE_INTERRUPT	(0x00000000)
-#define ENABLE_INTERRUPT	(0x00000000)
 
-#define SIO_BASE                0xd0000000
-#define PPB_BASE                0xe0000000
+/* Interrupt Macros */
+#define DISABLE_INTERRUPT       (0x00000000)
+#define ENABLE_INTERRUPT        (0x00000000)
+
+
+/* Interrupt Controller in RP2040 */
+//==================================
+#define SIO_BASE                (0xd0000000)
+#define PPB_BASE                (0xe0000000)
+
 
 /* Interrupt Control and State Register */
 #define ICSR_OFFSET             0xed04
@@ -30,46 +36,31 @@
 
 
 /* Clock & Oscillator Registers */
-//================================
-/* RCC clock control register */
-#define RCC_CR                  (*((volatile u32 *)(0x40023800)))
-#define RCC_PLLCFGR             (*((volatile u32 *)(0x40023804)))
-#define RCC_CFGR                (*((volatile u32 *)(0x40023808)))
-#define RCC_APB1RSTR            (*((volatile u32 *)(0x40023820)))
-#define RCC_AHB1ENR             (*((volatile u32 *)(0x40023830)))
-#define RCC_APB1ENR             (*((volatile u32 *)(0x40023840)))
-#define RCC_APB2ENR             (*((volatile u32 *)(0x40023844)))
+/*/================================
+RP2040 External Clock: 12 MHz
+RP2040 System Clock:  125 MHz (max)
+================================/*/
+#define SYST_CSR_OFFSET         (0xe010)
+#define SYSTICK_TICKINT         (0x02)
+#define SYSTICK_ENABLE          (0x01)
+#define SYST_CSR                (*((volatile u32 *)(PPB_BASE + SYST_CSR_OFFSET)))
+
+#define SYST_RVR_OFFSET         (0xe014)
+#define SYST_RVR                (*((volatile u32 *)(PPB_BASE + SYST_RVR_OFFSET)))
+#define SYST_CVR_OFFSET         (0xe018)
+#define SYST_CVR                (*((volatile u32 *)(PPB_BASE + SYST_CVR_OFFSET)))
 
 
-/* Timer Registers */
-//================================
-/* SysTick Control and Status Register */
-#define CM4_SYSTICK_STCSR       (*((volatile u32 *)(0xE000E010)))
-/* SysTick Reload Value Register */
-#define CM4_SYSTICK_STRVR       (*((volatile u32 *)(0xE000E014)))
-/* SysTick Current Value Register */
-#define CM4_SYSTICK_STCVR       (*((volatile u32 *)(0xE000E018)))
-/* SysTick Calibration Value Register */
-#define CM4_SYSTICK_STCR        (*((volatile u32 *)(0xE000E01C)))
 
-/* STM32F407ve Timer2 Register */
-//================================
-/* Control Registers */
-#define TIM2_CR1                (*((volatile u32 *)(0x40000000)))
-#define TIM2_CR2                (*((volatile u32 *)(0x40000004)))
-/* Slave Mode Control Register */
-#define TIM2_SMCR               (*((volatile u32 *)(0x40000008)))
-/* DMA/Interrupt Enable Register */
-#define TIM2_DIER               (*((volatile u32 *)(0x4000000C)))
-/* Status Register */
-#define TIM2_SR                 (*((volatile u32 *)(0x40000010)))
-/* Event Generation Register */
-#define TIM2_EGR                (*((volatile u32 *)(0x40000014)))
-/* Counter Register */
-#define TIM2_CNT                (*((volatile u32 *)(0x40000024)))
-/* Prescalar Register */
-#define TIM2_PSC                (*((volatile u32 *)(0x40000028)))
+/* Raspberry Pi Pico (RP2040) Timer Register */
+//============================================
+#define TIMER_BASE              (0x40054000)
+#define TIMEHW_OFFSET           (0x00)
+#define TIMELW_OFFSET           (0x04)
+#define TIMEHR_OFFSET           (0x08)
+#define TIMELR_OFFSET           (0x0C)
 
+#define TIMELR                  (*((volatile u32 *)(TIMER_BASE + TIMELR_OFFSET)))
 
 
 /* STM32F407VE Port A Registers */

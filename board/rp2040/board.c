@@ -37,40 +37,23 @@ int console_fputs(const char *s) {
 
 #define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */ 
 
-/* SysTick clk = System Clock = 8 MHz (FCLK Cortex free-running clock) */
-#define SYSTEM_CLOCK_MHz        (8)
+/* SysTick clk = External Clock = 12 MHz; let us not use 125MHz System clock for SysTick */
+#define SYSTICK_CLOCK_MHz       (12)
 
 int brd_setup_systimer(void) {
-        u32 tick_count = OS_TICK_DURATION_ns * SYSTEM_CLOCK_MHz / CLOCK_SEC2MSEC;
+        register u32 tick_count = OS_TICK_DURATION_ns * SYSTICK_CLOCK_MHz / CLOCK_SEC2MSEC;
 
-        /* Setup Clocks and Oscillator */
-        RCC_PLLCFGR = 0x02003010; /* Q = 2,  P = 2(0), N = 192, M = 16 */
-        RCC_CFGR |= 0x01; /* SW (System Clock) = HSE clock; AHB & APB uses this clock */
-        RCC_CR |= ((1 << 24) | (1 << 16)); /* PLL = ON, HSE = ON; Ext. Osc. 8 MHz */
-
-        /* Using SysTick Timer to generate system ticks */
-        CM4_SYSTICK_STRVR = tick_count & 0x00FFFFFF;
-        CM4_SYSTICK_STCVR = 0;
-        CM4_SYSTICK_STCSR = 0x7; /* Core Clock | TICKINT | Down Counter */
-
-        /* Prepare Timer 2 for free-running up-counter */
-        RCC_APB1ENR |= 0x01; /* Enable TIM2 Clock */
-        RCC_APB2ENR |= ((1 << 14) | (1 << 4)); /* SYSCFGEN = 1 to access APB1 bus; USART1EN */
-
-        /* Using TIM2 for free-running 32-bit counter */
-        TIM2_PSC = 7; /* f = fCK_PSC / (PSC[15:0] + 1) = 8 MHz / (7 + 1) = 1 MHz */
-        TIM2_CR2 = 0x00;
-        TIM2_EGR = 0x01; /* If UG bit is not set, the prescalar (PSC) has no effect */
-        TIM2_CR1 = 0x01; /* Enabling the Timer */
-
-
+        /* Setup SysTick clock source and enable interrupt */
+        SYST_CVR = 0;
+        SYST_RVR = tick_count & 0x00FFFFFF;
+        SYST_CSR = SYSTICK_TICKINT + SYSTICK_ENABLE;
         return 0;
 }
 
 int brd_get_usec_syscount(u32 *ucount) {
         u32 count;
 
-        *ucount = TIM2_CNT; /* Runs at 1 MHz, hence 1 count == 1 µs */
+        *ucount = TIMELR; /* lower 32-bit of a 64-bit counter, incremented once per microsecond */
 
         return 0;
 }
@@ -87,23 +70,8 @@ int brd_sys_enable_interrupts() {
 
 
 int brd_console_init(void) {
-        /* USART1 is mapped to Port A, so, enable peripheral clock to GPIO-A */
-        RCC_AHB1ENR |= (0x00000001);
-        /* Configure GPIOs as Alt. Fun. for Tx (PA9) & Rx (PA10) pins */
-        GPIOA_MODER |= (0x00280000);
-        /* Configure Alt. Fun. = AF7 for UART for Tx (PA9) & Rx (PA10) pins */
-        GPIOA_AFRH  |= (0x00000770);
 
-        /* First enable the USART module before you configure it */
-        USART1_CR1 |= (1 << 13); /* Set UE */
-
-        /* PCLK = 8 MHz, 16 samples per bit = 500 kHz, BR = 500k/115200 = 4.34 */
-        USART1_BRR |= ((4) << 4 | (5)); /* Mantissa = 4, Fraction = 5 / 16 = 0.3125 */
-        /* Set prescalar to div by 1 */
-        USART1_GTPR  |= (0x00000001);
-
-        /* Now enable transmission and reception */
-        USART1_CR1 |= ((1 << 3) | (1 << 2)); /* TE | RE */
+        return -1;
 
         pr_log_init();
 
