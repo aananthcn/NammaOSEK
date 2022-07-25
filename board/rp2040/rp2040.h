@@ -34,12 +34,7 @@
 #define ISR_SN_UART0            (12)
 
 
-
-/* Clock & Oscillator Registers */
-/*/================================
-RP2040 External Clock: 12 MHz
-RP2040 System Clock:  125 MHz (max)
-================================/*/
+/* SysTick Registers */
 #define SYST_CSR_OFFSET         (0xe010)
 #define SYSTICK_TICKINT         (0x02)
 #define SYSTICK_ENABLE          (0x01)
@@ -50,6 +45,32 @@ RP2040 System Clock:  125 MHz (max)
 #define SYST_CVR_OFFSET         (0xe018)
 #define SYST_CVR                (*((volatile u32 *)(PPB_BASE + SYST_CVR_OFFSET)))
 
+
+/* Clock & Oscillator Registers */
+/*/================================
+RP2040 External Clock: 12 MHz
+RP2040 System Clock:  125 MHz (max)
+================================/*/
+#define CLOCKS_BASE             (0x40008000)
+#define XOSC_BASE               (0x40024000)
+
+#define CLK_PERI_CTRL_OFFSET    (0x48)
+#define CLK_PERI_CTRL           (*((volatile u32 *)(CLOCKS_BASE + CLK_PERI_CTRL_OFFSET)))
+#define PERI_AUXSRC(x)          (x << 5)
+#define PERI_ENABLE             (1 << 11)
+
+#define XOSC_CTRL_OFFSET        (0x00)
+#define XOSC_CTRL               (*((volatile u32 *)(XOSC_BASE + XOSC_CTRL_OFFSET)))
+#define XOSC_FREQ_RANGE_1_15MHz (0xaa0)
+#define XOSC_ENABLE             (0xfab << 12)
+#define XOSC_DISABLE            (0xd1e << 12)
+
+#define XOSC_STATUS_OFFSET      (0x04)
+#define XOSC_STATUS             (*((volatile u32 *)(XOSC_BASE + XOSC_STATUS_OFFSET)))
+
+#define XOSC_STARTUP_OFFSET     (0x0C)
+#define XOSC_STARTUP            (*((volatile u32 *)(XOSC_BASE + XOSC_STATUS_OFFSET)))
+#define XOSC_DELAY(x)           (x << 0)
 
 
 /* Raspberry Pi Pico (RP2040) Timer Register */

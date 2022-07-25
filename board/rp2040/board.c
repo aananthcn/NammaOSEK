@@ -38,10 +38,20 @@ int console_fputs(const char *s) {
 #define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */ 
 
 /* SysTick clk = External Clock = 12 MHz; let us not use 125MHz System clock for SysTick */
-#define SYSTICK_CLOCK_MHz       (12)
+#define XOSC_MHz                (12)
+#define MHz                     (1000000)
+
+int brd_osc_init(void) {
+        XOSC_CTRL    = XOSC_FREQ_RANGE_1_15MHz;
+        XOSC_STARTUP = XOSC_DELAY((((XOSC_MHz * MHz) / CLOCK_SEC2MSEC) + 128) / 256);
+        XOSC_CTRL   |= XOSC_ENABLE;
+        /* wait till XOSC becomes stable */
+        while (!(XOSC_STATUS & 0x80000000));
+}
+
 
 int brd_setup_systimer(void) {
-        register u32 tick_count = OS_TICK_DURATION_ns * SYSTICK_CLOCK_MHz / CLOCK_SEC2MSEC;
+        register u32 tick_count = OS_TICK_DURATION_ns * XOSC_MHz / CLOCK_SEC2MSEC;
 
         /* Setup SysTick clock source and enable interrupt */
         SYST_CVR = 0;
@@ -49,6 +59,7 @@ int brd_setup_systimer(void) {
         SYST_CSR = SYSTICK_TICKINT + SYSTICK_ENABLE;
         return 0;
 }
+
 
 int brd_get_usec_syscount(u32 *ucount) {
         u32 count;
@@ -70,7 +81,8 @@ int brd_sys_enable_interrupts() {
 
 
 int brd_console_init(void) {
-
+        /* let us drive UART (peri_clk) from 12 MHz crystal oscillator */
+        CLK_PERI_CTRL = PERI_ENABLE | PERI_AUXSRC(0x4);
         return -1;
 
         pr_log_init();
@@ -80,6 +92,7 @@ int brd_console_init(void) {
 
 
 void main(void) {
+        brd_osc_init();
         brd_setup_systimer();
         brd_console_init();
         brd_sys_enable_interrupts();
