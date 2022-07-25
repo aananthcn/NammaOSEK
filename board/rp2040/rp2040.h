@@ -72,6 +72,18 @@ RP2040 System Clock:  125 MHz (max)
 #define XOSC_STARTUP            (*((volatile u32 *)(XOSC_BASE + XOSC_STATUS_OFFSET)))
 #define XOSC_DELAY(x)           (x << 0)
 
+/* SYS PLL */
+#define PLL_SYS_BASE            (0x40028000)
+#define PLL_CS_OFFSET           (0x0)
+#define PLL_PWR_OFFSET          (0x4)
+#define PLL_FBDIV_INT_OFFSET    (0x8)
+#define PLL_PRIM_OFFSET         (0xc)
+#define PLL_CS                  (*((volatile u32 *)(PLL_SYS_BASE + PLL_CS_OFFSET)))
+#define PLL_PWR                 (*((volatile u32 *)(PLL_SYS_BASE + PLL_PWR_OFFSET)))
+#define PLL_FBDIV_INT           (*((volatile u32 *)(PLL_SYS_BASE + PLL_FBDIV_INT_OFFSET)))
+#define PLL_PRIM                (*((volatile u32 *)(PLL_SYS_BASE + PLL_PRIM_OFFSET)))
+
+
 
 /* Raspberry Pi Pico (RP2040) Timer Register */
 //============================================

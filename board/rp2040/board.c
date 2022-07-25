@@ -50,6 +50,45 @@ int brd_osc_init(void) {
 }
 
 
+int brd_sys_pll_init(void) {
+        u32 vco_freq = (1500 * MHz); /* min = 5 MHz, max = 1600 MHz */
+        u32 refdiv = 1;
+        u32 fbdiv, post_div1, post_div2, ref_mhz;
+
+        /* power down PLL to configure it correctly */
+        PLL_PWR = (1 << 5) | (1 << 3) | (1 << 2) | (1 << 0);
+
+        /* do frequency checks */
+        fbdiv = vco_freq / (XOSC_MHz * MHz);
+        if ((fbdiv < 16) || (fbdiv >320)) {
+                pr_log("Error: fbdiv out of range!\n");
+                return -1;
+        }
+        post_div1 = 6; /* min = 1, max = 7 */
+        post_div2 = 2; /* min = 1, max = 7 */
+        if (post_div2 > post_div1) {
+                pr_log("Error: post_div2 greater than post_div1\n");
+                return -1;
+        }
+        ref_mhz = XOSC_MHz / refdiv;
+        if (ref_mhz > (vco_freq / 16)) {
+                pr_log("Error: reference freq greater than vco / 16\n");
+                return -1;
+        }
+
+        /* configure the SYS PLL */
+        PLL_FBDIV_INT = fbdiv;
+        PLL_PWR &= ~((1 << 5) | (1 << 0)); /* clear VCOPD and PD bits */
+
+        /* wait till PLL gets locked */
+        while (!(PLL_CS & 0x80000000));
+
+        /* configure post dividers */
+        PLL_PRIM = post_div1 << 16 | post_div2 << 12;
+        PLL_PWR &= ~(1 << 3); /* clear POSTDIVPD bit */
+}
+
+
 int brd_setup_systimer(void) {
         register u32 tick_count = OS_TICK_DURATION_ns * XOSC_MHz / CLOCK_SEC2MSEC;
 
@@ -93,6 +132,7 @@ int brd_console_init(void) {
 
 void main(void) {
         brd_osc_init();
+        brd_sys_pll_init();
         brd_setup_systimer();
         brd_console_init();
         brd_sys_enable_interrupts();
