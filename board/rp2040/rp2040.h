@@ -51,13 +51,7 @@
 RP2040 External Clock: 12 MHz
 RP2040 System Clock:  125 MHz (max)
 ================================/*/
-#define CLOCKS_BASE             (0x40008000)
 #define XOSC_BASE               (0x40024000)
-
-#define CLK_PERI_CTRL_OFFSET    (0x48)
-#define CLK_PERI_CTRL           (*((volatile u32 *)(CLOCKS_BASE + CLK_PERI_CTRL_OFFSET)))
-#define PERI_AUXSRC(x)          (x << 5)
-#define PERI_ENABLE             (1 << 11)
 
 #define XOSC_CTRL_OFFSET        (0x00)
 #define XOSC_CTRL               (*((volatile u32 *)(XOSC_BASE + XOSC_CTRL_OFFSET)))
@@ -72,6 +66,7 @@ RP2040 System Clock:  125 MHz (max)
 #define XOSC_STARTUP            (*((volatile u32 *)(XOSC_BASE + XOSC_STATUS_OFFSET)))
 #define XOSC_DELAY(x)           (x << 0)
 
+
 /* SYS PLL */
 #define PLL_SYS_BASE            (0x40028000)
 #define PLL_CS_OFFSET           (0x0)
@@ -83,6 +78,26 @@ RP2040 System Clock:  125 MHz (max)
 #define PLL_FBDIV_INT           (*((volatile u32 *)(PLL_SYS_BASE + PLL_FBDIV_INT_OFFSET)))
 #define PLL_PRIM                (*((volatile u32 *)(PLL_SYS_BASE + PLL_PRIM_OFFSET)))
 
+
+/* Clocks */
+#define CLOCKS_BASE             (0x40008000)
+#define CLK_CTRL                (0x0)
+#define CLK_DIV                 (0x4)
+#define CLK_SELECTED            (0x8)
+
+#define CLK_REF_BASE            (CLOCKS_BASE + 0x30)
+#define CLK_REF_CTRL            (*((volatile u32 *)(CLK_REF_BASE + CLK_CTRL)))
+#define CLK_REF_DIV             (*((volatile u32 *)(CLK_REF_BASE + CLK_DIV)))
+#define CLK_REF_SELECTED        (*((volatile u32 *)(CLK_REF_BASE + CLK_SELECTED)))
+
+#define CLK_SYS_BASE            (CLOCKS_BASE + 0x3c)
+#define CLK_SYS_CTRL            (*((volatile u32 *)(CLK_SYS_BASE + CLK_CTRL)))
+#define CLK_SYS_DIV             (*((volatile u32 *)(CLK_SYS_BASE + CLK_DIV)))
+#define CLK_SYS_SELECTED        (*((volatile u32 *)(CLK_SYS_BASE + CLK_SELECTED)))
+
+#define CLK_PERI_CTRL           (*((volatile u32 *)(CLOCKS_BASE + 0x48)))
+#define PERI_AUXSRC(x)          (x << 5)
+#define PERI_ENABLE             (1 << 11)
 
 
 /* Raspberry Pi Pico (RP2040) Timer Register */

@@ -50,11 +50,47 @@ int brd_osc_init(void) {
 }
 
 
+
+int brd_config_clock(u32 reg_base, u8 clksrc, u8 auxsrc) {
+        /* First reset the Clock src, else system may hang */
+        *(volatile u32*)(reg_base + CLK_CTRL) &= ~(0x3);
+        while(!((*(volatile u32*)(reg_base + CLK_SELECTED)) & (1)));
+
+        /* Clock DIV register */
+        *(volatile u32*)(reg_base + CLK_DIV) = (1 << 8);
+        /* Clock CTRL register */
+        *(volatile u32*)(reg_base + CLK_CTRL) = (auxsrc << 5) | (clksrc);
+        /* Wait till the clock source bit in Clock SELECTED register is set */
+        while(!((*(volatile u32*)(reg_base + CLK_SELECTED)) & (1 << clksrc)));
+
+        return 0;
+}
+
+
+int brd_clock_init(void) {
+        u32 clksrc, auxsrc;
+
+        /* CLK_REF SRC = XOSC = 12 MHz, No AUXSRC */
+        brd_config_clock(CLK_REF_BASE, 2, 0);
+
+        /* CLK_SYS SRC = SYS_AUX, AUXSRC = PLL_SYS = 125 MHz */
+        brd_config_clock(CLK_SYS_BASE, 1, 0);
+
+        return 0;
+}
+
+
+
+/*/               REFDIV   XOSC    REF   VCO       POSTDIV   SYS_PLL
+    SYS PLL: 12 / 1    =   12MHz * 125 = 1500MHz / 6 / 2   = 125MHz
+/*/
 int brd_sys_pll_init(void) {
         u32 vco_freq = (1500 * MHz); /* min = 5 MHz, max = 1600 MHz */
         u32 refdiv = 1;
         u32 fbdiv, post_div1, post_div2, ref_mhz;
 
+        /* let us switch to ROSC clock before PLL power down */
+        brd_config_clock(CLK_SYS_BASE, 0, 2);
         /* power down PLL to configure it correctly */
         PLL_PWR = (1 << 5) | (1 << 3) | (1 << 2) | (1 << 0);
 
@@ -86,6 +122,7 @@ int brd_sys_pll_init(void) {
         /* configure post dividers */
         PLL_PRIM = post_div1 << 16 | post_div2 << 12;
         PLL_PWR &= ~(1 << 3); /* clear POSTDIVPD bit */
+        return 0;
 }
 
 
@@ -133,6 +170,7 @@ int brd_console_init(void) {
 void main(void) {
         brd_osc_init();
         brd_sys_pll_init();
+        brd_clock_init();
         brd_setup_systimer();
         brd_console_init();
         brd_sys_enable_interrupts();
