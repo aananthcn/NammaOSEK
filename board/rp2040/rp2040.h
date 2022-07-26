@@ -36,8 +36,6 @@
 
 /* SysTick Registers */
 #define SYST_CSR_OFFSET         (0xe010)
-#define SYSTICK_TICKINT         (0x02)
-#define SYSTICK_ENABLE          (0x01)
 #define SYST_CSR                (*((volatile u32 *)(PPB_BASE + SYST_CSR_OFFSET)))
 
 #define SYST_RVR_OFFSET         (0xe014)

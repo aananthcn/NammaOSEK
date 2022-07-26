@@ -39,6 +39,7 @@ int console_fputs(const char *s) {
 
 /* SysTick clk = External Clock = 12 MHz; let us not use 125MHz System clock for SysTick */
 #define XOSC_MHz                (12)
+#define CPU_CLK_MHz             (125)
 #define MHz                     (1000000)
 
 int brd_osc_init(void) {
@@ -85,7 +86,7 @@ int brd_clock_init(void) {
     SYS PLL: 12 / 1    =   12MHz * 125 = 1500MHz / 6 / 2   = 125MHz
 /*/
 int brd_sys_pll_init(void) {
-        u32 vco_freq = (1500 * MHz); /* min = 5 MHz, max = 1600 MHz */
+        u32 vco_freq = (CPU_CLK_MHz * XOSC_MHz * MHz); /* min = 5 MHz, max = 1600 MHz */
         u32 refdiv = 1;
         u32 fbdiv, post_div1, post_div2, ref_mhz;
 
@@ -127,12 +128,12 @@ int brd_sys_pll_init(void) {
 
 
 int brd_setup_systimer(void) {
-        register u32 tick_count = OS_TICK_DURATION_ns * XOSC_MHz / CLOCK_SEC2MSEC;
+        register u32 tick_count = OS_TICK_DURATION_ns * CPU_CLK_MHz / CLOCK_SEC2MSEC;
 
         /* Setup SysTick clock source and enable interrupt */
         SYST_CVR = 0;
         SYST_RVR = tick_count & 0x00FFFFFF;
-        SYST_CSR = SYSTICK_TICKINT + SYSTICK_ENABLE;
+        SYST_CSR = (1 << 2) | (1 << 1) | (1 << 0); /* CLK SRC = Proc. Clk; TICKINT = ISR Trig.; ENABLE = 1 */
         return 0;
 }
 
