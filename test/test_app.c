@@ -115,6 +115,12 @@ TASK(Task_A) {
 #ifdef BOARD_STM32F407VET6
 		GPIOA_ODR |= 0x40;
 #endif
+#ifdef BOARD_RP2040
+		SET_PAD_GPIO(25, 0);
+		SET_GPIO_CTRL(25, ((0x3 << 12) | (0x2 << 8) | GPIO_FUNC_SIO));
+		SIO_GPIO_OE |= 1 << 25;
+		SIO_GPIO_OUT &= ~(1 << 25);
+#endif
 		SetEvent(1, 0x101);
 		pr_log("Task A: Triggered event for Task B\n");
 		GetEvent(1, &Event);
@@ -129,6 +135,12 @@ TASK(Task_A) {
 		toggle_bit = true;
 #ifdef BOARD_STM32F407VET6
 		GPIOA_ODR &= ~(0x40);
+#endif
+#ifdef BOARD_RP2040
+		SET_PAD_GPIO(25, 0);
+		SET_GPIO_CTRL(25, ((0x3 << 12) | (0x3 << 8) | GPIO_FUNC_SIO));
+		SIO_GPIO_OE |= 1 << 25;
+		SIO_GPIO_OUT |= 1 << 25;
 #endif
 		#ifdef GET_RELEASE_RESOURCE_TEST
 		pr_log("Task A Priority = %d\n", _OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio);
