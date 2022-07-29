@@ -188,13 +188,15 @@ enum gpio_function {
 
 /* UART / USART Registers */
 //================================
-#define USART1_SR               (*((volatile u32*)(0x40011000)))
-#define USART1_DR               (*((volatile u32*)(0x40011004)))
-#define USART1_BRR              (*((volatile u32*)(0x40011008)))
-#define USART1_CR1              (*((volatile u32*)(0x4001100C)))
-#define USART1_CR2              (*((volatile u32*)(0x40011010)))
-#define USART1_CR3              (*((volatile u32*)(0x40011014)))
-#define USART1_GTPR             (*((volatile u32*)(0x40011018)))
+#define UART0_BASE              (0x40034000)
+#define UART1_BASE              (0x40038000)
+
+#define UART0_DR                (*((volatile u32*)(UART0_BASE + 0x00)))
+#define UART0_RSR_ECR           (*((volatile u32*)(UART0_BASE + 0x04)))
+#define UART0_IBRD              (*((volatile u32*)(UART0_BASE + 0x24)))
+#define UART0_FBRD              (*((volatile u32*)(UART0_BASE + 0x28)))
+#define UART0_LCR_H             (*((volatile u32*)(UART0_BASE + 0x2c)))
+#define UART0_CR                (*((volatile u32*)(UART0_BASE + 0x30)))
 
 
 

@@ -12,14 +12,66 @@
 #include "rp2040.h"
 
 
+
+/* Macros */
+#define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */
+
+/* SysTick clk = External Clock = 12 MHz; let us not use 125MHz System clock for SysTick */
+#define XOSC_MHz                (12)
+#define CPU_CLK_MHz             (125)
+#define PERI_CLK_MHz            (125)
+#define MHz                     (1000000)
+
+
+/* Functions */
+int uc_uart_init(u32 base) {
+        u32 baud_divint, baud_divfrac;
+        u32 baud_rate_div;
+
+        /* set PAD, FUNCTSEL for GPIO 0 (TX0) and 1 (RX0) pins */
+        SET_PAD_GPIO(0, (1<<7)|(1<<6));
+        SET_GPIO_CTRL(0, GPIO_FUNC_UART);
+        SET_PAD_GPIO(1, (1<<7)|(1<<6));
+        SET_GPIO_CTRL(1, GPIO_FUNC_UART);
+
+        /* FreeOSEK's standard baudrate = 115200, CLK_PERI = 125 MHz */
+        baud_rate_div = ((PERI_CLK_MHz * MHz) << 3) / (115200);
+        baud_divint = baud_rate_div >> (3+4);
+        if (baud_divint == 0) {
+                baud_divint = 1;
+                baud_divfrac = 0;
+        }
+        else if (baud_divint >= 65535) {
+                baud_divint = 65535;
+                baud_divfrac = 0;
+        }
+        else {
+                /* extract 6 bits from baud_divfrac */
+                baud_divfrac = ((baud_rate_div & 0x7f) + 1) / 2;
+        }
+
+        /* Set computed baudrate values to registers */
+        UART0_IBRD = baud_divint; //16 bits
+        UART0_FBRD = baud_divfrac; //6 bits
+
+        /* UART Data Format & configs */
+        UART0_LCR_H = (0x3 << 5) /* 8-bit */ | (1 << 4) /* FEN */;
+
+        /* Enable Tx, Rx and UART0 */
+        UART0_CR = (1 << 9) | (1 << 8) | (1 << 0);
+
+        return 0;
+}
+
+
 /* Serial console functions */
 int console_fputc(const int c) {
-#if 0
-        while((USART1_SR & 0x40) == 0); // wait until TC = 1
-        USART1_DR = (unsigned int) (c & 0xFF);
-#endif
-        return c;
+        u32 x;
+        x = UART0_DR;
+        UART0_DR = (unsigned int) (c & 0xFF);
+        return x;
 }
+
 
 int console_fputs(const char *s) {
         int count = 0;
@@ -43,18 +95,14 @@ int uc_ss_reset(void) {
                 SS_BIT_PADS_QSPI |
                 SS_BIT_IO_QSPI |
                 SS_BIT_PADS_BANK0 |
-                SS_BIT_IO_BANK0
+                SS_BIT_IO_BANK0 |
+                SS_BIT_JTAG |
+                SS_BIT_UART0
         );
         return 0;
 }
 
 
-#define CLOCK_SEC2MSEC          (1000) /* 1000ms = 1 sec */ 
-
-/* SysTick clk = External Clock = 12 MHz; let us not use 125MHz System clock for SysTick */
-#define XOSC_MHz                (12)
-#define CPU_CLK_MHz             (125)
-#define MHz                     (1000000)
 
 int uc_osc_init(void) {
         XOSC_CTRL    = XOSC_FREQ_RANGE_1_15MHz;
@@ -189,8 +237,7 @@ int brd_sys_enable_interrupts() {
 
 
 int brd_console_init(void) {
-        return -1;
-
+        uc_uart_init(UART0_BASE);
         pr_log_init();
 
         return 0;
