@@ -28,11 +28,6 @@
 #define NVIC_ICER               (*((volatile u32*)(PPB_BASE + NVIC_ICER_OFFSET)))
 
 
-/* ISR shift numbers */
-#define ISR_SN_TIMER01          (4)
-#define ISR_SN_TIMER23          (5)
-#define ISR_SN_UART0            (12)
-
 
 /* SysTick Registers */
 #define SYST_CSR_OFFSET         (0xe010)
