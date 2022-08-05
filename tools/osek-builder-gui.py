@@ -40,6 +40,9 @@ OIL_FileName = None
 ArXml_FileName = None
 RootView = None
 
+# UI Stuffs
+RecentFiles = os.getcwd()+"/.filelist"
+
 
 
 ###############################################################################
@@ -253,6 +256,7 @@ def save_as_arxml():
 
 
 def open_arxml_file(fpath):
+    print("filepath = ", fpath)
     global RootView, ArXml_FileName, AppTitle
 
     init_dir = os.getcwd()
@@ -267,7 +271,7 @@ def open_arxml_file(fpath):
             print("Info: no or many ARXML file is chosen, hence open_arxml_file() returning without processing!")
             return
     else:
-        ArXml_FileName = fpath
+        ArXml_FileName = fpath.strip()
 
     if RootView != None:
         RootView.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
@@ -275,6 +279,7 @@ def open_arxml_file(fpath):
     # Import/Parse ARXML file, so that we can use the content in GUI.
     sg.sg_reset()
     imp_status = arxml.import_arxml(ArXml_FileName)
+    update_recent_files(ArXml_FileName)
     show_os_config(RootView)
     if imp_status != 0:
         messagebox.showinfo(ToolName, "Input file contains errors, hence opening as new file!")
@@ -288,7 +293,7 @@ def open_arxml_file(fpath):
 # Fuction: add_menus
 # args: rv - root view
 #    
-def add_menus(rv):
+def add_menus(rv, flst):
     global MenuBar, FileMenu
     MenuBar = tk.Menu(rv, background='#ff8000', foreground='black', activebackground='white', activeforeground='black')
     FileMenu = tk.Menu(MenuBar, tearoff=0)
@@ -299,6 +304,10 @@ def add_menus(rv):
     FileMenu.add_command(label="Save", command=save_project, state="disabled")
     FileMenu.add_command(label="Save As", command=save_as_arxml)
     FileMenu.add_separator()
+    if len(flst) > 0:
+        for file_path in flst:
+            FileMenu.add_command(label=file_path, command=lambda: open_arxml_file(file_path))
+        FileMenu.add_separator()
     FileMenu.add_command(label="Exit", command=rv.quit)
     MenuBar.add_cascade(label="File", menu=FileMenu)
 
@@ -334,14 +343,51 @@ def init_view_setup(fpath, ftype):
 
 
 
+
+def update_recent_files(filepath):
+    with open(RecentFiles) as rfile:
+        raw_list = rfile.readlines()
+        rfile.close()
+
+    rfile = open(RecentFiles, 'a')
+    if filepath not in raw_list:
+        rfile.write("\n"+filepath)
+    rfile.close()
+
+
+
+def get_recent_files():
+    file_list = []
+    try:
+        with open(RecentFiles) as rfile:
+            raw_list = rfile.readlines()
+    except:
+        raw_list = []
+
+    rfile.close()
+    for item in raw_list:
+        if item not in file_list:
+            if len(item) > 4: # 4 for a dot and at least 3 letters.
+                file_list.append(item)
+
+    with open(RecentFiles, 'w') as rfile:
+        for line in file_list:
+            rfile.write(f"{line}\n")
+    rfile.close()
+
+    return file_list
+
+
+
 def main(fpath, ftype):
     global RootView, AppTitle
     
     # Create the main window
     RootView = tk.Tk()
     RootView.title(AppTitle + " [uninitialized]")
-    add_menus(RootView)
-    RootView.attributes('-fullscreen', True)
+    flst = get_recent_files()
+    add_menus(RootView, flst)
+    RootView.state("zoomed")
 
     # setup init view
     init_view_setup(fpath, ftype)
