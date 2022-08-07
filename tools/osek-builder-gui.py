@@ -38,10 +38,25 @@ OsTab = AmTab = CtrTab = MsgTab = ResTab = TskTab = AlmTab = IsrTab = None
 # I/O stuffs
 OIL_FileName = None
 ArXml_FileName = None
-RootView = None
-
-# UI Stuffs
 RecentFiles = os.getcwd()+"/.filelist"
+
+# UI Stuffs - View
+class View:
+    root = None
+    xsize = None
+    ysize = None
+
+    def __init__(self):
+        self.root = tk.Tk()
+        self.xsize = self.root.winfo_screenwidth()
+        self.ysize = self.root.winfo_screenheight()
+
+# UI Stuffs - FreeAUTOSAR Configurator Tool
+class FreeAutosarConfTool:
+    view = View()
+
+
+Gui = None
 
 
 
@@ -149,17 +164,17 @@ def show_os_config(view):
 
 
 def new_file():
-    global RootView
+    global Gui
     global OsTab, AmTab, CtrTab, MsgTab, ResTab, TskTab, AlmTab, IsrTab
 
     sg.sg_reset()
-    show_os_config(RootView)
+    show_os_config(Gui.view.root)
     FileMenu.entryconfig("Save", state="normal")
 
 
 
 def open_oil_file(fpath):
-    global RootView, OIL_FileName, AppTitle
+    global Gui, OIL_FileName, AppTitle
 
     init_dir = os.getcwd()
     if os.path.exists(os.getcwd()+"/output/oil-files"):
@@ -175,13 +190,13 @@ def open_oil_file(fpath):
     else:
         OIL_FileName = fpath
 
-    if RootView != None:
-        RootView.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
+    if Gui.view.root != None:
+        Gui.view.root.title(AppTitle + " [" + str(OIL_FileName).split("/")[-1] +"]")
 
     # Make System Generator to parse, so that we can use the content in GUI.
     sg.sg_reset()
     sg.parse(OIL_FileName)
-    show_os_config(RootView)
+    show_os_config(Gui.view.root)
     FileMenu.entryconfig("Save", state="normal")
 
 
@@ -230,7 +245,7 @@ def save_project():
 
     # Export and File name clean up
     arxml.export_arxml(ArXml_FileName)
-    RootView.title(AppTitle + " [" + ArXml_FileName.split("/")[-1] +"]")
+    Gui.view.root.title(AppTitle + " [" + ArXml_FileName.split("/")[-1] +"]")
 
 
 
@@ -249,15 +264,14 @@ def save_as_arxml():
         messagebox.showinfo(ToolName, "File to save is not done correctly, saving aborted!")
         return
 
-    RootView.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
+    Gui.view.root.title(AppTitle + " [" + str(saved_filename.name).split("/")[-1] +"]")
     backup_gui_before_save()
     arxml.export_arxml(saved_filename.name)
 
 
 
 def open_arxml_file(fpath):
-    print("filepath = ", fpath)
-    global RootView, ArXml_FileName, AppTitle
+    global Gui, ArXml_FileName, AppTitle
 
     init_dir = os.getcwd()
     if os.path.exists(os.getcwd()+"/output/arxml"):
@@ -273,14 +287,14 @@ def open_arxml_file(fpath):
     else:
         ArXml_FileName = fpath.strip()
 
-    if RootView != None:
-        RootView.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
+    if Gui.view.root != None:
+        Gui.view.root.title(AppTitle + " [" + str(ArXml_FileName).split("/")[-1] +"]")
 
     # Import/Parse ARXML file, so that we can use the content in GUI.
     sg.sg_reset()
     imp_status = arxml.import_arxml(ArXml_FileName)
     update_recent_files(ArXml_FileName)
-    show_os_config(RootView)
+    show_os_config(Gui.view.root)
     if imp_status != 0:
         messagebox.showinfo(ToolName, "Input file contains errors, hence opening as new file!")
         new_file()
@@ -380,20 +394,21 @@ def get_recent_files():
 
 
 def main(fpath, ftype):
-    global RootView, AppTitle
+    global Gui, AppTitle
     
     # Create the main window
-    RootView = tk.Tk()
-    RootView.title(AppTitle + " [uninitialized]")
+    ## Gui.view.root = tk.Tk()
+    Gui = FreeAutosarConfTool()
+    Gui.view.root.title(AppTitle + " [uninitialized]")
     flst = get_recent_files()
-    add_menus(RootView, flst)
-    RootView.state("zoomed")
+    add_menus(Gui.view.root, flst)
+    Gui.view.root.state("zoomed")
 
     # setup init view
     init_view_setup(fpath, ftype)
 
     # Run forever!
-    RootView.mainloop()
+    Gui.view.root.mainloop()
 
 
 #
