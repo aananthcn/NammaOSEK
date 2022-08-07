@@ -150,6 +150,14 @@ RP2040 System Clock:  125 MHz (max)
 #define TIMELR                  (*((volatile u32*)(TIMER_BASE + TIMELR_OFFSET)))
 
 
+/* Watchdog - Timer derives clock from Watchdog */
+#define WATCHDOG_BASE           (0x40058000)
+
+#define WDG_CTRL                (*((volatile u32*)(WATCHDOG_BASE + 0x00)))
+#define WDG_LOAD                (*((volatile u32*)(WATCHDOG_BASE + 0x04)))
+#define WDG_REASON              (*((volatile u32*)(WATCHDOG_BASE + 0x08)))
+#define WDG_TICK                (*((volatile u32*)(WATCHDOG_BASE + 0x2C)))
+
 
 /* GPIO Registers */
 #define GPIO_BASE               (0x40014000)

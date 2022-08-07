@@ -224,6 +224,10 @@ int brd_setup_systimer(void) {
         SYST_CVR = 0;
         SYST_RVR = tick_count & 0x00FFFFFF;
         SYST_CSR = (1 << 2) | (1 << 1) | (1 << 0); /* CLK SRC = Proc. Clk; TICKINT = ISR Trig.; ENABLE = 1 */
+
+        /* Setup Watchdog timer TICK register to use TIMELR values */
+        WDG_TICK = (1 << 9) /* ENABLE */ | 12 /* CYCLES = 12 for 12 MHz clock */;
+
         return 0;
 }
 
