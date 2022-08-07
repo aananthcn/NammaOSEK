@@ -101,12 +101,6 @@ RP2040 System Clock:  125 MHz (max)
 #define PLL_PWR_OFFSET          (0x4)
 #define PLL_FBDIV_INT_OFFSET    (0x8)
 #define PLL_PRIM_OFFSET         (0xc)
-#if 0
-#define PLL_SYS_CS                  (*((volatile u32*)(PLL_SYS_BASE + PLL_CS_OFFSET)))
-#define PLL_SYS_PWR                 (*((volatile u32*)(PLL_SYS_BASE + PLL_PWR_OFFSET)))
-#define PLL_FBDIV_INT           (*((volatile u32*)(PLL_SYS_BASE + PLL_FBDIV_INT_OFFSET)))
-#define PLL_PRIM                (*((volatile u32*)(PLL_SYS_BASE + PLL_PRIM_OFFSET)))
-#endif
 
 
 /* Clocks */
@@ -188,6 +182,7 @@ enum gpio_function {
 
 #define UART0_DR                (*((volatile u32*)(UART0_BASE + 0x00)))
 #define UART0_RSR_ECR           (*((volatile u32*)(UART0_BASE + 0x04)))
+#define UART0_FR                (*((volatile u32*)(UART0_BASE + 0x18)))
 #define UART0_IBRD              (*((volatile u32*)(UART0_BASE + 0x24)))
 #define UART0_FBRD              (*((volatile u32*)(UART0_BASE + 0x28)))
 #define UART0_LCR_H             (*((volatile u32*)(UART0_BASE + 0x2c)))

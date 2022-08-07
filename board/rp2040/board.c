@@ -66,10 +66,14 @@ int uc_uart_init(u32 base) {
 
 /* Serial console functions */
 int console_fputc(const int c) {
-        u32 x;
-        x = UART0_DR;
+        /* wait if UART0 is busy */
+        while(UART0_FR & (1<<3)) {
+                /* do nothing */
+        }
+
         UART0_DR = (unsigned int) (c & 0xFF);
-        return x;
+
+        return 0;
 }
 
 
