@@ -286,10 +286,7 @@ def parse(oilfile):
 
 
 
-def generate_code():
-    global SrcFilePath
-
-    path = SrcFilePath
+def generate_code(path):
     try:
         sg_counter.generate_code(path, Counters)
         sg_appmodes.generate_code(path, AppModes, Tasks)

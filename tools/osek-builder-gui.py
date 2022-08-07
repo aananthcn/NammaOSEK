@@ -250,7 +250,8 @@ def save_project():
 
 
 def generate_code():
-    if 0 == sg.generate_code():
+    path = os.getcwd()+"/tools/src"
+    if 0 == sg.generate_code(path):
         messagebox.showinfo(ToolName, "Code Generated Successfully!")
     else:
         messagebox.showinfo(ToolName, "Code Generation Failed!")
