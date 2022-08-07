@@ -132,6 +132,12 @@ RP2040 System Clock:  125 MHz (max)
 #define PERI_AUXSRC(x)          (x << 5)
 #define PERI_ENABLE             (1 << 11)
 
+#define CLK_USB_BASE            (CLOCKS_BASE + 0x54)
+#define CLK_ADC_BASE            (CLOCKS_BASE + 0x60)
+#define CLK_RTC_BASE            (CLOCKS_BASE + 0x6C)
+
+
+
 
 /* Raspberry Pi Pico (RP2040) Timer Register */
 //============================================

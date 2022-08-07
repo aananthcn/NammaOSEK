@@ -146,7 +146,14 @@ int uc_clock_init(void) {
         /* CLK_PERI: AUXSRC = CLK_SYS = 125 MHz */
         CLK_PERI_CTRL = PERI_ENABLE | PERI_AUXSRC(0);
 
-        /* CLK_USB: SRC = none, AUXSRC = PSS_USB = 48 MHz */
+        /* CLK_USB: SRC = none, AUXSRC = PLL_USB = 48 MHz */
+        uc_config_clock(CLK_USB_BASE, 0, 0);
+
+        /* CLK_ADC: SRC = none, AUXSRC = PLL_USB = 48 MHz */
+        uc_config_clock(CLK_ADC_BASE, 0, 0);
+
+        /* CLK_RTC: SRC = none, AUXSRC = PLL_USB = 48 MHz */
+        uc_config_clock(CLK_RTC_BASE, 0, 0);
 
         /* CLK_GPOUTx: use 12 MHz crystal clock as clock source */
         /* Not sure if this initialization is needed for normal GPIO usage */
