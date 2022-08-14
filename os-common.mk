@@ -1,4 +1,4 @@
-TARGET = osek-os
+TARGET = NammaAutosar
 
 INCDIRS  += -I ${CWD}/board
 

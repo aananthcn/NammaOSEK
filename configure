@@ -43,7 +43,7 @@ sed -i "/#include /c $INCLUDE_BOARD_H" board/platform.h
 
 echo "CWD := $(pwd)" > ./Makefile
 echo "include ${board_path}/${target}.mk" >> ./Makefile
-echo "include ./tools/src/sg-objs.mk" >> ./Makefile
+echo "include ./tools/src/os-objs.mk" >> ./Makefile
 echo "include ./test/app.mk" >> ./Makefile
 
 # qemu-versatilepb specifics
@@ -61,5 +61,5 @@ if [ "$target" == "rp2040" ]; then
   echo "include ./arch/arm/cortex-m0/cortex-m0.mk" >> ./Makefile
 fi
 
-echo "include ./common.mk" >> ./Makefile
+echo "include ./os-common.mk" >> ./Makefile
 echo "Configuration Success!"
