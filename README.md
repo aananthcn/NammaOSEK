@@ -1,4 +1,4 @@
-FreeOSEK (Underconstruction 🛠🔧⛏)
+NammaOSEK (a.k.a FreeOSEK. Underconstruction 🛠🔧⛏)
 ========
 What is OSEK?
 -------------
@@ -14,12 +14,12 @@ The OS and its standardised interfaces are described in greater details in OSEK 
 
 <br>
 
-What is FreeOSEK?
------------------
+What is NammaOSEK?
+------------------
 
-FreeOSEK is a intended to provide a free to use with no liability licensed (Apache 2.0/MIT) software, writen against OSEK specification version 2.3.3. This is created to learn OSEK standard practically. And therefore setting a path towards learning as well as teaching AUTOSAR core skills.
+NammaOSEK (aka FreeOSEK) is a intended to provide a free to use with no liability licensed (MIT) software, writen against OSEK specification version 2.3.3. This is created to learn OSEK standard practically. And therefore setting a path towards learning as well as teaching AUTOSAR core skills.
 
-Some small percentage of this work is derived from Zephyr OS, mpaland/printf etc., hence most of the files here would have the same content and license information (Apache 2.0)
+What is Namma? Namma means our in Tamil and Kannada. We used to say "Avan namma friendu" in Tamil. Which means "he is our friend". So, this is (y)our OSEK, free to use with no liability. 
 
 **Start date**: 27 June 2021, Sunday<br>
 Motivation to create an OS came from **Ashokkumar Narayanan** (one of my best buddies in Visteon Chennai).
@@ -27,16 +27,17 @@ Motivation to create an OS came from **Ashokkumar Narayanan** (one of my best bu
 ### Supported Boards
  * qemu-versatilepb
  * stm32f407vet6
+ * rp2040 (Raspberry Pi Pico)
 
 ### Python based GUI
-![OSEK Builder](https://github.com/aananthcn/FreeOSEK/blob/main/doc/gui-taskview.png)
+![OSEK Builder](https://github.com/aananthcn/NammaOSEK/blob/main/doc/gui-taskview.png)
 
 <br>
 
-FreeOSEK High Level Architecture
+NammaOSEK High Level Architecture
 ---
-The FreeOSEK project uses a python (tkinter) based GUI as system configuration UI which can help developers to edit and save OS configs to OIL file. Then it can invoke Python scripts as code generators to convert the OIL file to C source file. The workflow supported by FreeOSEK is shown in picture below.
-![High Level Architecture and Workflow](https://github.com/aananthcn/FreeOSEK/blob/main/doc/workflow.png)
+The NammaOSEK project uses a python (tkinter) based GUI as system configuration UI which can help developers to edit and save OS configs to OIL file. Then it can invoke Python scripts as code generators to convert the OIL file to C source file. The workflow supported by NammaOSEK is shown in picture below.
+![High Level Architecture and Workflow](https://github.com/aananthcn/NammaOSEK/blob/main/doc/workflow.png)
 
 OSEK Features & Status
 ---
@@ -79,14 +80,14 @@ Prerequisites
    * `apt install gcc-arm-none-eabi qemu-system-arm gdb-multiarch python3`
 <br>
 
-Cloning FreeOSEK
+Cloning NammaOSEK
 ---
-* `git clone git@github.com:aananthcn/FreeOSEK.git`
+* `git clone git@github.com:aananthcn/NammaOSEK.git`
 <br>
 
 Board selection
 ---
-* `cd FreeOSEK` (Move to the cloned location)
+* `cd NammaOSEK` (Move to the cloned location)
 * Run `./configure` to know the list of boards supported
 * `./configure qemu-versatilepb` to select QEMU board
 * Always do a `make clean` after selecting the board.
@@ -94,9 +95,9 @@ Board selection
 
 
 
-Building the FreeOSEK image
+Building the NammaOSEK image
 ---
-* `cd FreeOSEK` (Move to the cloned location)
+* `cd NammaOSEK` (Move to the cloned location)
 * `make` 
 * After a successfuld build, you should see following output files created in the current directory
   * osek-os.bin
@@ -105,9 +106,9 @@ Building the FreeOSEK image
 <br>
 
 
-Configuring FreeOSEK & (Re-)Generating OIL files and Source files
+Configuring NammaOSEK & (Re-)Generating OIL files and Source files
 ---
-* Open Windows command prompt and change directory to FreeOSEK (the cloned directory)
+* Open Windows command prompt and change directory to NammaOSEK (the cloned directory)
 * Run `python tools\osek-builder-gui.py` in Windows command prompt.
   * You should see a GUI (tkinter based) opening. Do the following:
     * File -> "Open OIL File" -> select "osek_os-cortex-m4.oil"
@@ -115,11 +116,11 @@ Configuring FreeOSEK & (Re-)Generating OIL files and Source files
     * File -> "Save As", and save it with same or different file name.
     * Generate -> "Generate Source"
 * After the last step above, you should see new source files generated in path ./tools/src
-* Now, go to section "**Building the FreeOSEK image**" (above) to rebuild FreeOSEK.
+* Now, go to section "**Building the NammaOSEK image**" (above) to rebuild NammaOSEK.
 <br>
 
 
-Running FreeOSEK on QEMU (ARM926EJ-S)
+Running NammaOSEK on QEMU (ARM926EJ-S)
 ----
 To run the image on QEMU, use the following command
 * `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic -kernel osek-os.bin`
@@ -128,7 +129,7 @@ To stop QEMU running in -nographic mode, type the following
 * `CTRL+a x`
 <br>
 
-Debugging FreeOSEK on QEMU (ARM926EJ-S)
+Debugging NammaOSEK on QEMU (ARM926EJ-S)
 ----
 To debug using gdb, use the following command in 
 * `QEMU_AUDIO_DRV=none qemu-system-arm -M versatilepb -m 128M -nographic `**`-s -S`**` -kernel osek-os.bin`
