@@ -5,7 +5,8 @@ INCDIRS  += 	-I ${OS_PATH}/board \
 		-I ${OS_PATH}/lib/include \
 		-I ${OS_PATH}/tools/src \
 		-I ${MCU_BOARD_PATH} \
-		-I ${MCU_MICRO_PATH}
+		-I ${MCU_MICRO_PATH} \
+		-I ${MCU_PATH}/base/src
 
 CMN_OBJS := \
 	${OS_PATH}/kernel/os_entry.o \
