@@ -2,12 +2,12 @@
 #define KERNEL_OSEK_H
 
 #include <ostypes.h>
+#include <Std_Types.h>
 
 /*
  * OS Status
  */
 typedef enum eStatusType {
-	E_OK = 0,
 	E_OS_ACCESS = 1,
 	E_OS_CALLEVEL = 2,
 	E_OS_ID = 3,
