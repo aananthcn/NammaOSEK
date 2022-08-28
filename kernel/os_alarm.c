@@ -13,7 +13,7 @@ static u32 OsTickCount_us;
 
 #define ENABLE_UPTIME_PRINTS	0 // set this to 1 if you want up-time to be printed.
 #define TEMPORARY_WORKAROUND	1
-#define ONE_MSEC_IN_NANO_SEC	(1000000)
+#define ONE_MSEC_IN_MICROSEC	(1000)
 
 
 int OsComputeUpTime(void);
@@ -85,7 +85,7 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 	}
 
 	ticks_futr = _AppAlarmCounters[AlarmID];
-	if (_OsCounters[counter_id].maxallowedvalue < ONE_MSEC_IN_NANO_SEC) {
+	if (_OsCounters[counter_id].maxallowedvalue < ONE_MSEC_IN_MICROSEC) {
 		if (brd_get_usec_syscount(&ticks_curr)) {
 			pr_log("Error: brd_get_usec_syscount returns error\n");
 			return -1;
@@ -359,13 +359,13 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
  expires.
 /*/
 int OsHandleCounters(void) {
-	static TickType os_ticks_old, nsec_cnt_old;
-	TickType os_ticks, nsec_cnt;
+	static TickType os_ticks_old, usec_cnt_old;
+	TickType os_ticks, usec_cnt;
 	TickType delta;
 	int i;
 
 	/* Get input from OS Counter */
-	if (brd_get_usec_syscount(&nsec_cnt)) {
+	if (brd_get_usec_syscount(&usec_cnt)) {
 		pr_log("Error: brd_get_usec_syscount returns error\n");
 		return -1;
 	}
@@ -373,8 +373,8 @@ int OsHandleCounters(void) {
 
 	/* Increment user configured OSEK Counters */
 	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-		if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_NANO_SEC ) {
-			delta = (TickType)(nsec_cnt - nsec_cnt_old);
+		if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_MICROSEC ) {
+			delta = (TickType)(usec_cnt - usec_cnt_old);
 		}
 		else {
 			delta = (TickType)(os_ticks - os_ticks_old);
@@ -390,7 +390,7 @@ int OsHandleCounters(void) {
 	}
 
 	os_ticks_old = os_ticks;
-	nsec_cnt_old = nsec_cnt;
+	usec_cnt_old = usec_cnt;
 	return 0;
 }
 

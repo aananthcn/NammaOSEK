@@ -10,6 +10,7 @@ int _OsHandleTicks(void);
 /* low level APIs  - Stack Pointer Manipulation functions */
 u32 _set_stack_ptr(u32 new_stack);
 u32 _get_stack_ptr(void);
+u32 _get_irq_stack_ptr(void);
 u32 _get_next_pc(void);
 void _set_sp_and_pc(u32 sp, u32 pc);
 u32 _save_context(u32 sp);
