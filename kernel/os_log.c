@@ -34,6 +34,6 @@ int pr_log_init(void) {
                 ret = 0;
         }
 
-        pr_log("Welcome to FreeOSEK!\n");
+        pr_log("Welcome to NammaAUTOSAR!\n");
         return ret;
 }

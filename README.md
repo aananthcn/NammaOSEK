@@ -1,4 +1,4 @@
-NammaOSEK (a.k.a FreeOSEK. Underconstruction 🛠🔧⛏)
+NammaOSEK (a.k.a NammaAUTOSAR. Underconstruction 🛠🔧⛏)
 ========
 What is OSEK?
 -------------
@@ -17,7 +17,7 @@ The OS and its standardised interfaces are described in greater details in OSEK 
 What is NammaOSEK?
 ------------------
 
-NammaOSEK (aka FreeOSEK) is a intended to provide a free to use with no liability licensed (MIT) software, writen against OSEK specification version 2.3.3. This is created to learn OSEK standard practically. And therefore setting a path towards learning as well as teaching AUTOSAR core skills.
+NammaOSEK (aka NammaAUTOSAR) is a intended to provide a free to use with no liability licensed (MIT) software, writen against OSEK specification version 2.3.3. This is created to learn OSEK standard practically. And therefore setting a path towards learning as well as teaching AUTOSAR core skills.
 
 What is Namma? Namma means our in Tamil and Kannada. We used to say "Avan namma friendu" in Tamil. Which means "he is our friend". So, this is (y)our OSEK, free to use with no liability. 
 

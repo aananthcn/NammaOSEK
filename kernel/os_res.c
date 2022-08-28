@@ -88,8 +88,8 @@ StatusType ReleaseResource(ResourceType ResID) {
 
 	/* Let us raise the priority of the calling task to ceiling priority */
 	OsClrCeilingPrio();
-	/* After this point, the calling task will be scheduled at the normal 
-	priority (i.e., as configured in OSEK-Builder tool) by the FreeOSEK 
+	/* After this point, the calling task will be scheduled at the normal
+	priority (i.e., as configured in OSEK-Builder tool) by the NammaAUTOSAR
 	kernel */
 
 	return stat;
