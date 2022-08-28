@@ -126,9 +126,9 @@ int OsScheduleTasks(void) {
 		tick_cnt_old = tick_cnt;
 	}
 
-	/* Task handling */
-	for (i = SG_FIFO_QUEUE_MAX_LEN-1; i >= 0; i--) {
-		task = GetTaskFromFifoQueue(ReadyQueue, i);
+	/* Schedule Task in the order of decreasing priority (high --> low) */
+	for (i = OS_NO_OF_PRIORITIES-1; i >= 0; i--) {
+		task = GetTaskFromFifoQueue(ReadyQueue, _OsTaskValidPriorities[i]);
 		if (task != NULL) {
 			OsScheduleCall(task);
 		}
