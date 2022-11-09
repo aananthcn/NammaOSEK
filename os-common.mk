@@ -1,12 +1,11 @@
 TARGET = NammaAutosar
 
-INCDIRS  += 	-I ${OS_PATH}/board \
-		-I ${OS_PATH}/include \
+INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${OS_PATH}/lib/include \
-		-I ${OS_PATH}/tools/src \
 		-I ${MCU_BOARD_PATH} \
 		-I ${MCU_MICRO_PATH} \
-		-I ${MCU_PATH}/base/src
+		-I ${MCU_PATH}/src/common/src \
+		-I ${MCU_PATH}/src/common/api
 
 CMN_OBJS := \
 	${OS_PATH}/kernel/os_entry.o \

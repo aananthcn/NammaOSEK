@@ -13,7 +13,7 @@ int pr_log(const char *format, ...)
         va_list time;
         u32 usec;
 
-        if (0 == brd_get_usec_syscount(&usec)) {
+        if (0 == bsp_get_usec_syscount(&usec)) {
                 usec = usec - usec_0;
                 printf("[%d.%06d] ", usec/1000000, usec%1000000);
         }
@@ -30,7 +30,7 @@ int pr_log(const char *format, ...)
 int pr_log_init(void) {
         int ret = -1;
 
-        if (0 == brd_get_usec_syscount(&usec_0)) {
+        if (0 == bsp_get_usec_syscount(&usec_0)) {
                 ret = 0;
         }
 
