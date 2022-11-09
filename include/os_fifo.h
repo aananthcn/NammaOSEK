@@ -1,7 +1,7 @@
 #ifndef ACN_OSEK_OS_FIFO_H
 #define ACN_OSEK_OS_FIFO_H
 
-#include <ostypes.h>
+#include <base_types.h>
 #include <sg_tasks.h>
 
 typedef struct {

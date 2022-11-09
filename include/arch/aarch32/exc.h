@@ -68,7 +68,7 @@
 #ifdef _ASMLANGUAGE
 GTEXT(z_arm_exc_exit);
 #else
-#include <ostypes.h>
+#include <base_types.h>
 
 #ifdef __cplusplus
 extern "C" {

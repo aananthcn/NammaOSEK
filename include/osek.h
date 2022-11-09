@@ -1,7 +1,7 @@
 #ifndef KERNEL_OSEK_H
 #define KERNEL_OSEK_H
 
-#include <ostypes.h>
+#include <base_types.h>
 #include <Std_Types.h>
 
 /*

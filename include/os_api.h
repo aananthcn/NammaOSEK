@@ -1,7 +1,7 @@
 #ifndef AANANTH_OSEK_OS_API_H
 #define AANANTH_OSEK_OS_API_H
 
-#include <ostypes.h>
+#include <base_types.h>
 
 u32 _GetOsTickCnt(void);
 int _OsHandleTicks(void);

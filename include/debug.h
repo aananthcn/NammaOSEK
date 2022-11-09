@@ -1,7 +1,7 @@
 #ifndef INCLUDE_DEBUG_H
 #define INCLUDE_DEBUG_H
 
-#include <ostypes.h>
+#include <base_types.h>
 
 void user_led_init(void);
 bool get_user_led1(void);

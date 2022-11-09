@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-#include <ostypes.h>
+#include <base_types.h>
 
 u32* free_osek_errno(void);
 #define errno (*free_osek_errno())

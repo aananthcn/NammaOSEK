@@ -1,7 +1,7 @@
 #ifndef ACN_OSEK_COM_H
 #define ACN_OSEK_COM_H
 
-#include <ostypes.h>
+#include <base_types.h>
 
 typedef struct {
 	void* data;
