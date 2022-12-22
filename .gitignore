@@ -3,7 +3,6 @@
 *.elf
 *.bin
 *.dfu
-/Makefile
 ~*
 *.pyc
 __pycache__
@@ -11,3 +10,4 @@ __pycache__
 *.uf2
 .vscode
 .file*
+*.la
