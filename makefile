@@ -5,18 +5,19 @@ AR=${COMPILER}ar
 RANLIB=${COMPILER}ranlib
 OBJCOPY=${COMPILER}objcopy
 
+
 include ${ROOT_DIR}/path_defs.mk
 include ${OS_BUILDER_PATH}/src/os-objs.mk
 
+
 INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${OS_PATH}/lib/include \
-		-I ${MCU_BOARD_PATH} \
-		-I ${MCU_MICRO_PATH} \
+		-I ${MCU_STARTUP_PATH} \
 		-I ${MCU_PATH}/src \
 		-I ${MCU_PATH}/src/common \
 		-I ${MCU_PATH}/src/common/src \
 		-I ${MCU_PATH}/src/common/api \
-		-I ${MCU_MICRO_PATH} \
+		-I ${MCU_STARTUP_PATH} \
 		-I ${OS_BUILDER_PATH}/src
 
 CMN_OBJS := \
