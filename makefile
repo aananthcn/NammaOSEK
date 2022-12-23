@@ -11,6 +11,8 @@ INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${OS_PATH}/lib/include \
 		-I ${MCU_BOARD_PATH} \
 		-I ${MCU_MICRO_PATH} \
+		-I ${MCU_PATH}/src \
+		-I ${MCU_PATH}/src/common \
 		-I ${MCU_PATH}/src/common/src \
 		-I ${MCU_PATH}/src/common/api \
 		-I ${MCU_MICRO_PATH} \
