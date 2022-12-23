@@ -6,6 +6,7 @@ RANLIB=${COMPILER}ranlib
 OBJCOPY=${COMPILER}objcopy
 
 include ${ROOT_DIR}/path_defs.mk
+include ${OS_BUILDER_PATH}/src/os-objs.mk
 
 INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${OS_PATH}/lib/include \
@@ -41,7 +42,7 @@ STDLIBOBJS	:= \
 #	${OS_PATH}/lib/libc-minimal/stdlib/malloc.o \
 
 
-LIBOBJS	:= \
+OS_LIBOBJS	:= \
 	${OS_PATH}/lib/libc-minimal/string/string.o \
 	${OS_PATH}/lib/libc-minimal/stdout/printf.o
 
@@ -55,7 +56,7 @@ include ${ROOT_DIR}/c_l_flags.mk
 
 all: $(TARGET)
 
-LIB_OBJS := $(CMN_OBJS) $(STDLIBOBJS) $(LIBOBJS)
+LIB_OBJS := $(CMN_OBJS) $(STDLIBOBJS) $(OS_LIBOBJS) $(SG_OBJS)
 
 $(TARGET): $(LIB_OBJS)
 	$(AR) r $@ $^
