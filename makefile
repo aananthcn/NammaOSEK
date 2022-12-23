@@ -44,8 +44,12 @@ LIBOBJS	:= \
 	${OS_PATH}/lib/libc-minimal/stdout/printf.o
 
 
-CFLAGS := ${INCDIRS}
-TARGET := libOs.la
+LDFLAGS := -g
+CFLAGS  := -Werror ${INCDIRS} -g
+ASFLAGS := ${INCDIRS} -g
+TARGET  := libOs.la
+# include c_l_flags.mk to add more definitions specific to micro-controller
+include ${ROOT_DIR}/c_l_flags.mk
 
 all: $(TARGET)
 
