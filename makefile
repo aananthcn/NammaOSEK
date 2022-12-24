@@ -35,6 +35,7 @@ STDLIBOBJS	:= \
 	${OS_PATH}/lib/libc-minimal/stdlib/abort.o \
 	${OS_PATH}/lib/libc-minimal/stdlib/atoi.o \
 	${OS_PATH}/lib/libc-minimal/stdlib/bsearch.o \
+	${OS_PATH}/lib/libc-minimal/stdlib/error.o \
 	${OS_PATH}/lib/libc-minimal/stdlib/exit.o \
 	${OS_PATH}/lib/libc-minimal/stdlib/strtol.o \
 	${OS_PATH}/lib/libc-minimal/stdlib/strtoul.o \
@@ -48,7 +49,8 @@ OS_LIBOBJS	:= \
 	${OS_PATH}/lib/libc-minimal/stdout/printf.o
 
 
-LDFLAGS := -g
+
+LDFLAGS := -g -relocatable
 CFLAGS  := -Werror ${INCDIRS} -g
 ASFLAGS := ${INCDIRS} -g
 TARGET  := libOs.la
@@ -60,8 +62,7 @@ all: $(TARGET)
 LIB_OBJS := $(CMN_OBJS) $(STDLIBOBJS) $(OS_LIBOBJS) $(SG_OBJS)
 
 $(TARGET): $(LIB_OBJS)
-	$(AR) r $@ $^
-	$(RANLIB) $@
+	$(LD) ${LDFLAGS} -o $@ $^
 
 clean:
 	$(RM) $(LIB_OBJS) $(TARGET)

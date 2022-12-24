@@ -6,10 +6,11 @@
 
 static u32 usec_0;
 
+
 int pr_log(const char *format, ...)
 {
         va_list arg;
-        int done;
+        int ch_cnt = 0;
         va_list time;
         u32 usec;
 
@@ -20,11 +21,17 @@ int pr_log(const char *format, ...)
 
         va_start(arg, format);
         //done = vfprintf(stdout, format, arg);
-        done = vprintf(format, arg);
+        ch_cnt = vprintf(format, arg);
         va_end(arg);
 
-        return done;
+        return ch_cnt;
 }
+
+
+int puts(const char* str) {
+        return pr_log("%s", str);
+}
+
 
 
 int pr_log_init(void) {
