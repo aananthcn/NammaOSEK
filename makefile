@@ -50,6 +50,10 @@ OS_LIBOBJS	:= \
 
 
 
+$(info  )
+$(info compiling Os source files)
+
+
 LDFLAGS := -g -relocatable
 CFLAGS  := -Werror ${INCDIRS} -g
 ASFLAGS := ${INCDIRS} -g
