@@ -5,20 +5,22 @@ AR=${COMPILER}ar
 RANLIB=${COMPILER}ranlib
 OBJCOPY=${COMPILER}objcopy
 
-
-include ${ROOT_DIR}/path_defs.mk
+# CAR_OS_PATH will be passed as argument from main Makefile in Car-OS directory
+include ${CAR_OS_PATH}/path_defs.mk
 include ${OS_BUILDER_PATH}/src/os-objs.mk
 
 
 INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${OS_PATH}/lib/include \
-		-I ${MCU_STARTUP_PATH} \
+		-I ${CAR_OS_INC_PATH}/autosar \
+		-I ${CAR_OS_INC_PATH}/car_os \
+		-I ${CAR_OS_BOARDS_PATH} \
 		-I ${MCU_PATH}/src \
 		-I ${MCU_PATH}/src/common \
 		-I ${MCU_PATH}/src/common/src \
 		-I ${MCU_PATH}/src/common/api \
-		-I ${MCU_STARTUP_PATH} \
 		-I ${OS_BUILDER_PATH}/src
+
 
 CMN_OBJS := \
 	${OS_PATH}/kernel/os_entry.o \
@@ -59,7 +61,7 @@ CFLAGS  := -Werror ${INCDIRS} -g
 ASFLAGS := ${INCDIRS} -g
 TARGET  := libOs.la
 # include c_l_flags.mk to add more definitions specific to micro-controller
-include ${ROOT_DIR}/c_l_flags.mk
+include ${CAR_OS_PATH}/c_l_flags.mk
 
 all: $(TARGET)
 

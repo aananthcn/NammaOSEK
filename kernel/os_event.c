@@ -124,9 +124,9 @@ StatusType WaitEvent(EventMaskType Mask) {
 		return E_OK;
 	}
 
-	/* check failed, terminate the current (extended) task */
-	_OsTaskCtrlBlk[_OsCurrentTask.id].state = WAITING;
-	_set_sp_and_pc(_OsKernelSp, _OsKernelPc);
+	// /* check failed, terminate the current (extended) task */
+	// _OsTaskCtrlBlk[_OsCurrentTask.id].state = WAITING;
+	// _set_sp_and_pc(_OsKernelSp, _OsKernelPc);
 
 	/* this call won't reach here, hence no return */
 	return E_OK;

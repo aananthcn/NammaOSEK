@@ -84,18 +84,18 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 		return E_OS_STATE;
 	}
 
-	ticks_futr = _AppAlarmCounters[AlarmID];
-	if (_OsCounters[counter_id].maxallowedvalue < ONE_MSEC_IN_MICROSEC) {
-		if (bsp_get_usec_syscount(&ticks_curr)) {
-			pr_log("Error: bsp_get_usec_syscount returns error\n");
-			return -1;
-		}
-		*Tick = (TickType)(ticks_futr - ticks_curr);
-	}
-	else {
-		ticks_curr = _GetOsTickCnt();
-		*Tick = (TickType)(ticks_futr - ticks_curr);
-	}
+	// ticks_futr = _AppAlarmCounters[AlarmID];
+	// if (_OsCounters[counter_id].maxallowedvalue < ONE_MSEC_IN_MICROSEC) {
+	// 	if (bsp_get_usec_syscount(&ticks_curr)) {
+	// 		pr_log("Error: bsp_get_usec_syscount returns error\n");
+	// 		return -1;
+	// 	}
+	// 	*Tick = (TickType)(ticks_futr - ticks_curr);
+	// }
+	// else {
+	// 	ticks_curr = _GetOsTickCnt();
+	// 	*Tick = (TickType)(ticks_futr - ticks_curr);
+	// }
 
 	return E_OK;
 }
@@ -359,38 +359,38 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
  expires.
 /*/
 int OsHandleCounters(void) {
-	static TickType os_ticks_old, usec_cnt_old;
-	TickType os_ticks, usec_cnt;
-	TickType delta;
-	int i;
+	// static TickType os_ticks_old, usec_cnt_old;
+	// TickType os_ticks, usec_cnt;
+	// TickType delta;
+	// int i;
 
-	/* Get input from OS Counter */
-	if (bsp_get_usec_syscount(&usec_cnt)) {
-		pr_log("Error: bsp_get_usec_syscount returns error\n");
-		return -1;
-	}
-	os_ticks = _GetOsTickCnt();
+	// /* Get input from OS Counter */
+	// if (bsp_get_usec_syscount(&usec_cnt)) {
+	// 	pr_log("Error: bsp_get_usec_syscount returns error\n");
+	// 	return -1;
+	// }
+	// os_ticks = _GetOsTickCnt();
 
-	/* Increment user configured OSEK Counters */
-	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-		if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_MICROSEC ) {
-			delta = (TickType)(usec_cnt - usec_cnt_old);
-		}
-		else {
-			delta = (TickType)(os_ticks - os_ticks_old);
-		}
+	// /* Increment user configured OSEK Counters */
+	// for (int i = 0; i < OS_MAX_COUNTERS; i++) {
+	// 	if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_MICROSEC ) {
+	// 		delta = (TickType)(usec_cnt - usec_cnt_old);
+	// 	}
+	// 	else {
+	// 		delta = (TickType)(os_ticks - os_ticks_old);
+	// 	}
 
-		if (delta >= _OsCounters[i].alarm.ticksperbase) {
-			_OsCounters[i].countval += delta;
-			if (_OsCounters[i].countval > _OsCounters[i].alarm.maxallowedvalue) {
-				_OsCounters[i].countval = 0;
-			}
-		}
-		OsHandleAlarms(i, _OsCounters[i].countval);
-	}
+	// 	if (delta >= _OsCounters[i].alarm.ticksperbase) {
+	// 		_OsCounters[i].countval += delta;
+	// 		if (_OsCounters[i].countval > _OsCounters[i].alarm.maxallowedvalue) {
+	// 			_OsCounters[i].countval = 0;
+	// 		}
+	// 	}
+	// 	OsHandleAlarms(i, _OsCounters[i].countval);
+	// }
 
-	os_ticks_old = os_ticks;
-	usec_cnt_old = usec_cnt;
+	// os_ticks_old = os_ticks;
+	// usec_cnt_old = usec_cnt;
 	return 0;
 }
 

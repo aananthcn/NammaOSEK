@@ -155,7 +155,8 @@ static inline void _out_char(char character, void* buffer, size_t idx, size_t ma
 {
   (void)buffer; (void)idx; (void)maxlen;
   if (character) {
-    console_fputc(character);
+    // console_fputc(character);
+    printf("%c", character);
   }
 }
 

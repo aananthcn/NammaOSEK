@@ -14,8 +14,8 @@
 
 int OsAppMode;
 
-u32 _OsKernelPc;
-u32 _OsKernelSp;
+// u32 _OsKernelPc;
+// u32 _OsKernelSp;
 
 
 int SetActiveApplicationMode(AppModeType mode) {
@@ -48,10 +48,10 @@ void StartOS(AppModeType mode) {
 	OsSetupScheduler(mode);
 	OsInitializeAlarms(mode);
 
-	/* Following addresses will be used by certain OSEK calls to come back
-	after either terminating or suspending the any task */
-	_OsKernelSp = _get_stack_ptr();
-	_OsKernelPc = _get_next_pc();
+	// /* Following addresses will be used by certain OSEK calls to come back
+	// after either terminating or suspending the any task */
+	// _OsKernelSp = _get_stack_ptr();
+	// _OsKernelPc = _get_next_pc();
 
 re_entry_point:
 
