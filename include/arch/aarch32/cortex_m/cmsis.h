@@ -15,7 +15,7 @@
 #define ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_CORTEX_M_CMSIS_H_
 
 //#include <soc.h>
-#include <config.h>
+#include <cgen/platform.h>
 #include <nvic.h>
 
 #ifdef __cplusplus

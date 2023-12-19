@@ -14,12 +14,13 @@ INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${OS_PATH}/lib/include \
 		-I ${CAR_OS_INC_PATH}/autosar \
 		-I ${CAR_OS_INC_PATH}/car_os \
-		-I ${CAR_OS_BOARDS_PATH} \
-		-I ${MCU_PATH}/src \
-		-I ${MCU_PATH}/src/common \
-		-I ${MCU_PATH}/src/common/src \
-		-I ${MCU_PATH}/src/common/api \
+		-I ${CAR_OS_BOARD_PATH} \
 		-I ${OS_BUILDER_PATH}/src
+
+# -I ${MCU_PATH}/src \
+# -I ${MCU_PATH}/src/common \
+# -I ${MCU_PATH}/src/common/src \
+# -I ${MCU_PATH}/src/common/api \
 
 
 CMN_OBJS := \

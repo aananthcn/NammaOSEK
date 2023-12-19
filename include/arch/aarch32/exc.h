@@ -15,7 +15,7 @@
 #ifndef ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_EXC_H_
 #define ZEPHYR_INCLUDE_ARCH_ARM_AARCH32_EXC_H_
 
-#include <config.h>
+#include <cgen/platform.h>
 
 #if defined(CONFIG_CPU_CORTEX_M)
 //#include <devicetree.h> -- ACN: let us not go in device tree path now.
