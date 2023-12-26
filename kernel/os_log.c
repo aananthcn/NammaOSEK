@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include <board.h>
 
-#include <printf.h>
+// #include <printf.h>
 
 // static u32 usec_0;
 

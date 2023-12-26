@@ -17,11 +17,10 @@ INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${CAR_OS_BOARD_PATH} \
 		-I ${OS_BUILDER_PATH}/src
 
-# -I ${MCU_PATH}/src \
-# -I ${MCU_PATH}/src/common \
-# -I ${MCU_PATH}/src/common/src \
-# -I ${MCU_PATH}/src/common/api \
-
+# -I ${ZEPHYR_INC_PATH} \
+# -I ${ZEPHYR_INC_Z_PATH} \
+# -I ${ZEPHYR_GEN_INC_PATH} \
+# -I ${ZEPHYR_STDLIB_PATH} \
 
 CMN_OBJS := \
 	${OS_PATH}/kernel/os_entry.o \
@@ -34,22 +33,22 @@ CMN_OBJS := \
 	${OS_PATH}/kernel/os_res.o
 
 
-STDLIBOBJS	:= \
-	${OS_PATH}/lib/libc-minimal/stdlib/abort.o \
-	${OS_PATH}/lib/libc-minimal/stdlib/atoi.o \
-	${OS_PATH}/lib/libc-minimal/stdlib/bsearch.o \
-	${OS_PATH}/lib/libc-minimal/stdlib/error.o \
-	${OS_PATH}/lib/libc-minimal/stdlib/exit.o \
-	${OS_PATH}/lib/libc-minimal/stdlib/strtol.o \
-	${OS_PATH}/lib/libc-minimal/stdlib/strtoul.o \
+# STDLIBOBJS	:= \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/abort.o \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/atoi.o \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/bsearch.o \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/error.o \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/exit.o \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/strtol.o \
+# 	${OS_PATH}/lib/libc-minimal/stdlib/strtoul.o \
 
 #	${OS_PATH}/lib/libc-minimal/stdout/fprintf.o \
 #	${OS_PATH}/lib/libc-minimal/stdlib/malloc.o \
 
 
-OS_LIBOBJS	:= \
-	${OS_PATH}/lib/libc-minimal/string/string.o \
-	${OS_PATH}/lib/libc-minimal/stdout/printf.o
+# OS_LIBOBJS	:= \
+# 	${OS_PATH}/lib/libc-minimal/string/string.o \
+# 	${OS_PATH}/lib/libc-minimal/stdout/printf.o
 
 
 
@@ -57,19 +56,29 @@ $(info  )
 $(info compiling Os source files)
 
 
-LDFLAGS := -g -relocatable
-CFLAGS  := -Werror ${INCDIRS} -g
-ASFLAGS := ${INCDIRS} -g
-TARGET  := libOs.la
+# LDFLAGS := -g -relocatable
+# CFLAGS  := -Werror ${INCDIRS} -g
+# ASFLAGS := ${INCDIRS} -g
+TARGET  := libOs.a
 # include c_l_flags.mk to add more definitions specific to micro-controller
 include ${CAR_OS_PATH}/c_l_flags.mk
 
+
+
+%.o: %.c
+	$(CC) -c ${CFLAGS} ${INCDIRS} $< -o $@
+
+
 all: $(TARGET)
 
-LIB_OBJS := $(CMN_OBJS) $(STDLIBOBJS) $(OS_LIBOBJS) $(SG_OBJS)
+# LIB_OBJS := $(CMN_OBJS) $(STDLIBOBJS) $(OS_LIBOBJS) $(SG_OBJS)
+LIB_OBJS := $(CMN_OBJS) $(SG_OBJS)
+
 
 $(TARGET): $(LIB_OBJS)
-	$(LD) ${LDFLAGS} -o $@ $^
+	$(AR) -rcs ${TARGET} ${LIB_OBJS}
+
+# $(LD) ${LDFLAGS} -o $@ $^
 
 clean:
 	$(RM) $(LIB_OBJS) $(TARGET)

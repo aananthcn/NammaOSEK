@@ -32,44 +32,44 @@ void OsClearActivationsCounts(void) {
 // extern u8 _user_stack_top;
 
 void OsSetupScheduler(AppModeType mode) {
-	// int t, m, tmp;
-	// OsFifoType* pFifo;
-	// int sp_acc = 0;
+	int t, m, tmp;
+	OsFifoType* pFifo;
+	int sp_acc = 0;
 
-	// if (mode >= OS_MODES_MAX) {
-	// 	pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!\n", mode);
-	// 	return;
-	// }
+	if (mode >= OS_MODES_MAX) {
+		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!\n", mode);
+		return;
+	}
 
-	// /* check all tasks marked as autostart */
-	// for (t=0; t < TASK_ID_MAX; t++) {
-	// 	/* initialize ceiling priority same as configured priority */
-	// 	_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
+	/* check all tasks marked as autostart */
+	for (t=0; t < TASK_ID_MAX; t++) {
+		/* initialize ceiling priority same as configured priority */
+		_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
 
-	// 	/* AppModes initialization */
-	// 	for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
-	// 		/* do sanity check - for any hand modification of sg code */
-	// 		if (t != _OsTaskList[t].id) {
-	// 			pr_log("Error: %s(), task.id (%d) != id (%d)! \
-	// 			Try do \'build clean\' the re-build code.\n",
-	// 				__func__, _OsTaskList[t].id, t);
-	// 			continue; // skip this
-	// 		}
+		/* AppModes initialization */
+		for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
+			/* do sanity check - for any hand modification of sg code */
+			if (t != _OsTaskList[t].id) {
+				pr_log("Error: %s(), task.id (%d) != id (%d)! \
+				Try do \'build clean\' the re-build code.\n",
+					__func__, _OsTaskList[t].id, t);
+				continue; // skip this
+			}
 
-	// 		/* check if task 't' is configured to run in this mode */
-	// 		if (mode != *(((AppModeType*) _OsTaskList[t].appmodes)+m)) {
-	// 			continue; // skip this
-	// 		}
+			/* check if task 't' is configured to run in this mode */
+			if (mode != *(((AppModeType*) _OsTaskList[t].appmodes)+m)) {
+				continue; // skip this
+			}
 
-	// 		/* check if it has already reached activations limit */
-	// 		if (_OsTaskCtrlBlk[t].activations >= _OsTaskList[t].activations) {
-	// 			continue; // skip this
-	// 		}
-	// 		_OsTaskCtrlBlk[t].activations++;
+			/* check if it has already reached activations limit */
+			if (_OsTaskCtrlBlk[t].activations >= _OsTaskList[t].activations) {
+				continue; // skip this
+			}
+			_OsTaskCtrlBlk[t].activations++;
 
 	// 		/* all set, we can not add this task to queue */
 	// 		AddTaskToFifoQueue(_OsTaskList[t], ReadyQueue);
-	// 	}
+		}
 
 	// 	/* initialize stack pointer for each tasks */
 	// 	tmp = ((int)&_user_stack_top - sp_acc);                   /* top location for stack */
@@ -78,8 +78,8 @@ void OsSetupScheduler(AppModeType mode) {
 	// 	_OsTaskCtrlBlk[t].sp_tsk = (intptr_t) (tmp - (tmp % 8));  /* align to 8 */
 	// 	_OsTaskCtrlBlk[t].state = SUSPENDED;
 	// 	sp_acc += _OsTaskList[t].stack_size + _OS_CTX_SAVE_SZ;    /* find the start of stack for next task */
-	// }
-	// pr_log("Scheduler setup done!\n");
+	}
+	pr_log("Scheduler setup done!\n");
 }
 
 
