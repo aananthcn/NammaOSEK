@@ -15,10 +15,10 @@ INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${CAR_OS_INC_PATH}/autosar \
 		-I ${CAR_OS_INC_PATH}/car_os \
 		-I ${CAR_OS_BOARDSOC_PATH} \
+		-I ${ZEPHYR_INC_Z_PATH} \
 		-I ${OS_BUILDER_PATH}/src
 
 # -I ${ZEPHYR_INC_PATH} \
-# -I ${ZEPHYR_INC_Z_PATH} \
 # -I ${ZEPHYR_GEN_INC_PATH} \
 # -I ${ZEPHYR_STDLIB_PATH} \
 

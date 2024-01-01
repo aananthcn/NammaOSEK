@@ -4,17 +4,17 @@
 #include <osek.h>
 #include <sg_tasks.h>
 
-// #include <kernel/thread.h> /* Zephyr kernel */
+#include <kernel/thread.h> /* Zephyr kernel */
 
 typedef struct {
+	/* Car-OS or OSEK's data */
 	u32 activations;
-	u32 sp_top; // TODO: Remove stack pointer stuff - sp_top
-	u32 sp_ctx; // TODO: Remove stack pointer stuff - sp_ctx
-	u32 sp_tsk; // TODO: Remove stack pointer stuff - sp_tsk
         TaskStateType state;
-	bool context_saved; /* TODO: remove this, this will be true for schedule() and premption cases. */
 	u32 ceil_prio;
-	// k_tid_t kthread_id;
+
+	/* Zephyr's data */
+	k_tid_t tid;
+	struct k_thread thread;
 } OsTaskCtrlType;
 
 extern OsTaskCtrlType _OsTaskCtrlBlk[];

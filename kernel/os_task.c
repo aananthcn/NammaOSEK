@@ -10,7 +10,7 @@
 #include <sg_appmodes.h>
 #include <sg_os_param.h>
 
-
+#include <zephyr/kernel.h>
 
 OsTaskCtrlType _OsTaskCtrlBlk[TASK_ID_MAX];
 OsTaskType _OsCurrentTask;
@@ -32,9 +32,7 @@ void OsClearActivationsCounts(void) {
 // extern u8 _user_stack_top;
 
 void OsSetupScheduler(AppModeType mode) {
-	int t, m, tmp;
-	OsFifoType* pFifo;
-	int sp_acc = 0;
+	int t;
 
 	if (mode >= OS_MODES_MAX) {
 		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!\n", mode);
@@ -46,40 +44,67 @@ void OsSetupScheduler(AppModeType mode) {
 		/* initialize ceiling priority same as configured priority */
 		_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
 
-		/* AppModes initialization */
-		for (m=0; m < _OsTaskList[t].n_appmodes; m++) {
-			/* do sanity check - for any hand modification of sg code */
-			if (t != _OsTaskList[t].id) {
-				pr_log("Error: %s(), task.id (%d) != id (%d)! \
-				Try do \'build clean\' the re-build code.\n",
-					__func__, _OsTaskList[t].id, t);
-				continue; // skip this
-			}
+                /* do sanity check - for any hand modification of sg code */
+                if (t != _OsTaskList[t].id) {
+                        pr_log("Error: %s(), task.id (%d) != id (%d)! Try do \
+                        a clean build.\n", __func__, _OsTaskList[t].id, t);
+                        continue; // skip this
+                }
 
-			/* check if task 't' is configured to run in this mode */
-			if (mode != *(((AppModeType*) _OsTaskList[t].appmodes)+m)) {
-				continue; // skip this
-			}
+                /* ready tasks if set for autostart */
+                if (_OsTaskList[t].autostart) {
+                        _OsTaskCtrlBlk[t].state = READY;
+                }
 
-			/* check if it has already reached activations limit */
-			if (_OsTaskCtrlBlk[t].activations >= _OsTaskList[t].activations) {
-				continue; // skip this
-			}
-			_OsTaskCtrlBlk[t].activations++;
-
-	// 		/* all set, we can not add this task to queue */
-	// 		AddTaskToFifoQueue(_OsTaskList[t], ReadyQueue);
-		}
-
-	// 	/* initialize stack pointer for each tasks */
-	// 	tmp = ((int)&_user_stack_top - sp_acc);                   /* top location for stack */
-	// 	_OsTaskCtrlBlk[t].sp_top = (intptr_t) (tmp - (tmp % 8));  /* align to 8 */
-        //         tmp = tmp - _OS_CTX_SAVE_SZ;                              /* allow space for context save space */
-	// 	_OsTaskCtrlBlk[t].sp_tsk = (intptr_t) (tmp - (tmp % 8));  /* align to 8 */
-	// 	_OsTaskCtrlBlk[t].state = SUSPENDED;
-	// 	sp_acc += _OsTaskList[t].stack_size + _OS_CTX_SAVE_SZ;    /* find the start of stack for next task */
+                /* all set, we can now create a thread for this task */
+                _OsTaskCtrlBlk[t].tid = k_thread_create(&_OsTaskCtrlBlk[t].thread, /* struct k_thread* */
+                        _OsStackPtrList[t],                     /* k_thread_stack_t * stack */
+                        _OsTaskList[t].stack_size,              /* stack_size */
+                        _OsTaskEntryList[t],                    /* k_thread_entry_t entry*/
+                        NULL, NULL, NULL,                       /* p1, p2, p3 */
+                        K_PRIO_COOP(_OsTaskList[t].priority),   /* priority (smaller == higher in zephyr) */
+                        0,                                      /* uint32_t options */
+                        K_NO_WAIT                               /* no delay; OsTaskSchedConditionsOk() takes care of OSEK's */
+                );
 	}
 	pr_log("Scheduler setup done!\n");
+}
+
+
+
+/*/
+    This function will be called by thread entry point functions for each tasks
+    defined (auto-generated) by Os-builder in sg_tasks.c, before scheduling tasks
+    triggered by Zephyr RTOS's threads. 
+/*/
+bool OsTaskSchedConditionsOk(uint16_t task_id) {
+        int m;
+        bool retval = FALSE;
+        bool appmode_ok = FALSE;
+        AppModeType appmode;
+        AppModeType *task_app_modes;
+
+        /* input validation */
+        if (task_id >= TASK_ID_MAX) {
+                printf("ERROR: %s(): input validation failure!\n", __func__);
+                return retval;
+        }
+
+        /* check if task is configured to run in this mode */
+        appmode = GetActiveApplicationMode();
+        task_app_modes = ((AppModeType*)_OsTaskList[task_id].appmodes);
+	for (m=0; m < _OsTaskList[task_id].n_appmodes; m++) {
+                if (appmode == task_app_modes[m]) {
+                        appmode_ok = TRUE;
+                        break;
+                }
+        }
+
+        if ((_OsTaskCtrlBlk[task_id].state == READY) && (appmode_ok)) {
+                retval = TRUE;
+        }
+
+        return retval;
 }
 
 
