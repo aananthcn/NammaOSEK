@@ -28,8 +28,7 @@ void OsClearActivationsCounts(void) {
 	}
 }
 
-/* _user_stack_top is defined in board-specific linker definition file */
-// extern u8 _user_stack_top;
+
 
 void OsSetupScheduler(AppModeType mode) {
 	int t;
@@ -68,43 +67,6 @@ void OsSetupScheduler(AppModeType mode) {
                 );
 	}
 	pr_log("Scheduler setup done!\n");
-}
-
-
-
-/*/
-    This function will be called by thread entry point functions for each tasks
-    defined (auto-generated) by Os-builder in sg_tasks.c, before scheduling tasks
-    triggered by Zephyr RTOS's threads. 
-/*/
-bool OsTaskSchedConditionsOk(uint16_t task_id) {
-        int m;
-        bool retval = FALSE;
-        bool appmode_ok = FALSE;
-        AppModeType appmode;
-        AppModeType *task_app_modes;
-
-        /* input validation */
-        if (task_id >= TASK_ID_MAX) {
-                printf("ERROR: %s(): input validation failure!\n", __func__);
-                return retval;
-        }
-
-        /* check if task is configured to run in this mode */
-        appmode = GetActiveApplicationMode();
-        task_app_modes = ((AppModeType*)_OsTaskList[task_id].appmodes);
-	for (m=0; m < _OsTaskList[task_id].n_appmodes; m++) {
-                if (appmode == task_app_modes[m]) {
-                        appmode_ok = TRUE;
-                        break;
-                }
-        }
-
-        if ((_OsTaskCtrlBlk[task_id].state == READY) && (appmode_ok)) {
-                retval = TRUE;
-        }
-
-        return retval;
 }
 
 
@@ -160,6 +122,8 @@ int OsScheduleTasks(void) {
 	}
 }
 
+
+
 int OsSetCeilingPrio(u32 prio) {
 	if (prio > OS_MAX_TASK_PRIORITY) {
 		pr_log("Error: %s() called with invalid priority %d\n", __func__, prio);
@@ -172,6 +136,8 @@ int OsSetCeilingPrio(u32 prio) {
 	return 0;
 }
 
+
+
 int OsClrCeilingPrio(void) {
 	u32 prio;
 
@@ -181,6 +147,46 @@ int OsClrCeilingPrio(void) {
 	EnableAllInterrupts();
 	return 0;
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+//                     Thread Control Functions                              //
+///////////////////////////////////////////////////////////////////////////////
+/*/
+    This function will be called by thread entry point functions for each tasks
+    defined (auto-generated) by Os-builder in sg_tasks.c, before scheduling tasks
+    triggered by Zephyr RTOS's threads.
+/*/
+bool OsTaskSchedConditionsOk(uint32_t task_id) {
+        int m;
+        bool retval = FALSE;
+        bool appmode_ok = FALSE;
+        AppModeType appmode;
+        AppModeType *task_app_modes;
+
+        /* input validation */
+        if (task_id >= TASK_ID_MAX) {
+                printf("ERROR: %s(): input validation failure!\n", __func__);
+                return retval;
+        }
+
+        /* check if task is configured to run in this mode */
+        appmode = GetActiveApplicationMode();
+        task_app_modes = ((AppModeType*)_OsTaskList[task_id].appmodes);
+	for (m=0; m < _OsTaskList[task_id].n_appmodes; m++) {
+                if (appmode == task_app_modes[m]) {
+                        appmode_ok = TRUE;
+                        break;
+                }
+        }
+
+        if ((_OsTaskCtrlBlk[task_id].state == READY) && (appmode_ok)) {
+                retval = TRUE;
+        }
+
+        return retval;
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
