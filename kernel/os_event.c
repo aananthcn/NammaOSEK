@@ -4,7 +4,6 @@
 
 #include <sg_events.h>
 #include <sg_tasks.h>
-#include <sg_fifo.h>
 
 #include <stddef.h>
 

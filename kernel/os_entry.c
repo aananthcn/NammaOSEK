@@ -3,19 +3,15 @@
 #include <osek.h>
 
 #include <os_api.h>
-#include <os_fifo.h>
 #include <os_task.h>
 
 #include <sg_appmodes.h>
 #include <sg_tasks.h>
-#include <sg_fifo.h>
 #include <os_api.h>
 
+#include <zephyr/kernel.h> /* for k_sleep() */ 
 
 int OsAppMode;
-
-// u32 _OsKernelPc;
-// u32 _OsKernelSp;
 
 
 int SetActiveApplicationMode(AppModeType mode) {
@@ -58,6 +54,7 @@ re_entry_point:
 	EnableAllInterrupts();
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		OsScheduleTasks();
+		k_sleep(K_TICKS(1));
 	}
 }
 

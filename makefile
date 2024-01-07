@@ -18,14 +18,10 @@ INCDIRS  += 	-I ${OS_PATH}/include \
 		-I ${ZEPHYR_INC_Z_PATH} \
 		-I ${OS_BUILDER_PATH}/src
 
-# -I ${ZEPHYR_INC_PATH} \
-# -I ${ZEPHYR_GEN_INC_PATH} \
-# -I ${ZEPHYR_STDLIB_PATH} \
 
 CMN_OBJS := \
 	${OS_PATH}/kernel/os_entry.o \
 	${OS_PATH}/kernel/os_log.o \
-	${OS_PATH}/kernel/os_fifo.o \
 	${OS_PATH}/kernel/os_task.o \
 	${OS_PATH}/kernel/os_event.o \
 	${OS_PATH}/kernel/os_alarm.o \
@@ -33,33 +29,13 @@ CMN_OBJS := \
 	${OS_PATH}/kernel/os_res.o
 
 
-# STDLIBOBJS	:= \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/abort.o \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/atoi.o \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/bsearch.o \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/error.o \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/exit.o \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/strtol.o \
-# 	${OS_PATH}/lib/libc-minimal/stdlib/strtoul.o \
-
-#	${OS_PATH}/lib/libc-minimal/stdout/fprintf.o \
-#	${OS_PATH}/lib/libc-minimal/stdlib/malloc.o \
-
-
-# OS_LIBOBJS	:= \
-# 	${OS_PATH}/lib/libc-minimal/string/string.o \
-# 	${OS_PATH}/lib/libc-minimal/stdout/printf.o
-
-
 
 $(info  )
 $(info compiling Os source files)
 
 
-# LDFLAGS := -g -relocatable
-# CFLAGS  := -Werror ${INCDIRS} -g
-# ASFLAGS := ${INCDIRS} -g
 TARGET  := libOs.a
+
 # include c_l_flags.mk to add more definitions specific to micro-controller
 include ${CAR_OS_PATH}/c_l_flags.mk
 

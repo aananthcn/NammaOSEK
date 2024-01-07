@@ -4,6 +4,9 @@
 #include <os_api.h>
 #include <os_task.h>
 
+#include <zephyr/kernel.h> // for k_cycle_get_32()
+#include <zephyr/sys/time_units.h> // for k_cyc_to_us_near32()
+
 #include <sg_counter.h>
 #include <sg_alarms.h>
 #include <sg_appmodes.h>
@@ -320,12 +323,12 @@ int OsTriggerAlarm(const AppAlarmType* alarm) {
 }
 
 
-/*/ 
- Function: OsHandleAlarms
- Description: This is called by OsHandleCounters(). This function parses all 
- alarms that uses cntr_id as its base and check if the timer expired. If expires
- this function triggers the Alarm actions.
-/*/
+/// @brief This is called by OsHandleCounters(). This function parses all 
+/// alarms that uses cntr_id as its base and check if the timer expired. If expires
+/// this function triggers the Alarm actions.
+/// @param cntr_id OSEK Counter ID
+/// @param cnt Count Value to be added for the next cycle
+/// @return 0 if all went good.
 int OsHandleAlarms(int cntr_id, TickType cnt) {
 	int i;
 	const AppAlarmType* alarm;
@@ -349,6 +352,8 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 			}
 		}
 	}
+
+	return 0;
 }
 
 
@@ -360,37 +365,44 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 /*/
 int OsHandleCounters(void) {
 	// static TickType os_ticks_old, usec_cnt_old;
+	static TickType os_ticks_old, k_cyc_us_old;
 	// TickType os_ticks, usec_cnt;
-	// TickType delta;
-	// int i;
+	TickType os_ticks, k_cyc_us;
+	TickType delta;
+	int i;
 
 	// /* Get input from OS Counter */
 	// if (bsp_get_usec_syscount(&usec_cnt)) {
 	// 	pr_log("Error: bsp_get_usec_syscount returns error\n");
 	// 	return -1;
 	// }
-	// os_ticks = _GetOsTickCnt();
 
-	// /* Increment user configured OSEK Counters */
-	// for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-	// 	if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_MICROSEC ) {
-	// 		delta = (TickType)(usec_cnt - usec_cnt_old);
-	// 	}
-	// 	else {
-	// 		delta = (TickType)(os_ticks - os_ticks_old);
-	// 	}
+	/* Get input from Kernel & OS Counter */
+	os_ticks = _GetOsTickCnt();
+	k_cyc_us = k_cyc_to_us_near32(k_cycle_get_32());
 
-	// 	if (delta >= _OsCounters[i].alarm.ticksperbase) {
-	// 		_OsCounters[i].countval += delta;
-	// 		if (_OsCounters[i].countval > _OsCounters[i].alarm.maxallowedvalue) {
-	// 			_OsCounters[i].countval = 0;
-	// 		}
-	// 	}
-	// 	OsHandleAlarms(i, _OsCounters[i].countval);
-	// }
+	/* Increment user configured OSEK Counters */
+	for (i = 0; i < OS_MAX_COUNTERS; i++) {
+		if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_MICROSEC ) {
+			// delta = (TickType)(usec_cnt - usec_cnt_old);
+			delta = (TickType)(k_cyc_us - k_cyc_us_old);
+		}
+		else {
+			delta = (TickType)(os_ticks - os_ticks_old);
+		}
 
-	// os_ticks_old = os_ticks;
+		if (delta >= _OsCounters[i].alarm.ticksperbase) {
+			_OsCounters[i].countval += delta;
+			if (_OsCounters[i].countval > _OsCounters[i].alarm.maxallowedvalue) {
+				_OsCounters[i].countval = 0;
+			}
+		}
+		OsHandleAlarms(i, _OsCounters[i].countval);
+	}
+
+	os_ticks_old = os_ticks;
 	// usec_cnt_old = usec_cnt;
+	k_cyc_us_old = k_cyc_us;
 	return 0;
 }
 
