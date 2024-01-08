@@ -91,8 +91,8 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 		return E_OS_STATE;
 	}
 
-	data_blk = _OsAlarmsGroups[counter_id].data_blk;
 	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk = _OsAlarmsGroups[counter_id].data_blk;
 	ticks_futr = data_blk[blk_idx].counter;
 	if (_OsCounterCtrlBlk[counter_id].maxallowedvalue < ONE_MSEC_IN_MICROSEC) {
 		ticks_curr = k_cyc_to_us_near32(k_cycle_get_32());
@@ -156,8 +156,8 @@ StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 	}
 
 	/* All inputs are validated, just configure alarms */
-	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // data_blk points to RAM
 	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // data_blk points to RAM
 	data_blk[blk_idx].counter = (TickType)(_GetOsTickCnt() + increment);
 	data_blk[blk_idx].cycle = cycle;
 	data_blk[blk_idx].is_active = TRUE;
@@ -208,8 +208,8 @@ StatusType SetAbsAlarm(AlarmType AlarmID, TickType start, TickType cycle) {
 	}
 
 	/* All inputs are validated, just configure alarms */
-	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // points to RAM
 	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // points to RAM
 	data_blk[blk_idx].counter = start;
 	data_blk[blk_idx].cycle = cycle;
 	data_blk[blk_idx].is_active = TRUE;
@@ -243,8 +243,8 @@ StatusType CancelAlarm(AlarmType AlarmID) {
 	}
 
 	/* All inputs are validated, just configure alarms */
-	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // points to RAM.
 	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // points to RAM.
 	data_blk[blk_idx].is_active = FALSE;
 	data_blk[blk_idx].counter = 0;
 	data_blk[blk_idx].cycle = 0;
@@ -254,50 +254,6 @@ StatusType CancelAlarm(AlarmType AlarmID) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // Core OS Alarm Functions
-int OsInitializeAlarms(AppModeType mode) {
-	/*/
-	    This function is empty because the AlarmDataBlock will be 
-	    initialized by the python script. At the moment this function is
-	    an empty function only.
-	/*/
-
-	// int ctr, alm, m;
-	// bool is_mode_ok = false;
-	// const OsAlarmCtrlBlkType* alarm;
-
-	// if (mode >= OS_MODES_MAX) {
-	// 	pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Alarm init failed!\n", mode);
-	// 	return -1;
-	// }
-
-	// for (ctr = 0; ctr < MAX_ALARM_COUNTERS; ctr++) {
-	// 	for (alm = 0; alm < _OsAlarmsGroups[ctr].len; alm++) {
-	// 		alarm = &_OsAlarmsGroups[ctr].alarm[alm];
-	// 		if (alarm->is_autostart != true) {
-	// 			continue;
-	// 		}
-	// 		for (m = 0; m < alarm->n_appmodes; m++) {
-	// 			if (alarm->appmodes[m] == mode) {
-	// 				is_mode_ok = true;
-	// 				break;
-	// 			}
-	// 		}
-	// 		if (!is_mode_ok) {
-	// 			continue;
-	// 		}
-
-	// 		/* reaching here means, we need to trigger alarms */
-	// 		*alarm->pacntr = alarm->alarmtime;
-	// 		*alarm->pcycle = alarm->cycletime;
-	// 		*alarm->palrm_state = true;
-	// 	}
-	// }
-
-	// pr_log("OSEK Alarms intialization done!\n");
-	return 0;
-}
-
-
 /*/ 
  Function: OsTriggerAlarm
  Description: This is called by OsHandleAlarms(). This function handles the
@@ -361,7 +317,7 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 		if (cnt >= data_blk[i].counter) {
 			/* raise the OSEK alarm */
 			ctrl_blk = _OsAlarmsGroups[cntr_id].ctrl_blk;
-			OsTriggerAlarm(ctrl_blk);
+			OsTriggerAlarm(&ctrl_blk[i]);
 
 			/* if cycletime is set, go for rounds in cycle */
 			if (data_blk[i].cycle > 0) {

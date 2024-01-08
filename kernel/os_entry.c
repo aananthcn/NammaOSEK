@@ -42,21 +42,10 @@ void StartOS(AppModeType mode) {
 	}
 	
 	OsSetupScheduler(mode);
-	OsInitializeAlarms(mode);
-
-
 	EnableAllInterrupts();
+
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		OsScheduleTasks();
 		k_sleep(K_TICKS(1));
 	}
 }
-
-
-// /*
-//  * This funtion runs in interrupt context, hence keep things as minimal as possible
-//  */
-// void SystemTickISR(void) {
-// 	if (_OsHandleTicks())
-// 		pr_log("Error: _OsHandleTicks return errors!\n");
-// }

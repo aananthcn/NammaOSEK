@@ -23,7 +23,6 @@ extern OsTaskType _OsCurrentTask;
 void OsSetupScheduler(AppModeType mode);
 int OsScheduleTasks(void);
 void OsClearActivationsCounts(void);
-int OsInitializeAlarms(AppModeType mode);
 int OsSetCeilingPrio(u32 prio);
 int OsClrCeilingPrio(void);
 

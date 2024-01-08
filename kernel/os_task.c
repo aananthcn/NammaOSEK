@@ -39,17 +39,17 @@ void OsSetupScheduler(AppModeType mode) {
 	/* check all tasks marked as autostart */
 	for (t=0; t < TASK_ID_MAX; t++) {
 		/* initialize ceiling priority same as configured priority */
-		_OsTaskDataBlk[t].ceil_prio = _OsTaskList[t].priority;
+		_OsTaskDataBlk[t].ceil_prio = _OsTaskCtrlBlk[t].priority;
 
                 /* do sanity check - for any hand modification of sg code */
-                if (t != _OsTaskList[t].id) {
+                if (t != _OsTaskCtrlBlk[t].id) {
                         pr_log("Error: %s(), task.id (%d) != id (%d)! Try do \
-                        a clean build.\n", __func__, _OsTaskList[t].id, t);
+                        a clean build.\n", __func__, _OsTaskCtrlBlk[t].id, t);
                         continue; // skip this
                 }
 
                 /* ready tasks if set for autostart */
-                if (_OsTaskList[t].autostart) {
+                if (_OsTaskCtrlBlk[t].autostart) {
                         _OsTaskDataBlk[t].state = READY;
                 }
 		_OsTaskDataBlk[t].activations = 0;
@@ -57,10 +57,10 @@ void OsSetupScheduler(AppModeType mode) {
                 /* all set, we can now create a thread for this task */
                 _OsTaskDataBlk[t].tid = k_thread_create(&_OsTaskDataBlk[t].thread, /* struct k_thread* */
                         _OsStackPtrList[t],                     /* k_thread_stack_t * stack */
-                        _OsTaskList[t].stack_size,              /* stack_size */
+                        _OsTaskCtrlBlk[t].stack_size,              /* stack_size */
                         _OsTaskEntryList[t],                    /* k_thread_entry_t entry*/
                         NULL, NULL, NULL,                       /* p1, p2, p3 */
-                        K_PRIO_COOP(_OsTaskList[t].priority),   /* priority (smaller == higher in zephyr) */
+                        K_PRIO_COOP(_OsTaskCtrlBlk[t].priority),   /* priority (smaller == higher in zephyr) */
                         0,                                      /* uint32_t options */
                         K_MSEC(1)                               /* TODO: no delay; OsTaskSchedConditionsOk() takes care of OSEK's */
                 );
@@ -107,7 +107,7 @@ int OsClrCeilingPrio(void) {
 	u32 prio;
 
 	DisableAllInterrupts();
-	prio = _OsTaskList[_OsCurrentTask.id].priority;
+	prio = _OsTaskCtrlBlk[_OsCurrentTask.id].priority;
 	_OsTaskDataBlk[_OsCurrentTask.id].ceil_prio = prio;
 	EnableAllInterrupts();
 	return 0;
@@ -139,8 +139,8 @@ bool OsTaskSchedConditionsOk(uint32_t task_id) {
 
         /* check if task is configured to run in this mode */
         appmode = GetActiveApplicationMode();
-        task_app_modes = ((AppModeType*)_OsTaskList[task_id].appmodes);
-	for (m=0; m < _OsTaskList[task_id].n_appmodes; m++) {
+        task_app_modes = ((AppModeType*)_OsTaskCtrlBlk[task_id].appmodes);
+	for (m=0; m < _OsTaskCtrlBlk[task_id].n_appmodes; m++) {
                 if (appmode == task_app_modes[m]) {
                         appmode_ok = TRUE;
                         break;
@@ -161,7 +161,7 @@ bool OsTaskSchedConditionsOk(uint32_t task_id) {
 ///        of the tasks is completed.
 /// @param task_id
 void OsTaskSchedExit(uint32_t task_id) {
-	if (_OsTaskDataBlk[task_id].activations >= _OsTaskList[task_id].activations) {
+	if (_OsTaskDataBlk[task_id].activations >= _OsTaskCtrlBlk[task_id].activations) {
 		_OsTaskDataBlk[task_id].state = WAITING;
 		k_thread_suspend(_OsTaskDataBlk[task_id].tid);
 	}
