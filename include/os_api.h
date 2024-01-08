@@ -4,6 +4,13 @@
 #include <base_types.h>
 #include <stdio.h>
 
+
+
+// Macros
+#define ONE_MSEC_IN_MICROSEC	(1000)
+
+
+// Public functions
 u32 _GetOsTickCnt(void);
 int _OsHandleTicks(void);
 
@@ -18,8 +25,8 @@ int _OsHandleTicks(void);
 // void _restore_context(u32 sp);
 
 /* low level APIs  - Interrupt functions */
-u32 _set_interrupt_bits(u32 if_bits);
-u32 _clear_interrupt_bits(u32 if_bits);
+// u32 _set_interrupt_bits(u32 if_bits);
+// u32 _clear_interrupt_bits(u32 if_bits);
 
 
 // int pr_log(const char *format, ...);

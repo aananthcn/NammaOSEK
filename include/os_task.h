@@ -17,7 +17,7 @@ typedef struct {
 	struct k_thread thread;
 } OsTaskCtrlType;
 
-extern OsTaskCtrlType _OsTaskCtrlBlk[];
+extern OsTaskCtrlType _OsTaskDataBlk[];
 extern OsTaskType _OsCurrentTask;
 
 void OsSetupScheduler(AppModeType mode);

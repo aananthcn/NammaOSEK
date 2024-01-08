@@ -10,7 +10,7 @@
 
 #include <zephyr/kernel.h>
 
-OsTaskCtrlType _OsTaskCtrlBlk[TASK_ID_MAX];
+OsTaskCtrlType _OsTaskDataBlk[TASK_ID_MAX];
 OsTaskType _OsCurrentTask;
 
 
@@ -22,7 +22,7 @@ void OsClearActivationsCounts(void) {
 	int t;
 
 	for (t = 0; t < TASK_ID_MAX; t++) {
-		_OsTaskCtrlBlk[t].activations = 0;
+		_OsTaskDataBlk[t].activations = 0;
 	}
 }
 
@@ -39,7 +39,7 @@ void OsSetupScheduler(AppModeType mode) {
 	/* check all tasks marked as autostart */
 	for (t=0; t < TASK_ID_MAX; t++) {
 		/* initialize ceiling priority same as configured priority */
-		_OsTaskCtrlBlk[t].ceil_prio = _OsTaskList[t].priority;
+		_OsTaskDataBlk[t].ceil_prio = _OsTaskList[t].priority;
 
                 /* do sanity check - for any hand modification of sg code */
                 if (t != _OsTaskList[t].id) {
@@ -50,12 +50,12 @@ void OsSetupScheduler(AppModeType mode) {
 
                 /* ready tasks if set for autostart */
                 if (_OsTaskList[t].autostart) {
-                        _OsTaskCtrlBlk[t].state = READY;
+                        _OsTaskDataBlk[t].state = READY;
                 }
-		_OsTaskCtrlBlk[t].activations = 0;
+		_OsTaskDataBlk[t].activations = 0;
 
                 /* all set, we can now create a thread for this task */
-                _OsTaskCtrlBlk[t].tid = k_thread_create(&_OsTaskCtrlBlk[t].thread, /* struct k_thread* */
+                _OsTaskDataBlk[t].tid = k_thread_create(&_OsTaskDataBlk[t].thread, /* struct k_thread* */
                         _OsStackPtrList[t],                     /* k_thread_stack_t * stack */
                         _OsTaskList[t].stack_size,              /* stack_size */
                         _OsTaskEntryList[t],                    /* k_thread_entry_t entry*/
@@ -66,32 +66,6 @@ void OsSetupScheduler(AppModeType mode) {
                 );
 	}
 	pr_log("Scheduler setup done!\n");
-}
-
-
-
-static inline int OsScheduleCall(OsTaskType* task) {
-	// u32 sp_curr;
-
-	/* task is checked by the calling function, hence no check here */
-	// _OsCurrentTask = *task;
-	// _OsTaskCtrlBlk[task->id].state = RUNNING;
-
-	// if (_OsTaskCtrlBlk[task->id].context_saved) {
-	// 	/* continue task from where it was switched before */
-	// 	_restore_context(_OsTaskCtrlBlk[task->id].sp_ctx);
-	// 	/* The call shouldn't return here after the above call */
-	// 	/* instead it should return from the else block below  */
-	// }
-	// else {
-	// 	/* context not saved, set sp below context space and call */
-	// 	sp_curr = _set_stack_ptr(_OsTaskCtrlBlk[task->id].sp_tsk);
-	// 	_OsCurrentTask.handler();
-	// 	_set_stack_ptr(sp_curr);
-	// }
-	_OsTaskCtrlBlk[task->id].state = READY;
-
-	return 0;
 }
 
 
@@ -111,14 +85,6 @@ int OsScheduleTasks(void) {
 		OsHandleCounters();
 		tick_cnt_old = tick_cnt;
 	}
-
-	// /* Schedule Task in the order of decreasing priority (high --> low) */
-	// for (i = OS_NO_OF_PRIORITIES-1; i >= 0; i--) {
-	// 	task = GetTaskFromFifoQueue(ReadyQueue, _OsTaskValidPriorities[i]);
-	// 	if (task != NULL) {
-	// 		OsScheduleCall(task);
-	// 	}
-	// }
 }
 
 
@@ -130,7 +96,7 @@ int OsSetCeilingPrio(u32 prio) {
 	}
 
 	DisableAllInterrupts();
-	_OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio = prio;
+	_OsTaskDataBlk[_OsCurrentTask.id].ceil_prio = prio;
 	EnableAllInterrupts();
 	return 0;
 }
@@ -142,7 +108,7 @@ int OsClrCeilingPrio(void) {
 
 	DisableAllInterrupts();
 	prio = _OsTaskList[_OsCurrentTask.id].priority;
-	_OsTaskCtrlBlk[_OsCurrentTask.id].ceil_prio = prio;
+	_OsTaskDataBlk[_OsCurrentTask.id].ceil_prio = prio;
 	EnableAllInterrupts();
 	return 0;
 }
@@ -181,9 +147,9 @@ bool OsTaskSchedConditionsOk(uint32_t task_id) {
                 }
         }
 
-        if ((_OsTaskCtrlBlk[task_id].state == READY) && (appmode_ok)) {
-		_OsTaskCtrlBlk[task_id].activations++;
-		_OsTaskCtrlBlk[task_id].state = RUNNING;
+        if ((_OsTaskDataBlk[task_id].state == READY) && (appmode_ok)) {
+		_OsTaskDataBlk[task_id].activations++;
+		_OsTaskDataBlk[task_id].state = RUNNING;
                 retval = TRUE;
         }
 
@@ -195,12 +161,12 @@ bool OsTaskSchedConditionsOk(uint32_t task_id) {
 ///        of the tasks is completed.
 /// @param task_id
 void OsTaskSchedExit(uint32_t task_id) {
-	if (_OsTaskCtrlBlk[task_id].activations >= _OsTaskList[task_id].activations) {
-		_OsTaskCtrlBlk[task_id].state = WAITING;
-		k_thread_suspend(_OsTaskCtrlBlk[task_id].tid);
+	if (_OsTaskDataBlk[task_id].activations >= _OsTaskList[task_id].activations) {
+		_OsTaskDataBlk[task_id].state = WAITING;
+		k_thread_suspend(_OsTaskDataBlk[task_id].tid);
 	}
 	else {
-		_OsTaskCtrlBlk[task_id].state = READY;
+		_OsTaskDataBlk[task_id].state = READY;
 	}
 }
 
@@ -225,20 +191,16 @@ StatusType ActivateTask(TaskType TaskID) {
 		return E_OS_ID;
 	}
 
-	if (_OsTaskCtrlBlk[TaskID].state == WAITING) {
-		k_thread_resume(_OsTaskCtrlBlk[TaskID].tid);
+	if (_OsTaskDataBlk[TaskID].state == WAITING) {
+		k_thread_resume(_OsTaskDataBlk[TaskID].tid);
 	}
-	_OsTaskCtrlBlk[TaskID].state = READY;
-	// stat = AddTaskToFifoQueue(_OsTaskList[TaskID], ReadyQueue);
+	_OsTaskDataBlk[TaskID].state = READY;
 
 	return stat;
 }
 
 
 
-/* Following global variables are used by TerminateTask and ChainTask APIs */
-extern u32 _OsKernelPc;
-extern u32 _OsKernelSp;
 
 /*/
 Function: TerminateTask
@@ -248,13 +210,11 @@ Description: This service causes the termination of the calling task. The
 	     suspended state.
 /*/
 StatusType TerminateTask(void) {
-	// /* mark the current task as not running */
-	// _OsTaskCtrlBlk[_OsCurrentTask.id].state = SUSPENDED;
+	/* mark the current task as not running */
+	_OsTaskDataBlk[_OsCurrentTask.id].state = SUSPENDED;
+	k_thread_abort(_OsTaskDataBlk[_OsCurrentTask.id].tid);	
 	
-	// /* jump to main loop */
-	// _set_sp_and_pc(_OsKernelSp, _OsKernelPc);
-	
-	/* this call won't reach here, but just to satisfy the compiler */
+	/* this call may not reach here, if trure the line below is to satisfy the compiler */
 	return E_OK;
 }
 
@@ -277,16 +237,11 @@ StatusType ChainTask(TaskType TaskID) {
 	}
 
 	/* mark the current task as not running */
-	_OsTaskCtrlBlk[_OsCurrentTask.id].state = SUSPENDED;
+	_OsTaskDataBlk[_OsCurrentTask.id].state = SUSPENDED;
 
-	/* calling the new tasks and not returning (i.e., jump to main loop)
-	is equivalent to terminating the calling task */
-	OsScheduleCall((OsTaskType*)&_OsTaskList[TaskID]);
+	/* move the task passed to resume state */
+	ActivateTask(TaskID);
 	
-	// /* jump to main loop */
-	// _set_sp_and_pc(_OsKernelSp, _OsKernelPc);
-	
-	/* this call won't reach here, but just to satisfy the compiler */
 	return E_OK;
 }
 
@@ -302,17 +257,17 @@ Description: If a higher-priority task is ready, the internal resource of the
 /*/
 StatusType Schedule(void) {
 	// u32 sp_ctx;
-	// //pr_log("sp_top: %X\n", _OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
+	// //pr_log("sp_top: %X\n", _OsTaskDataBlk[_OsCurrentTask.id].sp_top);
 	// /* save the context of this task, for resuming later */
-	// sp_ctx = _save_context(_OsTaskCtrlBlk[_OsCurrentTask.id].sp_top);
+	// sp_ctx = _save_context(_OsTaskDataBlk[_OsCurrentTask.id].sp_top);
 	// /* return if this call is resuming from previous context save */
-	// if (_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved) {
-	// 	_OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = false;
+	// if (_OsTaskDataBlk[_OsCurrentTask.id].context_saved) {
+	// 	_OsTaskDataBlk[_OsCurrentTask.id].context_saved = false;
 	// 	return E_OK;
 	// }
 	// //pr_log("sp_ctx: %X\n", sp_ctx);
-	// _OsTaskCtrlBlk[_OsCurrentTask.id].sp_ctx = sp_ctx;
-	// _OsTaskCtrlBlk[_OsCurrentTask.id].context_saved = true;
+	// _OsTaskDataBlk[_OsCurrentTask.id].sp_ctx = sp_ctx;
+	// _OsTaskDataBlk[_OsCurrentTask.id].context_saved = true;
 
 	// /* add this task to ready queue, as the scheduler would have removed it */
 	// ActivateTask(_OsCurrentTask.id);
@@ -361,7 +316,7 @@ StatusType GetTaskState(TaskType TaskID, TaskStateRefType pState) {
 		pr_log("Error: %s() taskID reference is NULL\n", __func__);
 		return E_OS_ARG_FAIL;
 	}
-	*pState = _OsTaskCtrlBlk[TaskID].state;
+	*pState = _OsTaskDataBlk[TaskID].state;
 
 	return E_OK;
 }

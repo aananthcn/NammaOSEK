@@ -24,6 +24,7 @@ CMN_OBJS := \
 	${OS_PATH}/kernel/os_log.o \
 	${OS_PATH}/kernel/os_task.o \
 	${OS_PATH}/kernel/os_event.o \
+	${OS_PATH}/kernel/os_counter.o \
 	${OS_PATH}/kernel/os_alarm.o \
 	${OS_PATH}/kernel/os_isr.o \
 	${OS_PATH}/kernel/os_res.o

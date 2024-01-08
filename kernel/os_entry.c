@@ -44,12 +44,6 @@ void StartOS(AppModeType mode) {
 	OsSetupScheduler(mode);
 	OsInitializeAlarms(mode);
 
-	// /* Following addresses will be used by certain OSEK calls to come back
-	// after either terminating or suspending the any task */
-	// _OsKernelSp = _get_stack_ptr();
-	// _OsKernelPc = _get_next_pc();
-
-re_entry_point:
 
 	EnableAllInterrupts();
 	while (OsAppMode == OSDEFAULTAPPMODE) {
@@ -59,10 +53,10 @@ re_entry_point:
 }
 
 
-/*
- * This funtion runs in interrupt context, hence keep things as minimal as possible
- */
-void SystemTickISR(void) {
-	if (_OsHandleTicks())
-		pr_log("Error: _OsHandleTicks return errors!\n");
-}
+// /*
+//  * This funtion runs in interrupt context, hence keep things as minimal as possible
+//  */
+// void SystemTickISR(void) {
+// 	if (_OsHandleTicks())
+// 		pr_log("Error: _OsHandleTicks return errors!\n");
+// }

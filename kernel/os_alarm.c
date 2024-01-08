@@ -11,12 +11,9 @@
 #include <sg_alarms.h>
 #include <sg_appmodes.h>
 
-static u32 _OsTickCount;
-static u32 OsTickCount_us;
 
 #define ENABLE_UPTIME_PRINTS	0 // set this to 1 if you want up-time to be printed.
 #define TEMPORARY_WORKAROUND	1
-#define ONE_MSEC_IN_MICROSEC	(1000)
 
 
 int OsComputeUpTime(void);
@@ -37,7 +34,7 @@ Particularities: Allowed on task level, ISR, and in several hook routines.
 StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 	AlarmType counter_id;
 
-	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+	if (AlarmID >= MAX_OS_ALARMS) {
 		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
 		return E_OS_ID;
 	}
@@ -53,9 +50,14 @@ StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 		return E_OS_STATE;
 	}
 
-	*Info = _OsCounters[counter_id].alarm;
+	Info->mincycle = _OsCounterCtrlBlk[counter_id].mincycle;
+	Info->ticksperbase = _OsCounterCtrlBlk[counter_id].ticksperbase;
+	Info->maxallowedvalue = _OsCounterCtrlBlk[counter_id].maxallowedvalue;
+
 	return E_OK;
 }
+
+
 
 /*/
 Function: GetAlarm
@@ -69,9 +71,11 @@ defined. Allowed on task level, ISR, and in several hook routines
 /*/
 StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 	AlarmType counter_id;
-	TickType ticks_curr, ticks_futr, delta;
+	TickType ticks_curr, ticks_futr;
+	const OsAlarmDataBlkType *data_blk;
+	uint8_t blk_idx;
 
-	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+	if (AlarmID >= MAX_OS_ALARMS) {
 		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
 		return E_OS_ID;
 	}
@@ -87,18 +91,17 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 		return E_OS_STATE;
 	}
 
-	// ticks_futr = _AppAlarmCounters[AlarmID];
-	// if (_OsCounters[counter_id].maxallowedvalue < ONE_MSEC_IN_MICROSEC) {
-	// 	if (bsp_get_usec_syscount(&ticks_curr)) {
-	// 		pr_log("Error: bsp_get_usec_syscount returns error\n");
-	// 		return -1;
-	// 	}
-	// 	*Tick = (TickType)(ticks_futr - ticks_curr);
-	// }
-	// else {
-	// 	ticks_curr = _GetOsTickCnt();
-	// 	*Tick = (TickType)(ticks_futr - ticks_curr);
-	// }
+	data_blk = _OsAlarmsGroups[counter_id].data_blk;
+	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	ticks_futr = data_blk[blk_idx].counter;
+	if (_OsCounterCtrlBlk[counter_id].maxallowedvalue < ONE_MSEC_IN_MICROSEC) {
+		ticks_curr = k_cyc_to_us_near32(k_cycle_get_32());
+		*Tick = (TickType)(ticks_futr - ticks_curr);
+	}
+	else {
+		ticks_curr = _GetOsTickCnt();
+		*Tick = (TickType)(ticks_futr - ticks_curr);
+	}
 
 	return E_OK;
 }
@@ -126,8 +129,10 @@ Allowed on task level and in ISR, but not in hook routines.
 /*/
 StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 	AlarmType counter_id;
+	OsAlarmDataBlkType *data_blk;
+	uint8_t blk_idx;
 
-	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+	if (AlarmID >= MAX_OS_ALARMS) {
 		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
 		return E_OS_ID;
 	}
@@ -138,22 +143,25 @@ StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 		return E_OS_STATE;
 	}
 
-	if (increment > _OsCounters[counter_id].alarm.maxallowedvalue) {
+	if (increment > _OsCounterCtrlBlk[counter_id].maxallowedvalue) {
 		pr_log("Error: %s(), increment arg (=%d) > maxallowedvalue!\n",
 			__func__, increment);
 		return E_OS_LIMIT;
 	}
 
-	if (cycle < _OsCounters[counter_id].alarm.mincycle) {
+	if (cycle < _OsCounterCtrlBlk[counter_id].mincycle) {
 		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
 			cycle);
 		return E_OS_LIMIT;
 	}
 
 	/* All inputs are validated, just configure alarms */
-	_AppAlarmCounters[AlarmID] = (TickType)(_OsTickCount + increment);
-	_AppAlarmCycles[AlarmID] = cycle;
-	_AppAlarmStates[AlarmID] = true;
+	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // data_blk points to RAM
+	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk[blk_idx].counter = (TickType)(_GetOsTickCnt() + increment);
+	data_blk[blk_idx].cycle = cycle;
+	data_blk[blk_idx].is_active = TRUE;
+
 	return E_OK;
 }
 
@@ -173,8 +181,10 @@ the alarm-callback routine is called.
 /*/
 StatusType SetAbsAlarm(AlarmType AlarmID, TickType start, TickType cycle) {
 	AlarmType counter_id;
+	OsAlarmDataBlkType *data_blk;
+	uint8_t blk_idx;
 
-	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+	if (AlarmID >= MAX_OS_ALARMS) {
 		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
 		return E_OS_ID;
 	}
@@ -185,22 +195,24 @@ StatusType SetAbsAlarm(AlarmType AlarmID, TickType start, TickType cycle) {
 		return E_OS_STATE;
 	}
 
-	if (start > _OsCounters[counter_id].alarm.maxallowedvalue) {
+	if (start > _OsCounterCtrlBlk[counter_id].maxallowedvalue) {
 		pr_log("Error: %s(), start arg (=%d) > maxallowedvalue!\n",
 			__func__, start);
 		return E_OS_LIMIT;
 	}
 
-	if (cycle < _OsCounters[counter_id].alarm.mincycle) {
+	if (cycle < _OsCounterCtrlBlk[counter_id].mincycle) {
 		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
 			cycle);
 		return E_OS_LIMIT;
 	}
 
 	/* All inputs are validated, just configure alarms */
-	_AppAlarmCounters[AlarmID] = start;
-	_AppAlarmCycles[AlarmID] = cycle;
-	_AppAlarmStates[AlarmID] = true;
+	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // points to RAM
+	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk[blk_idx].counter = start;
+	data_blk[blk_idx].cycle = cycle;
+	data_blk[blk_idx].is_active = TRUE;
 	return E_OK;
 }
 
@@ -215,77 +227,73 @@ Description: The system service cancels the alarm <AlarmID>.
 Particularities: Allowed on task level and in ISR, but not in hook routines.
 /*/
 StatusType CancelAlarm(AlarmType AlarmID) {
-	if (AlarmID >= MAX_APP_ALARM_COUNTERS) {
+	OsAlarmDataBlkType *data_blk;
+	AlarmType counter_id;
+	uint8_t blk_idx;
+
+	if (AlarmID >= MAX_OS_ALARMS) {
 		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
 		return E_OS_ID;
 	}
 
+	counter_id = _AlarmID2CounterID_map[AlarmID];
+	if (counter_id >= OS_MAX_COUNTERS) {
+		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		return E_OS_STATE;
+	}
+
 	/* All inputs are validated, just configure alarms */
-	_AppAlarmStates[AlarmID] = false;
-	_AppAlarmCounters[AlarmID] = 0;
-	_AppAlarmCycles[AlarmID] = 0;
+	data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[counter_id].data_blk; // points to RAM.
+	blk_idx  = _AlarmID2BlkIndex_map[AlarmID];
+	data_blk[blk_idx].is_active = FALSE;
+	data_blk[blk_idx].counter = 0;
+	data_blk[blk_idx].cycle = 0;
 	return E_OK;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Core OS Alarm / Counter Functions
-u32 _GetOsTickCnt(void) {
-	return _OsTickCount;
-}
-
-
-/*/ 
- Function: _OsHandleTicks
- Description: This is called by bsp_setup_sytimer() up on every basic OS ticks 
- which in-turned is dervived from OS_TICK_DURATION_ns macro generated by OSEK 
- builder & System Generator tools. 
-/*/
-int _OsHandleTicks(void) {
-	_OsTickCount++;
-	OsClearActivationsCounts();
-
-#if ENABLE_UPTIME_PRINTS != 0
-	OsComputeUpTime();
-#endif
-	return 0;
-}
-
-
+// Core OS Alarm Functions
 int OsInitializeAlarms(AppModeType mode) {
-	int ctr, alm, m;
-	bool is_mode_ok = false;
-	const AppAlarmType* alarm;
+	/*/
+	    This function is empty because the AlarmDataBlock will be 
+	    initialized by the python script. At the moment this function is
+	    an empty function only.
+	/*/
 
-	if (mode >= OS_MODES_MAX) {
-		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Alarm init failed!\n", mode);
-		return -1;
-	}
+	// int ctr, alm, m;
+	// bool is_mode_ok = false;
+	// const OsAlarmCtrlBlkType* alarm;
 
-	for (ctr = 0; ctr < MAX_APP_ALARMS; ctr++) {
-		for (alm = 0; alm < _AppAlarms[ctr].len; alm++) {
-			alarm = &_AppAlarms[ctr].alarm[alm];
-			if (alarm->is_autostart != true) {
-				continue;
-			}
-			for (m = 0; m < alarm->n_appmodes; m++) {
-				if (alarm->appmodes[m] == mode) {
-					is_mode_ok = true;
-					break;
-				}
-			}
-			if (!is_mode_ok) {
-				continue;
-			}
+	// if (mode >= OS_MODES_MAX) {
+	// 	pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Alarm init failed!\n", mode);
+	// 	return -1;
+	// }
 
-			/* reaching here means, we need to trigger alarms */
-			*alarm->pacntr = alarm->alarmtime;
-			*alarm->pcycle = alarm->cycletime;
-			*alarm->palrm_state = true;
-		}
-	}
+	// for (ctr = 0; ctr < MAX_ALARM_COUNTERS; ctr++) {
+	// 	for (alm = 0; alm < _OsAlarmsGroups[ctr].len; alm++) {
+	// 		alarm = &_OsAlarmsGroups[ctr].alarm[alm];
+	// 		if (alarm->is_autostart != true) {
+	// 			continue;
+	// 		}
+	// 		for (m = 0; m < alarm->n_appmodes; m++) {
+	// 			if (alarm->appmodes[m] == mode) {
+	// 				is_mode_ok = true;
+	// 				break;
+	// 			}
+	// 		}
+	// 		if (!is_mode_ok) {
+	// 			continue;
+	// 		}
 
-	pr_log("OSEK Alarms intialization done!\n");
+	// 		/* reaching here means, we need to trigger alarms */
+	// 		*alarm->pacntr = alarm->alarmtime;
+	// 		*alarm->pcycle = alarm->cycletime;
+	// 		*alarm->palrm_state = true;
+	// 	}
+	// }
+
+	// pr_log("OSEK Alarms intialization done!\n");
 	return 0;
 }
 
@@ -295,7 +303,7 @@ int OsInitializeAlarms(AppModeType mode) {
  Description: This is called by OsHandleAlarms(). This function handles the
  alarm action as per the configuration done in OSEK builder file.
 /*/
-int OsTriggerAlarm(const AppAlarmType* alarm) {
+int OsTriggerAlarm(const OsAlarmCtrlBlkType* alarm) {
 	int retval = 0;
 
 	if (alarm == NULL) {
@@ -327,112 +335,49 @@ int OsTriggerAlarm(const AppAlarmType* alarm) {
 /// alarms that uses cntr_id as its base and check if the timer expired. If expires
 /// this function triggers the Alarm actions.
 /// @param cntr_id OSEK Counter ID
-/// @param cnt Count Value to be added for the next cycle
+/// @param cnt Configured counter free running count value
 /// @return 0 if all went good.
 int OsHandleAlarms(int cntr_id, TickType cnt) {
+	OsAlarmDataBlkType *data_blk;
+	const OsAlarmCtrlBlkType *ctrl_blk;
 	int i;
-	const AppAlarmType* alarm;
 
-
-	if (cntr_id >= MAX_APP_ALARMS) {
+	if (cntr_id >= MAX_ALARM_COUNTERS) {
 		pr_log("Error: Counter ID %d is invalid in %s()\n", cntr_id, __func__);
 		return -1;
 	}
 
-	for (i = 0; i < _AppAlarms[cntr_id].len; i++) {
-		alarm = &_AppAlarms[cntr_id].alarm[i];
-		if ((cnt >= *alarm->pacntr) && (*alarm->palrm_state)) {
-			OsTriggerAlarm(alarm);
-			/* if cycletime is set, go for next round */
-			if (*alarm->pcycle > 0) {
-				*alarm->pacntr = cnt + *alarm->pcycle;
+	/* loop through all configured alarms for counter 'cntr_id' */
+	for (i = 0; i < _OsAlarmsGroups[cntr_id].len; i++) {
+		/* get the alarm RAM area in a pointer */
+		data_blk = (OsAlarmDataBlkType *) _OsAlarmsGroups[cntr_id].data_blk;
+
+		/* if alarm is in disabled state, ignore it */
+		if (!data_blk[i].is_active) {
+			continue;
+		}
+
+		/* check if the counter's free running count value exceeded the alarm time */
+		if (cnt >= data_blk[i].counter) {
+			/* raise the OSEK alarm */
+			ctrl_blk = _OsAlarmsGroups[cntr_id].ctrl_blk;
+			OsTriggerAlarm(ctrl_blk);
+
+			/* if cycletime is set, go for rounds in cycle */
+			if (data_blk[i].cycle > 0) {
+				data_blk[i].counter = cnt + data_blk[i].cycle;
+
+				/* do adjustment for counter max saw-tooth peak */
+				if (data_blk[i].counter > _OsCounterCtrlBlk[cntr_id].maxallowedvalue) {
+					data_blk[i].counter -= _OsCounterCtrlBlk[cntr_id].maxallowedvalue;
+				}
 			}
 			else {
-				*alarm->palrm_state = false;
+				/* this one is a one-shot alarm, disable it */
+				data_blk[i].is_active = FALSE;
 			}
 		}
 	}
 
 	return 0;
 }
-
-
-/*/ 
- Function: OsHandleCounters
- Description: This is called by _OsHandleTicks(). This function refreshes all 
- counters configured within this call and also handle alarms if any alarm
- expires.
-/*/
-int OsHandleCounters(void) {
-	// static TickType os_ticks_old, usec_cnt_old;
-	static TickType os_ticks_old, k_cyc_us_old;
-	// TickType os_ticks, usec_cnt;
-	TickType os_ticks, k_cyc_us;
-	TickType delta;
-	int i;
-
-	// /* Get input from OS Counter */
-	// if (bsp_get_usec_syscount(&usec_cnt)) {
-	// 	pr_log("Error: bsp_get_usec_syscount returns error\n");
-	// 	return -1;
-	// }
-
-	/* Get input from Kernel & OS Counter */
-	os_ticks = _GetOsTickCnt();
-	k_cyc_us = k_cyc_to_us_near32(k_cycle_get_32());
-
-	/* Increment user configured OSEK Counters */
-	for (i = 0; i < OS_MAX_COUNTERS; i++) {
-		if (_OsCounters[i].maxallowedvalue < ONE_MSEC_IN_MICROSEC ) {
-			// delta = (TickType)(usec_cnt - usec_cnt_old);
-			delta = (TickType)(k_cyc_us - k_cyc_us_old);
-		}
-		else {
-			delta = (TickType)(os_ticks - os_ticks_old);
-		}
-
-		if (delta >= _OsCounters[i].alarm.ticksperbase) {
-			_OsCounters[i].countval += delta;
-			if (_OsCounters[i].countval > _OsCounters[i].alarm.maxallowedvalue) {
-				_OsCounters[i].countval = 0;
-			}
-		}
-		OsHandleAlarms(i, _OsCounters[i].countval);
-	}
-
-	os_ticks_old = os_ticks;
-	// usec_cnt_old = usec_cnt;
-	k_cyc_us_old = k_cyc_us;
-	return 0;
-}
-
-
-#if ENABLE_UPTIME_PRINTS != 0
-int OsComputeUpTime(void) {
-	static u64 upTime_sec, ut_old;
-	u64 sec_in_nano_sec = 1000000000; /* 1 sec = 1000,000,000 nano sec */
-	int days, hrs, min, sec;
-
-	/* Print all counters */
-	printf("[");
-	for (int i = 0; i < OS_MAX_COUNTERS; i++) {
-		printf("%08X", _OsCounters[i].countval);
-		if (i+1 != OS_MAX_COUNTERS)
-			printf(", ");
-	}
-	printf("] ");
-
-	/* Compute and print up-time */
-	upTime_sec = (u64) OS_TICK_DURATION_ns * _GetOsTickCnt() / sec_in_nano_sec;
-	if (upTime_sec != ut_old) {
-		sec = upTime_sec % 60;
-		min = (upTime_sec / 60) % 60;
-		hrs = (upTime_sec / 3600) % 24;
-		days = (upTime_sec / (24*3600));
-		printf("Up-Time: %d days - %02d:%02d:%02d", days, hrs, min, sec);
-		ut_old = upTime_sec;
-	}
-	printf("\r");
-	fflush(stdout);
-}
-#endif
