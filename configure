@@ -37,9 +37,9 @@ else
   echo "Board '$target' is supported!"
 fi
 
-# add board specific include files in platform.h
+# add board specific include files in cgen/platform.h
 INCLUDE_BOARD_H="#include <$target.h>"
-sed -i "/#include /c $INCLUDE_BOARD_H" board/platform.h
+sed -i "/#include /c $INCLUDE_BOARD_H" board/cgen/platform.h
 
 echo "CWD := $(pwd)" > ./Makefile
 echo "include ${board_path}/${target}.mk" >> ./Makefile

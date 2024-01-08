@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include <bsp/platform.h>
+#include <cgen/platform.h>
 #include <os_api.h>
 
 
@@ -17,7 +17,7 @@ Description: This service disables all interrupts for which the hardware
 	     EnableAllInterrupts call.
 /*/
 void DisableAllInterrupts(void) {
-	_OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
+	// _OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
 }
 
 
@@ -29,21 +29,21 @@ Parameters: none
 Description: This service restores the state saved by DisableAllInterrupts.
 /*/
 void EnableAllInterrupts(void) {
-	_OsIsrBitsSaved = _clear_interrupt_bits(ENABLE_INTERRUPT);
+	// _OsIsrBitsSaved = _clear_interrupt_bits(ENABLE_INTERRUPT);
 }
 
 
 /* Following OSEK APIs are not 100% correct, but this should work! */
 void SuspendAllInterrupts(void) {
-	_OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
+	// _OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
 }
 void SuspendOSInterrupts(void) {
-	_OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
+	// _OsIsrBitsSaved = _set_interrupt_bits(DISABLE_INTERRUPT);
 }
 
 void ResumeAllInterrupts(void) {
-	_OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
+	// _OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
 }
 void ResumeOSInterrupts(void) {
-	_OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
+	// _OsIsrBitsSaved = _clear_interrupt_bits(_OsIsrBitsSaved);
 }

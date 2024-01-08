@@ -6,5 +6,6 @@
 #include <sg_alarms.h>
 #include <sg_events.h>
 #include <sg_resources.h>
+#include <sg_tasks.h>
 
 #endif

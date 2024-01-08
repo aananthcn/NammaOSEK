@@ -3,19 +3,15 @@
 #include <osek.h>
 
 #include <os_api.h>
-#include <os_fifo.h>
 #include <os_task.h>
 
 #include <sg_appmodes.h>
 #include <sg_tasks.h>
-#include <sg_fifo.h>
 #include <os_api.h>
 
+#include <zephyr/kernel.h> /* for k_sleep() */ 
 
 int OsAppMode;
-
-u32 _OsKernelPc;
-u32 _OsKernelSp;
 
 
 int SetActiveApplicationMode(AppModeType mode) {
@@ -46,26 +42,10 @@ void StartOS(AppModeType mode) {
 	}
 	
 	OsSetupScheduler(mode);
-	OsInitializeAlarms(mode);
-
-	/* Following addresses will be used by certain OSEK calls to come back
-	after either terminating or suspending the any task */
-	_OsKernelSp = _get_stack_ptr();
-	_OsKernelPc = _get_next_pc();
-
-re_entry_point:
-
 	EnableAllInterrupts();
+
 	while (OsAppMode == OSDEFAULTAPPMODE) {
 		OsScheduleTasks();
+		k_sleep(K_TICKS(1));
 	}
-}
-
-
-/*
- * This funtion runs in interrupt context, hence keep things as minimal as possible
- */
-void SystemTickISR(void) {
-	if (_OsHandleTicks())
-		pr_log("Error: _OsHandleTicks return errors!\n");
 }
