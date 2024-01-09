@@ -157,16 +157,21 @@ bool OsTaskSchedConditionsOk(uint32_t task_id) {
 }
 
 
-/// @brief This function is called by zephyr's thread right after scheduling
-///        of the tasks is completed.
+/// @brief This function is called by zephyr's thread at the end of every scheduling
+///        loop. It can schedule and reach here and it can reach here without 
+///        scheduling of Task as well.
 /// @param task_id
-void OsTaskSchedExit(uint32_t task_id) {
+void OsTaskSchedEndLoop(uint32_t task_id) {
 	if (_OsTaskDataBlk[task_id].activations >= _OsTaskCtrlBlk[task_id].activations) {
+		// this task has used its activation limits, suspend it
 		_OsTaskDataBlk[task_id].state = WAITING;
 		k_thread_suspend(_OsTaskDataBlk[task_id].tid);
 	}
 	else {
+		// this task is ready to run again, but
 		_OsTaskDataBlk[task_id].state = READY;
+		// give other threads (Tasks) an opportunity to schedule
+		k_sleep(K_TICKS(1));
 	}
 }
 
