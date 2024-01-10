@@ -161,7 +161,7 @@ bool OsTaskSchedConditionsOk(uint32_t task_id) {
 ///        loop. It can schedule and reach here and it can reach here without 
 ///        scheduling of Task as well.
 /// @param task_id
-void OsTaskSchedEndLoop(uint32_t task_id) {
+void OsTaskEndOfLoop(uint32_t task_id) {
 	if (_OsTaskDataBlk[task_id].activations >= _OsTaskCtrlBlk[task_id].activations) {
 		// this task has used its activation limits, suspend it
 		_OsTaskDataBlk[task_id].state = WAITING;
