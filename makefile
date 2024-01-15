@@ -21,7 +21,6 @@ INCDIRS  += 	-I ${OS_PATH}/include \
 
 CMN_OBJS := \
 	${OS_PATH}/kernel/os_entry.o \
-	${OS_PATH}/kernel/os_log.o \
 	${OS_PATH}/kernel/os_task.o \
 	${OS_PATH}/kernel/os_event.o \
 	${OS_PATH}/kernel/os_counter.o \

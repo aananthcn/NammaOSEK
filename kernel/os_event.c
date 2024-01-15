@@ -8,6 +8,11 @@
 #include <stddef.h>
 
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(os_event, LOG_LEVEL_DBG);
+
+
+
 static EventMaskType _EventMasks[TASK_ID_MAX];
 
 /*/
@@ -26,7 +31,7 @@ Particularities: Any events not set in the event mask remain unchanged.
 /*/
 StatusType SetEvent(TaskType TaskID, EventMaskType Mask) {
 	if (TaskID >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n", __func__,
+		LOG_ERR("Error: %s() called with invalid TaskID %d", __func__,
 			TaskID);
 		return E_OS_ID;
 	}
@@ -54,7 +59,7 @@ StatusType ClearEvent(EventMaskType Mask) {
 
 	task_id = _OsCurrentTask.id;
 	if (task_id >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n", __func__,
+		LOG_ERR("Error: %s() called with invalid TaskID %d", __func__,
 			task_id);
 		return E_OS_ID;
 	}
@@ -80,13 +85,13 @@ which own the event.
 /*/
 StatusType GetEvent(TaskType TaskID, EventMaskRefType Event) {
 	if (TaskID >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n", __func__,
+		LOG_ERR("Error: %s() called with invalid TaskID %d", __func__,
 			TaskID);
 		return E_OS_ID;
 	}
 
 	if (Event == NULL) {
-		pr_log("Error: %s() Event pointer is NULL\n", __func__);
+		LOG_ERR("Error: %s() Event pointer is NULL", __func__);
 		return E_OS_ARG_FAIL;
 	}
 
@@ -112,7 +117,7 @@ extern u32 _OsKernelSp;
 StatusType WaitEvent(EventMaskType Mask) {
 	/* check if the calling task is an Extended task */
 	if (_OsCurrentTask.n_evtmsks == 0) {
-		pr_log("Error: %s()! Task (id: %d) is not an Extended Task\n",
+		LOG_ERR("Error: %s()! Task (id: %d) is not an Extended Task",
 			 __func__, _OsCurrentTask.id);
 		return E_OS_NOFUNC;
 	}

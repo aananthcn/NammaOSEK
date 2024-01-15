@@ -6,6 +6,11 @@
 #include <sg_resources.h>
 
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(os_res, LOG_LEVEL_DBG);
+
+
+
 
 typedef struct {
 	ResourceType id;
@@ -37,14 +42,14 @@ StatusType GetResource(ResourceType ResID) {
 	StatusType stat = E_OK;
 
 	if (ResID >= MAX_RESOURCE_ID) {
-		pr_log("Error: %s() called with invalid ResID %d\n", __func__, ResID);
+		LOG_ERR("Error: %s() called with invalid ResID %d", __func__, ResID);
 		return E_OS_ID;
 	}
 
 	DisableAllInterrupts();
 	if (_OsResCtrlBlk[ResID].in_use) {
 		EnableAllInterrupts();
-		pr_log("Error: %s() ResID %d is busy!\n", __func__, ResID);
+		LOG_ERR("Error: %s() ResID %d is busy!", __func__, ResID);
 		return E_OS_RESOURCE;
 	}
 	_OsResCtrlBlk[ResID].in_use = true;
@@ -76,12 +81,12 @@ StatusType ReleaseResource(ResourceType ResID) {
 	StatusType stat = E_OK;
 
 	if (ResID >= MAX_RESOURCE_ID) {
-		pr_log("Error: %s() called with invalid ResID %d\n", __func__, ResID);
+		LOG_ERR("Error: %s() called with invalid ResID %d", __func__, ResID);
 		return E_OS_ID;
 	}
 
 	if (!_OsResCtrlBlk[ResID].in_use) {
-		pr_log("Warning: %s() is called for inactive ResID %d\n", __func__, ResID);
+		LOG_ERR("Warning: %s() is called for inactive ResID %d", __func__, ResID);
 		return E_OS_RESOURCE;
 	}
 	_OsResCtrlBlk[ResID].in_use = false;

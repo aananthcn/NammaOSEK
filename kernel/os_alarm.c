@@ -11,6 +11,9 @@
 #include <sg_alarms.h>
 #include <sg_appmodes.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(os_alarm, LOG_LEVEL_DBG);
+
 
 #define ENABLE_UPTIME_PRINTS	0 // set this to 1 if you want up-time to be printed.
 #define TEMPORARY_WORKAROUND	1
@@ -35,18 +38,18 @@ StatusType GetAlarmBase(AlarmType AlarmID, AlarmBaseRefType Info) {
 	AlarmType counter_id;
 
 	if (AlarmID >= MAX_OS_ALARMS) {
-		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		LOG_ERR("Error: %s() invalid AlarmID %d", __func__, AlarmID);
 		return E_OS_ID;
 	}
 
 	if (Info == NULL) {
-		pr_log("Error: %s() Info pointer is NULL\n", __func__);
+		LOG_ERR("Error: %s() Info pointer is NULL", __func__);
 		return E_OS_ARG_FAIL;
 	}
 
 	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
-		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		LOG_ERR("Error: %s(), Alarm to Counter mapping error!", __func__);
 		return E_OS_STATE;
 	}
 
@@ -76,18 +79,18 @@ StatusType GetAlarm(AlarmType AlarmID, TickRefType Tick) {
 	uint8_t blk_idx;
 
 	if (AlarmID >= MAX_OS_ALARMS) {
-		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		LOG_ERR("Error: %s() invalid AlarmID %d", __func__, AlarmID);
 		return E_OS_ID;
 	}
 
 	if (Tick == NULL) {
-		pr_log("Error: %s() Tick pointer is NULL\n", __func__);
+		LOG_ERR("Error: %s() Tick pointer is NULL", __func__);
 		return E_OS_ARG_FAIL;
 	}
 
 	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
-		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		LOG_ERR("Error: %s(), Alarm to Counter mapping error!", __func__);
 		return E_OS_STATE;
 	}
 
@@ -133,24 +136,24 @@ StatusType SetRelAlarm(AlarmType AlarmID, TickType increment, TickType cycle) {
 	uint8_t blk_idx;
 
 	if (AlarmID >= MAX_OS_ALARMS) {
-		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		LOG_ERR("Error: %s() invalid AlarmID %d", __func__, AlarmID);
 		return E_OS_ID;
 	}
 
 	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
-		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		LOG_ERR("Error: %s(), Alarm to Counter mapping error!", __func__);
 		return E_OS_STATE;
 	}
 
 	if (increment > _OsCounterCtrlBlk[counter_id].maxallowedvalue) {
-		pr_log("Error: %s(), increment arg (=%d) > maxallowedvalue!\n",
+		LOG_ERR("Error: %s(), increment arg (=%d) > maxallowedvalue!",
 			__func__, increment);
 		return E_OS_LIMIT;
 	}
 
 	if (cycle < _OsCounterCtrlBlk[counter_id].mincycle) {
-		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
+		LOG_ERR("Error: %s(), cycle arg (=%d) < mincycle!", __func__,
 			cycle);
 		return E_OS_LIMIT;
 	}
@@ -185,24 +188,24 @@ StatusType SetAbsAlarm(AlarmType AlarmID, TickType start, TickType cycle) {
 	uint8_t blk_idx;
 
 	if (AlarmID >= MAX_OS_ALARMS) {
-		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		LOG_ERR("Error: %s() invalid AlarmID %d", __func__, AlarmID);
 		return E_OS_ID;
 	}
 
 	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
-		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		LOG_ERR("Error: %s(), Alarm to Counter mapping error!", __func__);
 		return E_OS_STATE;
 	}
 
 	if (start > _OsCounterCtrlBlk[counter_id].maxallowedvalue) {
-		pr_log("Error: %s(), start arg (=%d) > maxallowedvalue!\n",
+		LOG_ERR("Error: %s(), start arg (=%d) > maxallowedvalue!",
 			__func__, start);
 		return E_OS_LIMIT;
 	}
 
 	if (cycle < _OsCounterCtrlBlk[counter_id].mincycle) {
-		pr_log("Error: %s(), cycle arg (=%d) < mincycle!\n", __func__,
+		LOG_ERR("Error: %s(), cycle arg (=%d) < mincycle!", __func__,
 			cycle);
 		return E_OS_LIMIT;
 	}
@@ -232,13 +235,13 @@ StatusType CancelAlarm(AlarmType AlarmID) {
 	uint8_t blk_idx;
 
 	if (AlarmID >= MAX_OS_ALARMS) {
-		pr_log("Error: %s() invalid AlarmID %d\n", __func__, AlarmID);
+		LOG_ERR("Error: %s() invalid AlarmID %d", __func__, AlarmID);
 		return E_OS_ID;
 	}
 
 	counter_id = _AlarmID2CounterID_map[AlarmID];
 	if (counter_id >= OS_MAX_COUNTERS) {
-		pr_log("Error: %s(), Alarm to Counter mapping error!\n", __func__);
+		LOG_ERR("Error: %s(), Alarm to Counter mapping error!", __func__);
 		return E_OS_STATE;
 	}
 
@@ -263,7 +266,7 @@ int OsTriggerAlarm(const OsAlarmCtrlBlkType* alarm) {
 	int retval = 0;
 
 	if (alarm == NULL) {
-		pr_log("Error: %s() invalid argument!\n", __func__);
+		LOG_ERR("Error: %s() invalid argument!", __func__);
 		return -1;
 	}
 
@@ -278,7 +281,7 @@ int OsTriggerAlarm(const OsAlarmCtrlBlkType* alarm) {
 		((void (*)(void))alarm->aat_arg1)();
 		break;
 	default:
-		pr_log("Error: Invalid Alarm Action Type in %s()\n", __func__);
+		LOG_ERR("Error: Invalid Alarm Action Type in %s()", __func__);
 		retval = -1;
 		break;
 	};
@@ -299,7 +302,7 @@ int OsHandleAlarms(int cntr_id, TickType cnt) {
 	int i;
 
 	if (cntr_id >= MAX_ALARM_COUNTERS) {
-		pr_log("Error: Counter ID %d is invalid in %s()\n", cntr_id, __func__);
+		LOG_ERR("Error: Counter ID %d is invalid in %s()", cntr_id, __func__);
 		return -1;
 	}
 

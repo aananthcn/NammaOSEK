@@ -8,7 +8,12 @@
 #include <sg_appmodes.h>
 #include <sg_os_param.h>
 
+
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(os_task, LOG_LEVEL_DBG);
+
+
 
 OsTaskCtrlType _OsTaskDataBlk[TASK_ID_MAX];
 OsTaskType _OsCurrentTask;
@@ -32,7 +37,7 @@ void OsSetupScheduler(AppModeType mode) {
 	int t;
 
 	if (mode >= OS_MODES_MAX) {
-		pr_log("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!\n", mode);
+		LOG_ERR("Error: AppMode \"%d >= OS_MODES_MAX\". Task init failed!", mode);
 		return;
 	}
 
@@ -43,8 +48,8 @@ void OsSetupScheduler(AppModeType mode) {
 
                 /* do sanity check - for any hand modification of sg code */
                 if (t != _OsTaskCtrlBlk[t].id) {
-                        pr_log("Error: %s(), task.id (%d) != id (%d)! Try do \
-                        a clean build.\n", __func__, _OsTaskCtrlBlk[t].id, t);
+                        LOG_ERR("Error: %s(), task.id (%d) != id (%d)! Try do \
+                        a clean build.", __func__, _OsTaskCtrlBlk[t].id, t);
                         continue; // skip this
                 }
 
@@ -65,7 +70,7 @@ void OsSetupScheduler(AppModeType mode) {
                         K_MSEC(1)                               /* TODO: no delay; OsTaskSchedConditionsOk() takes care of OSEK's */
                 );
 	}
-	pr_log("Scheduler setup done!\n");
+	LOG_INF("Car-OS Scheduler setup done!");
 }
 
 
@@ -91,7 +96,7 @@ int OsScheduleTasks(void) {
 
 int OsSetCeilingPrio(u32 prio) {
 	if (prio > OS_MAX_TASK_PRIORITY) {
-		pr_log("Error: %s() called with invalid priority %d\n", __func__, prio);
+		LOG_ERR("Error: %s() called with invalid priority %d", __func__, prio);
 		return E_OS_ID;
 	}
 
@@ -192,7 +197,7 @@ StatusType ActivateTask(TaskType TaskID) {
 	StatusType stat = E_OK;
 
 	if (TaskID >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n", __func__, TaskID);
+		LOG_ERR("Error: %s() called with invalid TaskID %d", __func__, TaskID);
 		return E_OS_ID;
 	}
 
@@ -236,8 +241,7 @@ Description: This service causes the termination of the calling task. After
 /*/
 StatusType ChainTask(TaskType TaskID) {
 	if (TaskID >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n",
-			__func__, TaskID);
+		LOG_ERR("Error: %s() called with invalid TaskID %d", __func__, TaskID);
 		return E_OS_ID;
 	}
 
@@ -261,8 +265,9 @@ Description: If a higher-priority task is ready, the internal resource of the
 	     Otherwise the calling task is continued.
 /*/
 StatusType Schedule(void) {
+	// TODO: Clean up Schedule OSEK function
 	// u32 sp_ctx;
-	// //pr_log("sp_top: %X\n", _OsTaskDataBlk[_OsCurrentTask.id].sp_top);
+	// //LOG_ERR("sp_top: %X\n", _OsTaskDataBlk[_OsCurrentTask.id].sp_top);
 	// /* save the context of this task, for resuming later */
 	// sp_ctx = _save_context(_OsTaskDataBlk[_OsCurrentTask.id].sp_top);
 	// /* return if this call is resuming from previous context save */
@@ -270,7 +275,7 @@ StatusType Schedule(void) {
 	// 	_OsTaskDataBlk[_OsCurrentTask.id].context_saved = false;
 	// 	return E_OK;
 	// }
-	// //pr_log("sp_ctx: %X\n", sp_ctx);
+	// //LOG_ERR("sp_ctx: %X\n", sp_ctx);
 	// _OsTaskDataBlk[_OsCurrentTask.id].sp_ctx = sp_ctx;
 	// _OsTaskDataBlk[_OsCurrentTask.id].context_saved = true;
 
@@ -294,7 +299,7 @@ Description: GetTaskID returns the information about the TaskID of the task
 /*/
 StatusType GetTaskID(TaskRefType pTaskID) {
 	if (pTaskID == NULL) {
-		pr_log("Error: %s() taskID reference is NULL\n", __func__);
+		LOG_ERR("Error: %s() taskID reference is NULL", __func__);
 		return E_OS_ARG_FAIL;
 	}
 	*pTaskID = _OsCurrentTask.id;
@@ -312,13 +317,13 @@ Description: Returns the state of a task (running, ready, waiting, suspended)
 /*/
 StatusType GetTaskState(TaskType TaskID, TaskStateRefType pState) {
 	if (TaskID >= TASK_ID_MAX) {
-		pr_log("Error: %s() called with invalid TaskID %d\n",
+		LOG_ERR("Error: %s() called with invalid TaskID %d",
 			__func__, TaskID);
 		return E_OS_ID;
 	}
 
 	if (pState == NULL) {
-		pr_log("Error: %s() taskID reference is NULL\n", __func__);
+		LOG_ERR("Error: %s() taskID reference is NULL", __func__);
 		return E_OS_ARG_FAIL;
 	}
 	*pState = _OsTaskDataBlk[TaskID].state;
