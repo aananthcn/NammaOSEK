@@ -82,13 +82,20 @@ int OsScheduleTasks(void) {
 	OsTaskType* task;
 	u32 tick_cnt;
 	static u32 tick_cnt_old;
-	int i;
+	int t;
 
 	/* Timer / Counter handling */
 	tick_cnt = _GetOsTickCnt();
 	if (tick_cnt != tick_cnt_old) {
 		OsHandleCounters();
 		tick_cnt_old = tick_cnt;
+	}
+
+	/* Scheduling of Tasks */
+	for (t=0; t < TASK_ID_MAX; t++) {
+		if (_OsTaskDataBlk[t].state == READY) {
+			k_thread_resume(_OsTaskDataBlk[t].tid);
+		}
 	}
 }
 
@@ -201,9 +208,6 @@ StatusType ActivateTask(TaskType TaskID) {
 		return E_OS_ID;
 	}
 
-	if (_OsTaskDataBlk[TaskID].state == WAITING) {
-		k_thread_resume(_OsTaskDataBlk[TaskID].tid);
-	}
 	_OsTaskDataBlk[TaskID].state = READY;
 
 	return stat;
