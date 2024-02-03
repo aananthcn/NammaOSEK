@@ -61,13 +61,13 @@ void OsSetupScheduler(AppModeType mode) {
 
                 /* all set, we can now create a thread for this task */
                 _OsTaskDataBlk[t].tid = k_thread_create(&_OsTaskDataBlk[t].thread, /* struct k_thread* */
-                        _OsStackPtrList[t],                     /* k_thread_stack_t * stack */
-                        _OsTaskCtrlBlk[t].stack_size,              /* stack_size */
-                        _OsTaskEntryList[t],                    /* k_thread_entry_t entry*/
-                        NULL, NULL, NULL,                       /* p1, p2, p3 */
-                        K_PRIO_COOP(_OsTaskCtrlBlk[t].priority),   /* priority (smaller == higher in zephyr) */
-                        0,                                      /* uint32_t options */
-                        K_MSEC(1)                               /* TODO: no delay; OsTaskSchedConditionsOk() takes care of OSEK's */
+                        _OsStackPtrList[t],                      /* k_thread_stack_t * stack */
+                        _OsTaskCtrlBlk[t].stack_size,            /* stack_size based on user config */
+                        _OsTaskEntryList[t],                     /* k_thread_entry_t entry*/
+                        NULL, NULL, NULL,                        /* p1, p2, p3 - refer Zephyr specs */
+                        K_PRIO_COOP(_OsTaskCtrlBlk[t].priority), /* priority (smaller == higher in zephyr) */
+                        0,                                       /* uint32_t options */
+                        K_MSEC(1)                                /* TODO: no delay; OsTaskSchedConditionsOk() takes care of OSEK's */
                 );
 	}
 	LOG_INF("Car-OS Scheduler setup done!");
